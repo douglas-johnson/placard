@@ -219,12 +219,19 @@ key, created on the web (works from a phone), so submission never waits on
 interactive two-factor; and an Apple Developer Program membership, which is the
 gate.
 
-**The gate.** TestFlight is unavailable to a free Personal Team; it requires the paid
-Developer Program. D29 recorded that the signing team is the personal account and
-left open whether it is paid. Xcode's cached account data on this machine does not
-list team `Q52822X522`, so the question can't be answered from here. If it is paid,
-everything below can start tonight. If it is not, enrolling takes a day or two of
-Apple's time, and the first TestFlight build waits on it.
+**The gate, and its answer.** TestFlight is unavailable to a free Personal Team; it
+requires the paid Developer Program. The account is not enrolled yet (Doug,
+2026-09-19); enrolling is the decision. The fastest route is the **Apple Developer app
+on the iPhone** — it does identity verification against a government ID on the phone
+and needs no Mac — at US$99 a year. Apple's approval usually takes a day or two and
+occasionally longer; nothing on the TestFlight path can start until the welcome email
+arrives, after which the App Store Connect API key and the app record are ten
+minutes' work. Enroll tonight. Team `Q52822X522` becomes the paid team on approval
+and `app.json` does not change.
+
+Enrollment is the only thing on the critical path that nobody here controls, so
+everything that does not depend on it — all of F0 — proceeds on the simulator in the
+meantime (D8), and the first EAS build is queued the hour the membership lands.
 
 **Internal versus external.** Internal testers — App Store Connect users on the team,
 up to a hundred — get a build minutes after it finishes processing, with no review.
@@ -243,7 +250,9 @@ matters for §6.
 
 ## 6. Tomorrow at the Met
 
-Two versions of tomorrow, and the right plan prepares both.
+Tomorrow is a stock camera day. The membership cannot be approved in time, so the
+first TestFlight build targets the visit after — and that is fine, because the Met is
+worth a protocol-grade take on its own.
 
 **The Met is the right venue regardless.** It is the highest-scoring venue by §11's
 criteria — a public collection API, which is what produces the first *verified*
@@ -253,18 +262,17 @@ policy (pay-what-you-wish for New York State residents and NY, NJ, and CT studen
 fixed admission otherwise, ID required) is precisely the §9.6 eligibility data, and
 it is on a sign. `data/venues/met.json` should exist before the visit.
 
-**If the gate is open tonight.** Build the §7 F0 scope, run the first EAS build, and
-submit to TestFlight internally; install on the phone in the morning. Use it for a
-subset of the take and the stock camera for the rest — that comparison *is* the A1
-milestone test, and it is more useful than a whole day on an untested build. Hard
-rule: if the build is not on the phone by the time the doors open, it is a stock
-camera day, no exceptions, and the app is used the visit after.
+**What tomorrow is for.** The protocol's "next trip" list, unchanged: prove GPS with
+the first frame of the day, and come back with at least one label whose extraction
+can be checked against the Met's API — the corpus's first `verified` fixture. Plus
+the entrance signage, shot as the §2.1 flow will shoot it, so the F0 venue input has a
+real example to be designed against. The frames come home by USB and `exif-check`,
+not by chat.
 
-**If the gate is closed.** Enroll tonight; tomorrow is a stock camera day under the
-protocol, with the Met API check as its goal. Nothing about this plan changes except
-which visit gets the first build.
-
-Either way, tomorrow's frames arrive by USB, not by chat.
+**What the first app visit is for.** Run F0 on a subset of the take and the stock
+camera on the rest. That comparison *is* the A1 milestone test, and it is more useful
+than a whole day on an untested build. Hard rule for that visit: if the build is not
+on the phone when the doors open, it is a stock camera day, no exceptions.
 
 ---
 
@@ -315,7 +323,6 @@ Proposals, mine, not yet accepted. Each becomes a D-entry when Doug settles it.
 
 ## 9. Open questions for Doug
 
-- Is the Apple account a paid Developer Program membership? (§5, the gate.)
 - Who are the testers, roughly how many, and in which cities? The registry seeding and
   the number of external invites follow from this.
 - Is a small monthly hosting and storage cost acceptable for the beta, or should the
