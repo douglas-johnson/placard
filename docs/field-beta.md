@@ -285,6 +285,12 @@ camera-roll save. Export the manifest through the share sheet. Everything runs w
 the phone in airplane mode. This is the build that clears A1's milestone, and it is
 the one that can plausibly exist by tomorrow if the gate is open.
 
+*Status, 2026-09-19 evening:* written, on this branch, with no native additions so it
+ships to build 4 as a JS update (D33). The accession locator finds the right number
+in its three candidates for every MCNY fixture when run over the corpus tool's own
+readings. Not yet field-tested; the Met on the 20th is the first chance, and the
+stock camera comes too.
+
 **F1 — many collectors.** The consent screen; the contributor ID; face blur in the
 native module; the ingest service and bucket; the upload queue; `eas.json` and
 external TestFlight; a one-page tester guide distilled from the protocol for people

@@ -33,6 +33,24 @@ real bar:
 That's testable in a way "a capture screen exists" isn't. Until the app clears it, the
 protocol is the better tool and should be used.
 
+**F0 (docs/field-beta.md §7) is that build, written 2026-09-19 and awaiting a field
+test.** What it does, and where:
+
+| | |
+|---|---|
+| `App.tsx` | The router — four screens and one flow at a time, no navigation library (D33) |
+| `src/take.ts` | A visit: frames plus an append-only NDJSON manifest under `Documents/takes/<date>-<venue>/`, replayed on launch to resume |
+| `src/screens/Arrive.tsx` | GPS fix → registry venues nearby → pick or add (a low-confidence claim) → the field log |
+| `src/screens/LabelFlow.tsx` | A label → on-device read → accession shown back → C only if nothing read → B enforced, or a stated reason → flags and hard cases |
+| `src/accession.ts` | Finds and ranks accession-shaped lines; locates, never validates (D11). 9/9 on the MCNY fixtures against the corpus tool's own output |
+| `src/screens/VenueFlow.tsx` | Arrival signage in the protocol's order; the exterior on leaving, which ends the take |
+| `src/screens/WallTextFlow.tsx` | The interpretive panel, optionally linked to the last label group |
+| `src/location.ts` | One position watcher per session; the fix is written into each JPEG's EXIF via `additionalExif` |
+| `src/registry.ts` | `data/venues/` bundled via `metro.config.js` `watchFolders` — add a venue there **and** to the import list |
+
+Frames also go to the camera roll, so the USB path in the protocol still works. The
+manifest leaves through the share sheet (AirDrop works in airplane mode).
+
 ## Constraints specific to this app
 
 **Capture must never fail offline.** Museums have terrible connectivity (§3). Photo,
@@ -88,15 +106,35 @@ toggle.
 
 ```sh
 npm install
-npm run ios          # Expo Go in the iOS simulator — 26.5 or 18.3 available
+npx expo run:ios --device <simulator udid>   # development build in the simulator
+npx expo run:ios --device                    # …or on the phone (D29)
+npx expo start                               # Metro, for either
 ```
 
-On first launch Expo Go shows a dev-menu onboarding sheet over the app. Tap
-**Continue**; it's Expo Go's, not ours.
+Expo Go still loads the bundle but can't link the Vision module, so a label group
+reads nothing there. In the simulator the shutter produces a blank 200px frame; every
+camera screen has a **Fixture (dev)** action that hands the flow the bundled 38.447.4
+label instead, which exercises the read-back path. It's compiled out of release builds.
 
-`App.tsx` is a preflight screen, not a Hello World: it reports whether the native
-modules the capture path depends on are actually linked, and echoes the same readout
-to the Metro console so the check survives being covered by that sheet.
+The preflight that used to be the whole app is now `src/screens/Preflight.tsx`, behind
+"Check this build" on the hub. It reports whether the native modules the capture path
+depends on are actually linked, and echoes the same readout to the Metro console.
+
+### Shipping to testers
+
+Two paths, and the difference is whether the native surface changed (D33):
+
+```sh
+# JS-only change — reaches every TestFlight phone on next launch, ~1 minute
+npx eas-cli@latest update --channel testflight --message "…" --non-interactive
+
+# Native change (a new module, a plist string) — ~15 minutes plus Apple's processing
+npx eas-cli@latest build -p ios --profile testflight --non-interactive
+npx eas-cli@latest submit -p ios --profile testflight --id <build> --non-interactive --wait
+```
+
+Adding a dependency with native code silently puts you on the second path. Check
+before adding.
 
 **Verified on this machine 2026-09-16** — bundles at 721 modules, renders in the iOS
 26.5 simulator, `expo-camera` and `expo-location` both link and report permission.

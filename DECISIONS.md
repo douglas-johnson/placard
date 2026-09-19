@@ -1150,3 +1150,38 @@ commit and is not a working repository — nothing goes there.
 **What would reverse this:** discovering that something in the public tree should not
 have been — in which case the fix is to move it to the notes repository and republish
 from a fresh initial commit, since the same reasoning about history applies.
+
+---
+
+## D33 — Field-beta iterations ship as JS updates on top of one native build
+
+**Date:** 2026-09-19 · **Status:** proposed by Claude, awaiting Doug · **Builds on:** D29, D30, field-beta §5
+
+Build 4 — the first TestFlight build — went out with `expo-updates` configured
+(channel `testflight`, runtime version policy `appVersion`, so `0.1.0`). F0 was then
+written to add **no native module**: the capture flow uses only what build 4 already
+links — `expo-camera`, `expo-file-system`, `expo-location`, `expo-media-library`, the
+local Vision module, and React Native's own `Share` for the manifest export. Two things
+were wanted and deliberately not added because each would have forced a rebuild:
+`react-native-safe-area-context` (replaced by `Constants.statusBarHeight` and a fixed
+home-indicator inset, `src/insets.ts`) and any navigation library (the app is four
+screens and a state machine).
+
+**Decision:** while the native surface is sufficient, a field-beta iteration is
+`eas update --channel testflight`, which reaches every tester's phone on next launch
+in about a minute. A native rebuild (`eas build` + `eas submit`, ~15 minutes plus
+Apple's review of the binary) happens only when the native surface changes — F1's
+face blur in the Vision module is the first known case — and every such rebuild bumps
+the app version so the runtime version moves with it.
+
+**Reasoning.** The Mac is an Intel machine and Doug is often remote (field-beta §5);
+the whole point of TestFlight was to take the Mac out of the loop. An OTA path keeps it
+out for the common case, which for a data-collection beta is copy changes, a new flag,
+a different prompt order — the things testers will ask for on day one. The cost is a
+constraint on what F0 may reach for, and the constraint turned out to be cheap: the
+insets helper is twelve lines, and the router is smaller than a library's config would
+have been.
+
+**What would reverse this:** a JS-only change that misbehaves against the embedded
+native modules — the runtime-version policy is what guards against that, and if
+`appVersion` proves too coarse the policy moves to `fingerprint`.
