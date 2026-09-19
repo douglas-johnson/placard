@@ -1,0 +1,43 @@
+{
+  "slug": "example-museum",
+  "name": "Example Museum of Art",
+  "type": "museum",
+  "location": {
+    "latitude": 40.7614,
+    "longitude": -73.9776,
+    "address": "11 W 53rd St, New York, NY 10019",
+    "city": "New York",
+    "region": "US-NY"
+  },
+  "collection_api": {
+    "available": true,
+    "base_url": "https://example.org/api/v1",
+    "notes": "Accession lookup at /objects?accession="
+  },
+  "accession_formats": [
+    { "pattern": "^\\d{2,4}\\.\\d{1,4}(\\.\\d+)?$", "example": "1925.708" },
+    { "pattern": "^X\\.\\d+$", "example": "X.1042", "notes": "loan / unaccessioned" }
+  ],
+  "labels": {
+    "extended_labels": true,
+    "photography": "permitted_permanent_collection_only",
+    "notes": "Vinyl-cut lettering in the lobby galleries; no tombstones."
+  },
+  "access_rules": [
+    {
+      "kind": "free_window",
+      "audience": "resident",
+      "region": "US-NY",
+      "recurrence": "FREQ=WEEKLY;BYDAY=FR",
+      "window": "17:30-20:30",
+      "reservation": { "required": true, "lead_time": "P7D" },
+      "obtainability": "competitive"
+    }
+  ],
+  "provenance": {
+    "source": "https://example.org/visit",
+    "source_type": "institutional_page",
+    "verified": "2026-09-16",
+    "verified_by": "manual"
+  }
+}

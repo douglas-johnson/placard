@@ -1,0 +1,69 @@
+{
+  "id": "mcny-38.447.4",
+  "venue": "mcny",
+  "gallery_dialect": "history_card",
+  "captured": "2026-09-16",
+  "source_image": "raw/2026-09-16-mcny/IMG_E1308.HEIC",
+  "frames": {
+    "work": "raw/2026-09-16-mcny/IMG_E1307.HEIC",
+    "label": "raw/2026-09-16-mcny/IMG_E1308.HEIC"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": false,
+    "gps_note": "Camera had no location permission on this visit. Venue is established by the bookend frames IMG_1287 (entrance board, 15:00) and IMG_1318 (exterior, 15:50) and by shot order, not by GPS. Fixed on the phone the same evening; expect GPS from the next visit onward."
+  },
+  "source_note": "Re-bound to the camera-roll originals (Image Capture over USB) the evening of the visit. Transcription was done from phone-channel copies; the originals are the same frames.",
+  "label_form": "printed_card",
+  "verified_against": "label_only",
+  "difficulty": [
+    "bilingual_en_es",
+    "attribution_qualifier",
+    "circa_marker",
+    "accession_in_parentheses",
+    "donation_year_before_accession",
+    "confusable_unicode",
+    "serif_face",
+    "text_bearing_artwork"
+  ],
+  "expected": {
+    "accession_number": "38.447.4",
+    "title": "Liberty Triumphant: Or the Downfall of Oppression",
+    "title_translations": {
+      "es": "La libertad triunfante: o la caída de la opresión"
+    },
+    "date_edtf": "1774~",
+    "date_raw": "ca. 1774",
+    "artist": "Henry Dawkins",
+    "attribution_qualifier": "Attributed to",
+    "medium": "Engraving",
+    "credit_line": "Gift of Mrs. J. Percy Sabin",
+    "donation_year": 1938,
+    "donor": "Mrs. J. Percy Sabin",
+    "donor_type": "person",
+    "owning_institution": null
+  },
+  "traps": {
+    "confusable_separator": "Vision reads the accession as '38.447•4' — the third separator is U+2022 BULLET, not U+002E. Confidence 1.00, no clipping. This is THE regression case: the primary key is silently corrupted and neither confidence nor geometry catches it. See D14.",
+    "two_years_on_one_line": "'Gift of Mrs. J. Percy Sabin, 1938. (38.447.4)' contains the donation year 1938 AND an accession beginning 38. A parser hunting for year-like numbers can easily take 1938 as the accession, or read '1938.' as its first component.",
+    "attribution_is_not_authorship": "'Attributed to' must survive as a qualifier. Flattening it to created_by asserts something the museum explicitly declines to assert (§4.6).",
+    "bilingual_duplication": "Title and essay each appear twice, English then Spanish. An extractor taking 'the first two lines' as the title gets the English; one taking 'all lines before the date' gets both languages concatenated. Neither is right without language detection.",
+    "circa": "'ca. 1774' is EDTF 1774~. Storing 1774 loses the approximation (D5)."
+  },
+  "expected_relationships": {
+    "note": "Candidates. Low confidence, review queue (§4.6).",
+    "candidates": [
+      {
+        "subject": "38.447.4",
+        "predicate": "depicts_subject",
+        "object": "opposition to the Tea Act"
+      },
+      {
+        "subject": "38.447.4",
+        "predicate": "responds_to",
+        "object": "Tea Act 1773"
+      }
+    ]
+  },
+  "work_photo_note": "The engraving itself is dense with text — an engraved title, place names, speech banderoles, and a numbered key. OCR of the WORK photo returned 41 lines, mostly garbage against 18th-century engraved script ('LIBERI \\\"RIUMPIAN I;orthe Downfall of OPPRESSION.'). See D15: line count cannot distinguish a work photo from a label photo."
+}

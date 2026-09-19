@@ -1,0 +1,75 @@
+{
+  "id": "mcny-loan-moaf-894.5",
+  "venue": "mcny",
+  "gallery_dialect": "history_card",
+  "captured": "2026-09-16",
+  "source_image": "raw/2026-09-16-mcny/IMG_1289.HEIC",
+  "frames": {
+    "work": "raw/2026-09-16-mcny/IMG_1288.HEIC",
+    "label": "raw/2026-09-16-mcny/IMG_1289.HEIC",
+    "accession_crop": "raw/2026-09-16-mcny/IMG_1290.HEIC"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": false,
+    "gps_note": "Camera had no location permission on this visit. Venue is established by the bookend frames IMG_1287 (entrance board, 15:00) and IMG_1318 (exterior, 15:50) and by shot order, not by GPS. Fixed on the phone the same evening; expect GPS from the next visit onward."
+  },
+  "source_note": "Bound to camera-roll originals on import. This label was photographed first on the visit but not written up until the originals were in hand.",
+  "label_form": "printed_card",
+  "verified_against": "label_only",
+  "verification_note": "Transcribed from the photograph. Not dereferenced against either institution's catalog. Note which catalog would be the right one: the lender's, not the venue's.",
+  "object_class": "printed_ephemera",
+  "accession_number": "894.5",
+  "accession_namespace": "Museum of American Finance",
+  "accession_note": "The number on the wall is the LENDER'S. §4.3's path is venue→accession→venue catalog; here the second hop must go to the Museum of American Finance, and asking MCNY for 894.5 will either fail or, worse, return an unrelated MCNY object. This is the other half of D17: a loan may break the chain (Champanier) or redirect it (this). The label tells you which by naming the lender in the credit line.",
+  "difficulty": [
+    "loan",
+    "lender_accession",
+    "short_accession",
+    "newspaper_not_artwork",
+    "date_is_publication_date",
+    "no_artist",
+    "no_medium_stated",
+    "doubled_punctuation_ocr"
+  ],
+  "expected": {
+    "accession_number": "894.5",
+    "owning_institution": "Museum of American Finance",
+    "owning_institution_location": "New York City",
+    "venue_relationship": "loan",
+    "credit_line": "Lent by Museum of American Finance, New York City",
+    "title": "Brooklyn Daily Eagle",
+    "title_is_publication": true,
+    "date_edtf": "1929-10-24",
+    "date_role": "publication_date",
+    "artist": null,
+    "artist_role": null,
+    "medium": null,
+    "object_qualifier": null,
+    "donor": null,
+    "donor_type": null,
+    "attribution_qualifier": null
+  },
+  "expected_relationships": {
+    "note": "The interpretive sentence is a plain historical claim about an event, not about the object. Per §4.6 it enters as a candidate about the EVENT, and the object merely documents it.",
+    "candidates": [
+      {
+        "subject": "New York Stock Exchange",
+        "predicate": "lost_value",
+        "object": "11 percent",
+        "detail": "first minutes of trading, 1929-10-24 (Black Thursday)"
+      },
+      {
+        "subject": "Brooklyn Daily Eagle 1929-10-24",
+        "predicate": "documents",
+        "object": "Wall Street crash of 1929"
+      }
+    ]
+  },
+  "traps": {
+    "the_number_is_not_mcnys": "894.5 has two components and no year; it fits none of the four MCNY shapes in data/venues/mcny.json, which is a hint rather than an error — it is not an MCNY number at all. An accession locator that keys on venue alone would file this under MCNY and be confidently wrong.",
+    "the_date_is_not_a_creation_date": "October 24, 1929 is the newspaper's publication date and also the date of the event it reports. One string, two events (D13). Neither is 'the date the artwork was made' in the fine-art sense.",
+    "no_artist_is_correct": "A newspaper has a publisher, not an artist. The same allowance D23 made for the cigar mold applies: the artist slot must be legitimately empty, not filled with 'Brooklyn Daily Eagle'.",
+    "ocr_doubled_punctuation": "Vision rendered the opening quotation mark as 'On\" Black Thursday,,' — doubled comma, misplaced quote. Both scales agreed on the doubled comma, so consensus did not catch it; only the language model of a human reader does."
+  }
+}

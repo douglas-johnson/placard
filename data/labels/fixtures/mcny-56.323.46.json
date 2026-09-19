@@ -1,0 +1,75 @@
+{
+  "id": "mcny-56.323.46",
+  "venue": "mcny",
+  "captured": "2026-09-16",
+  "source_image": "raw/2026-09-16-mcny/IMG_1292.HEIC",
+  "frames": {
+    "label": "raw/2026-09-16-mcny/IMG_1292.HEIC",
+    "accession_crop": "raw/2026-09-16-mcny/IMG_1293.HEIC",
+    "work": "raw/2026-09-16-mcny/IMG_1294.HEIC"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": false,
+    "gps_note": "Camera had no location permission on this visit. Venue is established by the bookend frames IMG_1287 (entrance board, 15:00) and IMG_1318 (exterior, 15:50) and by shot order, not by GPS. Fixed on the phone the same evening; expect GPS from the next visit onward."
+  },
+  "source_note": "Re-bound to the camera-roll originals (Image Capture over USB) the evening of the visit. Transcription was done from phone-channel copies; the originals are the same frames.",
+  "label_form": "combined_panel",
+  "verified_against": "label_only",
+  "verification_note": "Transcribed from the photograph. NOT dereferenced against MCNY's catalog record, so this is a label claim (§4.7), not a catalog fact. The distinction matters unusually much here: the accession identifies the original print, while the object on the wall is a digital reproduction (D12).",
+  "difficulty": [
+    "low_light",
+    "reflective_glass",
+    "heavy_glare",
+    "combined_panel",
+    "extended_label",
+    "object_qualifier",
+    "two_digit_year_accession",
+    "corporate_donor",
+    "em_dash"
+  ],
+  "expected": {
+    "accession_number": "56.323.46",
+    "title": "United Nations Building",
+    "date_edtf": "1956",
+    "artist": "Samuel H. Gottscho",
+    "artist_role": "photographer",
+    "artist_nationality": null,
+    "artist_dates": null,
+    "medium": null,
+    "object_qualifier": "digital reproduction",
+    "displayed_as": "digital_reproduction",
+    "credit_line": "Gift of Gottscho-Schleisner",
+    "donor": "Gottscho-Schleisner",
+    "donor_type": "organization",
+    "owning_institution": "Museum of the City of New York",
+    "attribution_qualifier": null
+  },
+  "expected_relationships": {
+    "note": "Candidates from the interpretive essay. Per §4.6 these enter the review queue as low confidence — curatorial prose is interpretive by design.",
+    "candidates": [
+      {
+        "subject": "United Nations Headquarters",
+        "predicate": "completed",
+        "object": "1952"
+      },
+      {
+        "subject": "John D. Rockefeller Jr.",
+        "predicate": "funded_land_purchase_for",
+        "object": "United Nations Headquarters",
+        "detail": "$9.5 million"
+      },
+      {
+        "subject": "photograph 56.323.46",
+        "predicate": "depicts",
+        "object": "United Nations Headquarters"
+      }
+    ]
+  },
+  "traps": {
+    "two_dates": "The photograph is 1956; the building it depicts was completed 1952. Both correct, different events. An extractor that emits one date for 'the artwork' has lost one of them — see D13.",
+    "donor_is_a_firm": "Gottscho-Schleisner is an architectural photography firm, not a person. A credit-line parser that assumes personal names creates a false person node.",
+    "accession_scheme": "56.323.46 is rejected by the four-digit-year pattern derived from this venue's first sample. See D11.",
+    "em_dash": "The source reads 'America—and New York—positioned at its top.' OCR returned the first em dash correctly and degraded the second to a hyphen. Dash normalization is needed before any text comparison."
+  }
+}

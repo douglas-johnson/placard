@@ -1,0 +1,51 @@
+{
+  "id": "mcny-X2011.4.10368.168",
+  "venue": "mcny",
+  "gallery_dialect": "photography_wall_card",
+  "captured": "2026-09-16",
+  "source_image": "raw/2026-09-16-mcny/IMG_1310.HEIC",
+  "frames": {
+    "work": "raw/2026-09-16-mcny/IMG_1309.HEIC",
+    "label": "raw/2026-09-16-mcny/IMG_1310.HEIC",
+    "label_rotated": "raw/2026-09-16-mcny/IMG_E1310.HEIC"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": false,
+    "gps_note": "Camera had no location permission on this visit. Venue is established by the bookend frames IMG_1287 (entrance board, 15:00) and IMG_1318 (exterior, 15:50) and by shot order, not by GPS. Fixed on the phone the same evening; expect GPS from the next visit onward."
+  },
+  "label_form": "tombstone",
+  "verified_against": "label_only",
+  "difficulty": [
+    "x_prefix_accession",
+    "five_component_accession",
+    "ocr_scale_nondeterminism",
+    "modern_print",
+    "sub_collection",
+    "corporate_donor",
+    "parenthetical_title",
+    "text_bearing_artwork"
+  ],
+  "expected": {
+    "accession_number": "X2011.4.10368.168",
+    "artist": "Stanley Kubrick",
+    "title": "Shoe Shine Boy (Mickey and another boy at a hotdog cart)",
+    "title_main": "Shoe Shine Boy",
+    "title_parenthetical": "Mickey and another boy at a hotdog cart",
+    "date_edtf": "1947",
+    "object_qualifier": "Modern print",
+    "displayed_as": "modern_print",
+    "owning_institution": "Museum of the City of New York",
+    "sub_collection": "The LOOK Collection",
+    "credit_line": "Gift of Cowles Magazines, Inc.",
+    "donor": "Cowles Magazines, Inc.",
+    "donor_type": "organization",
+    "medium": null,
+    "attribution_qualifier": null
+  },
+  "traps": {
+    "scale_nondeterminism": "THE regression case for D21. At 1.0x the accession reads X2011.4.10368168; at ~2000px wide it reads X2011.4.10368.168 (correct); at ~4000px it reads X2011.410368.168. Each scale drops a DIFFERENT separator. No confidence, geometry or normalization signal fires on any of them.",
+    "date_is_the_exposure": "1947 dates the exposure. The object on the wall is a 'Modern print' made much later and undated. Two production events (D13), and the displayed object is not the 1947 one (D12).",
+    "kubrick": "Stanley Kubrick as a teenage staff photographer for LOOK, not as a filmmaker. Prime §6.1 triangle-closure material: a learner who knows Kubrick from film encounters him here as a photojournalist."
+  }
+}

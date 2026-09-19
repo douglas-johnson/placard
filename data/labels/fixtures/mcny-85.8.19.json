@@ -1,0 +1,51 @@
+{
+  "id": "mcny-85.8.19",
+  "venue": "mcny",
+  "gallery_dialect": "photography_wall_card",
+  "captured": "2026-09-16",
+  "source_image": "raw/2026-09-16-mcny/IMG_E1314.HEIC",
+  "frames": {
+    "work": "raw/2026-09-16-mcny/IMG_1313.HEIC",
+    "work_rotated": "raw/2026-09-16-mcny/IMG_E1313.HEIC",
+    "label": "raw/2026-09-16-mcny/IMG_E1314.HEIC"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": false,
+    "gps_note": "Camera had no location permission on this visit. Venue is established by the bookend frames IMG_1287 (entrance board, 15:00) and IMG_1318 (exterior, 15:50) and by shot order, not by GPS. Fixed on the phone the same evening; expect GPS from the next visit onward."
+  },
+  "source_note": "Bound to camera-roll originals on import. Only the rotated (edited) render of the label came over; the unrotated original stayed on the phone. The photographed deli signage in the WORK frame is real text and OCR read some of it correctly ('Lindt', 'SWISS CHOCOLATE') — see traps.",
+  "label_form": "tombstone",
+  "verified_against": "label_only",
+  "verification_note": "Transcribed from the photograph. Every line was unanimous across scales and nothing clipped; this is the clean control case for the photography_wall_card dialect.",
+  "difficulty": [
+    "clean_control",
+    "title_contains_commas",
+    "title_wraps_two_lines",
+    "abbreviation_in_title",
+    "modern_print",
+    "real_text_in_work_photo"
+  ],
+  "expected": {
+    "accession_number": "85.8.19",
+    "artist": "Agnes Zellin",
+    "title": "J & T Deli, Italian Greek Deli, Ditmars Blvd. Astoria",
+    "title_is_supplied": false,
+    "date_edtf": "1982",
+    "object_qualifier": "Modern print",
+    "displayed_as": "modern_print",
+    "owning_institution": "Museum of the City of New York",
+    "credit_line": "Gift of Agnes Zellin",
+    "donor": "Agnes Zellin",
+    "donor_type": "person",
+    "donor_is_artist": true,
+    "medium": null,
+    "attribution_qualifier": null
+  },
+  "traps": {
+    "title_has_internal_commas": "The title itself is a comma list ('J & T Deli, Italian Greek Deli, Ditmars Blvd. Astoria'), and the credit line is also comma-delimited. A parser that splits the card on commas to find fields destroys the title. Field boundaries on this dialect are LINE breaks in a fixed order (see venue dialect field_order), never commas.",
+    "abbreviation_period_is_not_a_line_end": "'Blvd.' ends a wrapped line with a period that is an abbreviation, not sentence punctuation. Joining wrapped lines must not treat it as a boundary.",
+    "donor_is_the_artist": "The photographer gave her own print. donor and artist resolve to the SAME person node; a naive graph creates two.",
+    "work_photo_has_real_text": "Unlike the Gillon window-grid hallucination, this WORK frame contains genuine signage and OCR got some of it right. D15 stands — work-frame text is never label data — but the failure mode differs: here it is plausible and partly correct, which is harder to discard than nonsense."
+  }
+}

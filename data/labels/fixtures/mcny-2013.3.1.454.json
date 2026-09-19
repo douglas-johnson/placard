@@ -1,0 +1,44 @@
+{
+  "id": "mcny-2013.3.1.454",
+  "venue": "mcny",
+  "gallery_dialect": "photography_wall_card",
+  "captured": "2026-09-16",
+  "source_image": "raw/2026-09-16-mcny/IMG_E1312.HEIC",
+  "frames": {
+    "work": "raw/2026-09-16-mcny/IMG_1311.HEIC",
+    "label": "raw/2026-09-16-mcny/IMG_E1312.HEIC"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": false,
+    "gps_note": "Camera had no location permission on this visit. Venue is established by the bookend frames IMG_1287 (entrance board, 15:00) and IMG_1318 (exterior, 15:50) and by shot order, not by GPS. Fixed on the phone the same evening; expect GPS from the next visit onward."
+  },
+  "label_form": "tombstone",
+  "verified_against": "label_only",
+  "difficulty": [
+    "four_component_accession",
+    "supplied_title_brackets",
+    "modern_print",
+    "hallucinated_text_in_work_photo"
+  ],
+  "expected": {
+    "accession_number": "2013.3.1.454",
+    "artist": "Edmund Vincent Gillon",
+    "title": "Union Square Greenmarket",
+    "title_is_supplied": true,
+    "title_as_printed": "[Union Square Greenmarket]",
+    "date_edtf": "1976",
+    "object_qualifier": "Modern print",
+    "displayed_as": "modern_print",
+    "owning_institution": "Museum of the City of New York",
+    "credit_line": "Gift of Blair Davis",
+    "donor": "Blair Davis",
+    "donor_type": "person",
+    "medium": null,
+    "attribution_qualifier": null
+  },
+  "traps": {
+    "square_brackets_mean_something": "[Union Square Greenmarket] is a SUPPLIED title — devised by a cataloguer because the artist gave none. Stripping the brackets as punctuation destroys that, and asserts the artist named the work when the museum is saying the opposite. Same family of loss as flattening 'Attributed to' (D16).",
+    "work_photo_hallucination": "OCR of the WORK photo returned 8 lines of pure invention — 'CEE', 'HHE LEE', 'EEE', 'KEE CEE EEL' — reading the window grid of an office building as letters. Architectural photography generates false text from repeating structure. Reinforces D15: work-photo text is not merely unreliable, it can be entirely fabricated."
+  }
+}

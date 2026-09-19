@@ -1,0 +1,65 @@
+{
+  "expo": {
+    "name": "Placard",
+    "slug": "placard",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "scheme": "placard",
+    "ios": {
+      "bundleIdentifier": "pics.placard.learner",
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Placard uses the camera to photograph artworks and their wall labels.",
+        "NSLocationWhenInUseUsageDescription": "Placard uses your location to work out which museum you're in, which is what lets it identify a work from its label.",
+        "NSPhotoLibraryAddUsageDescription": "Placard saves the photographs you take to your photo library."
+      },
+      "appleTeamId": "Q52822X522"
+    },
+    "android": {
+      "package": "pics.placard.learner",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Placard uses the camera to photograph artworks and their wall labels.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "barcodeScannerEnabled": false
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Placard uses your location to work out which museum you're in, which is what lets it identify a work from its label.",
+          "locationAlwaysPermission": false,
+          "locationAlwaysAndWhenInUsePermission": false,
+          "motionUsagePermission": false,
+          "isIosBackgroundLocationEnabled": false,
+          "isAndroidBackgroundLocationEnabled": false
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "savePhotosPermission": "Placard saves the photographs you take to your photo library.",
+          "photosPermission": false,
+          "isAccessMediaLocationEnabled": false
+        }
+      ],
+      "expo-asset"
+    ]
+  }
+}

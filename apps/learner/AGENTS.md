@@ -1,0 +1,119 @@
+# apps/learner — the capture app
+
+**Read the exact versioned Expo docs at https://docs.expo.dev/versions/v57.0.0/ before
+writing any code.** Expo changes fast and remembered APIs are usually a version or two
+stale.
+
+Project-wide context is in the repository root `CLAUDE.md`, `PLANNING.md`, and
+`DECISIONS.md`. Read the root `CLAUDE.md` first — this file only covers what's specific
+to this app.
+
+## What this is
+
+Phase A1 (PLANNING.md §11). The learner-facing iOS app: capture, OCR, location, and
+manual identification against a small hardcoded catalog. **No suggestions yet** — the
+curriculum work is A3, and building it early would mean building it against a graph
+that doesn't exist.
+
+The one question A1 exists to answer: *is the capture ritual something you'd actually
+do standing in a gallery?* No amount of engineering answers that, and if the ritual
+doesn't hold, nothing downstream matters.
+
+## The first milestone is concrete
+
+**Beat the stock camera at collecting the corpus.** The corpus is currently being
+collected with `docs/capture-protocol.md` and a stock iPhone camera (D2), which sets a
+real bar:
+
+- Enforce the work → label shot pairing, so the take needs no hand-sorting
+- Capture venue automatically from GPS instead of the manual field log
+- Read the accession number on-device and show it back for confirmation
+- Never lose a capture to bad signal
+
+That's testable in a way "a capture screen exists" isn't. Until the app clears it, the
+protocol is the better tool and should be used.
+
+## Constraints specific to this app
+
+**Capture must never fail offline.** Museums have terrible connectivity (§3). Photo,
+OCR, and location all happen on-device and queue locally; resolution against the canon
+happens whenever signal returns. This is an architectural constraint, not an
+optimization — it shapes the data flow, so design for it from the first screen.
+
+**OCR is on-device, via Apple Vision.** Free, fast, works with no signal. It is the
+local Expo module in `modules/vision-ocr/`, and its pipeline — `ios/OCRCore.swift` —
+is literally the file `tools/ocr/` compiles for the Mac corpus tool (D30). Change it in
+one place and both hosts change. Two settings from D3 are load-bearing:
+
+- `usesLanguageCorrection = false` — correction turns artist names and accession
+  numbers into ordinary English words
+- explicit top-to-bottom reading-order sort — Vision returns observations unordered,
+  and §4.2's whole argument is that a label is a *known form*, which only helps if
+  line order survives
+
+Vision is not in the Expo SDK, so this module needs a development build — Expo Go
+reports it as not linked and the preflight says so. `npx expo run:ios --device` builds
+one; the one-time device setup is in D29. The preflight runs the module over a bundled
+copy of the 38.447.4 label in `assets/fixtures/` so a broken build is caught by a
+real reading, not by the module merely existing. **The phone's Vision model is not the
+Mac's** — same file, different wrong character (D30). Don't assume a fixture's `traps`
+describe what the device will see.
+
+**The label shot is the highest-value capture and the easiest to forget** (§13). Making
+the second shot feel like documentation practice rather than a chore is a design
+problem, not a technical one.
+
+**Ask rather than guess.** When identification confidence is low, show three candidates
+and let the learner choose (§4.1). A wrong silent identification poisons the learner's
+graph; an honest question is Reggio-appropriate anyway.
+
+**This device holds the private layer** (§5) — photos, notes, reactions, interest
+weights. Two different rules govern it, and conflating them is a mistake I already made
+once (D28):
+
+- **Promotion to the shared canon** is tightly constrained. Only the objective fact of a
+  sighting promotes, de-identified, timestamp coarsened, and only once corroborated.
+  Notes, reactions and interest vectors never promote at all.
+- **Processing for this learner** is a separate question with a separate answer. Sending
+  an artwork or label photo to the service for richer identification and analysis is
+  **opt-in, per purpose**, and carries no telemetry or PII. It expands that learner's own
+  path; it does not enter the canon. See D28 for the model and its limits.
+
+**The eligibility profile is the exception that really never leaves** (§9.6, D25).
+`freeForMe(rule, profile)` runs here, on the phone, and the server learns at most which
+venues were viewed. ZIP-level residency is close to a home address, so this one is not a
+toggle.
+
+## Running it
+
+```sh
+npm install
+npm run ios          # Expo Go in the iOS simulator — 26.5 or 18.3 available
+```
+
+On first launch Expo Go shows a dev-menu onboarding sheet over the app. Tap
+**Continue**; it's Expo Go's, not ours.
+
+`App.tsx` is a preflight screen, not a Hello World: it reports whether the native
+modules the capture path depends on are actually linked, and echoes the same readout
+to the Metro console so the check survives being covered by that sheet.
+
+**Verified on this machine 2026-09-16** — bundles at 721 modules, renders in the iOS
+26.5 simulator, `expo-camera` and `expo-location` both link and report permission.
+Expo Go's simulator build is `x86_64 arm64` fat, so Intel is not a problem here.
+
+## Development builds
+
+Expo Go cannot load custom native modules, so the Vision OCR work needs
+`expo prebuild` and a development build. Two things to know before starting:
+
+1. **CocoaPods is ready** — 1.17.0, installed via `gem`, verified against Xcode 26.6.
+   Do not `brew install` it; there's no Intel bottle on macOS 26 and Homebrew will
+   compile LLVM from source. See root `CLAUDE.md`.
+2. **It does work on Intel.** React Native 0.86.3's prebuilt xcframeworks include an
+   `ios-arm64_x86_64-simulator` slice, checked directly against Maven Central. Slow,
+   but not blocked.
+
+The simulator has no real camera, so capture work ultimately needs a device build.
+That's another reason the stock-camera protocol stays in use until this app clearly
+beats it.

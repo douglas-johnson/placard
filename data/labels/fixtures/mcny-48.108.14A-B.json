@@ -1,0 +1,135 @@
+{
+  "id": "mcny-48.108.14A-B",
+  "venue": "mcny",
+  "gallery_dialect": "case_panel",
+  "captured": "2026-09-16",
+  "source_image": "raw/2026-09-16-mcny/IMG_1316.HEIC",
+  "frames": {
+    "work": "raw/2026-09-16-mcny/IMG_1315.HEIC",
+    "case_panel": "raw/2026-09-16-mcny/IMG_1316.HEIC",
+    "case_panel_continued": "raw/2026-09-16-mcny/IMG_1317.HEIC"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": false,
+    "gps_note": "Camera had no location permission on this visit. Venue is established by the bookend frames IMG_1287 (entrance board, 15:00) and IMG_1318 (exterior, 15:50) and by shot order, not by GPS. Fixed on the phone the same evening; expect GPS from the next visit onward."
+  },
+  "label_form": "case_panel_with_object_entries",
+  "verified_against": "label_only",
+  "object_class": "material_culture",
+  "difficulty": [
+    "no_artist",
+    "no_title_only_object_name",
+    "component_suffix_accession",
+    "estate_donor",
+    "period_phrase_date",
+    "multi_object_case",
+    "mixed_ownership_case",
+    "adjacent_panel_in_frame",
+    "word_boundary_loss",
+    "vitrine_glass"
+  ],
+  "expected": {
+    "accession_number": "48.108.14A-B",
+    "accession_base": "48.108.14",
+    "accession_component_suffix": "A-B",
+    "object_name": "Cigar mold",
+    "title": null,
+    "artist": null,
+    "maker": null,
+    "date_raw": "late 19th century",
+    "date_edtf": "1870/1899",
+    "date_form": "period_phrase",
+    "medium": "Wood",
+    "owning_institution": "Museum of the City of New York",
+    "credit_line": "Gift from the Estate of Mrs. Pauline Stein",
+    "donor": "Estate of Mrs. Pauline Stein",
+    "donor_type": "estate",
+    "attribution_qualifier": null
+  },
+  "traps": {
+    "no_artist": "There is no artist and no title — an object NAME ('Cigar mold') and a material ('Wood'). §4.2's tombstone form and §7's created_by edge both assume an author. A city history museum is full of objects that have none. See D23.",
+    "suffix_is_physical": "A-B are the mold's two halves, plainly visible in the work photograph. Stripping the suffix to get 48.108.14 identifies a different thing; treating '48.108.14A-B' as opaque loses that it is two pieces. See D24.",
+    "period_phrase_date": "'late 19th century' is neither a year nor a year range. EDTF can express it, but only after a vocabulary maps the phrase. Distinct from 'ca. 1774' (D16), which is a year with an approximation marker.",
+    "estate_donor": "Third donor type after person and organization. 'Gift from the Estate of Mrs. Pauline Stein' names a legal entity standing in for a deceased person — an extractor taking the last personal name produces a living donor who does not exist.",
+    "adjacent_panel": "Shot from far enough back to include a neighbouring black panel serving different objects. 24 of 64 lines flagged as clipped, nearly all from that second panel. Text from two panels interleaved in one reading."
+  },
+  "case_contents_glimpsed": {
+    "note": "One vitrine, many objects, MIXED OWNERSHIP. Some MCNY-owned with accessions, some lent privately with none at all.",
+    "entries": [
+      {
+        "object": "Bohemian Cigar Makers",
+        "creator": "Jacob A. Riis",
+        "qualifier": "modern print",
+        "owner": "Museum of the City of New York"
+      },
+      {
+        "object": "“Union Sport,” cigar box",
+        "maker": "A.W. & Sons",
+        "owner": "private collection",
+        "accession": null
+      },
+      {
+        "object": "“Union Workers,” cigar box",
+        "maker": "Consolidated Lithographing Corporation",
+        "owner": "Museum of the City of New York",
+        "accession": "35.30.4",
+        "credit": "Gift of Jacob A. Voice"
+      },
+      {
+        "object": "Lapel button",
+        "date_raw": "c. 1896",
+        "owner": "private collection",
+        "accession": null
+      },
+      {
+        "object": "Labor leader Samuel Gompers",
+        "creator": "Byron Co.",
+        "qualifier": "modern print",
+        "owner": "Museum of the City of New York"
+      },
+      {
+        "object": "Labor Day Parade, Union Square",
+        "form": "American Series Stereo Card",
+        "owner": "private collection",
+        "accession": null
+      }
+    ]
+  },
+  "expected_relationships": {
+    "note": "From the case essay. Candidates, review queue (§4.6). Unusually dense social and political history for one vitrine.",
+    "candidates": [
+      {
+        "s": "Samuel Gompers",
+        "p": "led",
+        "o": "Cigar Makers' International Union"
+      },
+      {
+        "s": "Samuel Gompers",
+        "p": "founded",
+        "o": "American Federation of Labor",
+        "detail": "1886"
+      },
+      {
+        "s": "Cigar mold",
+        "p": "enabled",
+        "o": "tenement cigar production by unskilled families",
+        "detail": "invented 1860s"
+      },
+      {
+        "s": "tenement cigar labor",
+        "p": "performed_by",
+        "o": "German, Bohemian and Jewish immigrants"
+      },
+      {
+        "s": "Bohemian Cigar Makers",
+        "p": "photographed_by",
+        "o": "Jacob A. Riis"
+      }
+    ]
+  },
+  "ocr_notes": {
+    "word_boundary_loss": "New corruption mode, caught by multi-scale consensus: 'American Federation ofLabor', 'Museum ofthe City of New York', 'foundedthe'. Spaces dropped, inconsistently across scales — so the correct reading appeared among the variants. Confirms D21 generalises past the accession line.",
+    "accession_read_correctly": "48.108.14A-B was unanimous across all scales."
+  }
+}

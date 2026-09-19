@@ -1,0 +1,171 @@
+{
+  "id": "mcny-loan-champanier-alice-panel1",
+  "venue": "mcny",
+  "exhibition": "Another Wonderland",
+  "exhibition_curator": "Lilly Tuttle",
+  "gallery_dialect": "loan_exhibition",
+  "captured": "2026-09-16",
+  "source_image": "raw/2026-09-16-mcny/IMG_1300.HEIC",
+  "frames": {
+    "work": "raw/2026-09-16-mcny/IMG_1298.HEIC",
+    "exhibition_wall_text_healing_space": "raw/2026-09-16-mcny/IMG_1299.HEIC",
+    "tombstone": "raw/2026-09-16-mcny/IMG_1300.HEIC",
+    "numbered_panel_key": "raw/2026-09-16-mcny/IMG_1301.HEIC",
+    "artist_biography_panel": "raw/2026-09-16-mcny/IMG_1302.HEIC",
+    "exhibition_wall_text": "raw/2026-09-16-mcny/IMG_1303.HEIC"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": false,
+    "gps_note": "Camera had no location permission on this visit. Venue is established by the bookend frames IMG_1287 (entrance board, 15:00) and IMG_1318 (exterior, 15:50) and by shot order, not by GPS. Fixed on the phone the same evening; expect GPS from the next visit onward."
+  },
+  "label_form": "distributed_label_system",
+  "verified_against": "label_only",
+  "accession_number": null,
+  "accession_absent_reason": "not_in_venue_collection",
+  "accession_note": "There is no accession number anywhere on the wall because the work is NOT MCNY's. It is lent from the NYC Health + Hospitals Arts in Medicine Collection. §4.3's venue→accession→venue-catalog path fails structurally here, not because the label is poor. See D17.",
+  "difficulty": [
+    "no_accession",
+    "loaned_object",
+    "owning_institution_differs_from_venue",
+    "part_of_multipart_work",
+    "distributed_label_system",
+    "bilingual_en_es",
+    "artist_name_change",
+    "decorative_lettering_in_artwork",
+    "rotated_capture",
+    "internal_contradiction"
+  ],
+  "expected": {
+    "artist": "Abram August Champanier",
+    "artist_dates": "1896/1960",
+    "artist_birth_name": "Abram Sherschewitz",
+    "title": "Alice of Wonderland Visiting New York",
+    "date_edtf": "1938/1940",
+    "date_raw": "1938–1940",
+    "medium": "Oil on canvas",
+    "extent": "16 panels",
+    "owning_institution": "NYC Health + Hospitals Arts in Medicine Collection",
+    "attribution_qualifier": null
+  },
+  "part_whole": {
+    "catalog_object": "the complete 16-panel mural",
+    "object_on_wall": "panel 1, 'Alice steps out of a book'",
+    "note": "One tombstone serves all sixteen panels; a separate numbered key describes each. The learner encountered a panel, not the mural. See D18.",
+    "panel_1_title": "ALICE STEPS OUT OF A BOOK",
+    "panel_2_title": "ALICE AND FRIENDS IN THE SUBWAY"
+  },
+  "internal_contradiction": {
+    "tombstone_says": "Oil on canvas, 16 panels",
+    "exhibition_text_says": "fifteen of the panels were conserved",
+    "resolution": "Both are true: sixteen as painted, fifteen surviving conservation. A naive extractor reading two numbers for 'number of panels' sees a conflict. The honest model needs extent-as-made and extent-extant as separate facts."
+  },
+  "label_system": [
+    {
+      "element": "tombstone",
+      "carries": [
+        "artist",
+        "artist_dates",
+        "title",
+        "date",
+        "medium",
+        "extent",
+        "owning_institution"
+      ]
+    },
+    {
+      "element": "numbered_panel_key",
+      "carries": [
+        "per-panel titles",
+        "per-panel descriptions"
+      ]
+    },
+    {
+      "element": "artist_biography_panel",
+      "carries": [
+        "biography",
+        "relationships"
+      ],
+      "bilingual": "en+es"
+    },
+    {
+      "element": "exhibition_wall_text",
+      "carries": [
+        "commission",
+        "site",
+        "history",
+        "conservation",
+        "curator"
+      ]
+    }
+  ],
+  "expected_relationships": {
+    "note": "Unusually rich. Candidates only — review queue (§4.6). This is the §6.1 triangle-closure case in its purest form: an obscure artist who connects to three well-known ones.",
+    "candidates": [
+      {
+        "s": "Abram August Champanier",
+        "p": "also_known_as",
+        "o": "Abram Sherschewitz",
+        "detail": "birth name; entity-resolution case"
+      },
+      {
+        "s": "Abram August Champanier",
+        "p": "studied_at",
+        "o": "Art Students League"
+      },
+      {
+        "s": "Abram August Champanier",
+        "p": "charter_member_of",
+        "o": "Whitney Studio Club",
+        "detail": "1918"
+      },
+      {
+        "s": "Whitney Studio Club",
+        "p": "predecessor_of",
+        "o": "Whitney Museum of American Art"
+      },
+      {
+        "s": "Abram August Champanier",
+        "p": "contemporary_of",
+        "o": "Stuart Davis"
+      },
+      {
+        "s": "Abram August Champanier",
+        "p": "contemporary_of",
+        "o": "Thomas Hart Benton"
+      },
+      {
+        "s": "Abram August Champanier",
+        "p": "contemporary_of",
+        "o": "Alexander Calder"
+      },
+      {
+        "s": "Abram August Champanier",
+        "p": "spouse_of",
+        "o": "Norma Matte",
+        "detail": "composer and conductor"
+      },
+      {
+        "s": "Alice of Wonderland Visiting New York",
+        "p": "commissioned_by",
+        "o": "Federal Art Project, Works Progress Administration"
+      },
+      {
+        "s": "Alice of Wonderland Visiting New York",
+        "p": "made_for_site",
+        "o": "Gouverneur Hospital, children's ward, Lower East Side"
+      },
+      {
+        "s": "Abram August Champanier",
+        "p": "emigrated_to",
+        "o": "United States",
+        "detail": "arrived Ellis Island 1905 from Russian Poland"
+      }
+    ]
+  },
+  "traps": {
+    "dash_flattening": "Vision returned every en dash and nearly every em dash as U+002D HYPHEN-MINUS. '1896–1960' reads '1896-1960', '1938–1940' reads '1938-1940'. One em dash in the Spanish text survived as U+2014, so the flattening is INCONSISTENT within a single photograph. EDTF conversion therefore cannot key off dash type — it must key off pattern. See D19.",
+    "decorative_lettering": "The painted caption inside the artwork is hand-lettered and OCRs badly: 'Come Ablice!' for 'Come Alice!', \"Ule'd\" for \"We'd\". Confirms D15 — the work photo yields text, and that text is unreliable.",
+    "rotation_is_fine": "Two photographs were 90° rotated. Vision read them correctly with no preprocessing. Rotation is NOT a difficulty for this pipeline."
+  }
+}

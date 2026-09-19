@@ -1,0 +1,50 @@
+{
+  "id": "mcny-2014.21",
+  "venue": "mcny",
+  "captured": "2026-09-16",
+  "source_image": "raw/2026-09-16-mcny/IMG_1296.HEIC",
+  "frames": {
+    "work": "raw/2026-09-16-mcny/IMG_1295.HEIC",
+    "label": "raw/2026-09-16-mcny/IMG_1296.HEIC",
+    "accession_crop": "raw/2026-09-16-mcny/IMG_1297.HEIC"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": false,
+    "gps_note": "Camera had no location permission on this visit. Venue is established by the bookend frames IMG_1287 (entrance board, 15:00) and IMG_1318 (exterior, 15:50) and by shot order, not by GPS. Fixed on the phone the same evening; expect GPS from the next visit onward."
+  },
+  "source_note": "Re-bound to the camera-roll originals (Image Capture over USB) the evening of the visit. Transcription was done from phone-channel copies; the originals are the same frames.",
+  "label_form": "combined_panel",
+  "verified_against": "label_only",
+  "verification_note": "Transcribed from the photograph and cross-checked against a second, tighter shot. NOT dereferenced against the institution's catalog record, so per §4.7 this is a label claim, not a catalog fact.",
+  "difficulty": [
+    "low_light",
+    "reflective_glass",
+    "combined_panel",
+    "extended_label",
+    "clipped_frame",
+    "no_medium_stated"
+  ],
+  "expected": {
+    "accession_number": "2014.21",
+    "title": "Compassion in Action: Tzu Chi volunteers prepare 700 meals in darkness, Manhattan",
+    "date_edtf": "2012",
+    "artist": "Peter Lin",
+    "artist_role": "photographer",
+    "artist_nationality": null,
+    "artist_dates": null,
+    "medium": null,
+    "credit_line": "Gift of Peter Lin",
+    "owning_institution": "Museum of the City of New York",
+    "attribution_qualifier": null
+  },
+  "expected_ocr_behaviour": {
+    "accession_line_reads_cleanly": true,
+    "lines_expected_clipped": [
+      "hese dual crises laid bare so",
+      "/ulnerabilities, with the toll of",
+      "density and the very nature of"
+    ],
+    "note": "The interpretive essay above the rule was cut off by the frame in the source photograph. These clipped readings are what the extractor SHOULD flag rather than what it should produce — they are the regression case for edge-truncation detection, not a transcription target."
+  }
+}

@@ -1,0 +1,193 @@
+{
+  "slug": "mcny",
+  "name": "Museum of the City of New York",
+  "type": "museum",
+  "location": {
+    "latitude": 40.7923,
+    "longitude": -73.9518,
+    "address": "1220 Fifth Ave, New York, NY 10029",
+    "city": "New York",
+    "region": "US-NY"
+  },
+  "collection_api": {
+    "available": null,
+    "base_url": null,
+    "notes": "Public collections portal at collections.mcny.org. Whether it exposes a machine-readable API, and whether accession lookup works against it, is UNVERIFIED — check before relying on it for ground truth."
+  },
+  "accession_formats": {
+    "policy": "LOCATE, DO NOT VALIDATE. Five samples produced four different shapes. These patterns exist to help FIND the accession token on a label and to rank candidate readings. Nothing is ever rejected for failing them. See DECISIONS.md D11 and D21.",
+    "samples_seen": [
+      "2014.21",
+      "56.323.46",
+      "38.447.4",
+      "X2011.4.10368.168",
+      "2013.3.1.454"
+    ],
+    "shapes": [
+      {
+        "pattern": "^\\d{4}\\.\\d+$",
+        "example": "2014.21",
+        "sample_count": 1
+      },
+      {
+        "pattern": "^\\d{2}\\.\\d+\\.\\d+$",
+        "example": "56.323.46",
+        "samples": [
+          "56.323.46",
+          "38.447.4"
+        ],
+        "sample_count": 2,
+        "notes": "Two-digit accession year, 1956 and 1938."
+      },
+      {
+        "pattern": "^\\d{4}(\\.\\d+){3}$",
+        "example": "2013.3.1.454",
+        "sample_count": 1
+      },
+      {
+        "pattern": "^X\\d{4}(\\.\\d+){3}$",
+        "example": "X2011.4.10368.168",
+        "sample_count": 1,
+        "notes": "X prefix. Often signals a loan, deposit or bulk-catalogued holding; here a LOOK magazine negative among many thousands. Longest and most fragile to OCR."
+      }
+    ],
+    "locating_heuristic": "Last token on the credit line, optionally parenthesized. Digits and periods, optional leading letter. Do not constrain component count."
+  },
+  "labels": {
+    "dialects_observed": 3,
+    "note": "MCNY uses at least two distinct label designs in one building. Select the parser by gallery, not by venue — see DECISIONS.md D10 and D11.",
+    "dialects": [
+      {
+        "id": "photography_panel",
+        "where": "photography galleries",
+        "format": "combined_panel",
+        "typeface": "sans-serif, white on black",
+        "rule": {
+          "orientation": "horizontal",
+          "position": "top",
+          "marks": "block_start"
+        },
+        "fields": [
+          "title (+ date, inline or own line)",
+          "Photograph by NAME (+ optional object qualifier)",
+          "owning institution",
+          "credit line + accession, bare"
+        ],
+        "has_medium": false,
+        "bilingual": false
+      },
+      {
+        "id": "history_card",
+        "where": "Revolutionary-era history galleries",
+        "format": "printed_card",
+        "typeface": "serif, white on aubergine",
+        "rule": {
+          "orientation": "vertical",
+          "position": "left",
+          "marks": "block_left_margin"
+        },
+        "fields": [
+          "title EN",
+          "title ES",
+          "date (with circa marker)",
+          "attribution line",
+          "medium",
+          "credit line + donation year + accession in parentheses"
+        ],
+        "has_medium": true,
+        "bilingual": "en+es",
+        "notes": "No owning-institution line. Interpretive essay follows in both languages."
+      },
+      {
+        "id": "photography_wall_card",
+        "where": "photography galleries, small white cards beside each print",
+        "format": "tombstone",
+        "typeface": "sans-serif, black on white card",
+        "field_order": [
+          "ARTIST IN CAPS",
+          "title (bold)",
+          "date",
+          "object qualifier e.g. 'Modern print'",
+          "institution + optional sub-collection + credit line + accession"
+        ],
+        "has_medium": false,
+        "notes": "Classic §4.2 tombstone order — artist FIRST — unlike the black interpretive panels in the same department, which lead with the title. Two dialects coexist in one gallery."
+      }
+    ],
+    "photography": "permitted",
+    "lighting": "very dim; works behind glass with visible glare"
+  },
+  "access_rules": [
+    {
+      "id": "free-wednesdays",
+      "kind": "free_window",
+      "audience": "everyone",
+      "recurrence": "FREQ=WEEKLY;BYDAY=WE",
+      "window": null,
+      "window_note": "All opening hours that day. Unlike MoMA's Friday 17:30-20:30, there is no time restriction — so `window` must be optional in the model.",
+      "reservation": {
+        "required": false
+      },
+      "obtainability": "unrestricted",
+      "confirmed_by_visit": "2026-09-16"
+    },
+    {
+      "id": "free-for-neighbours",
+      "kind": "always_free",
+      "audience": "resident",
+      "region": "US-NY",
+      "zip_codes": [
+        "10029",
+        "10035",
+        "10037"
+      ],
+      "recurrence": null,
+      "recurrence_note": "No temporal condition at all — so `recurrence` must also be optional. This rule and free-wednesdays exercise opposite ends of the model.",
+      "window": null,
+      "reservation": {
+        "required": false
+      },
+      "obtainability": "unrestricted"
+    }
+  ],
+  "provenance": {
+    "source": "first-hand observation and the museum's own on-site signage, 2026-09-16",
+    "source_type": "institutional_signage",
+    "verified": "2026-09-16",
+    "verified_by": "visit",
+    "notes": "Access rules read off the museum's own sandwich board at the entrance — per §8.2 the institution IS the authority on its own access policy, so this is a strong source. It is still a point-in-time reading of a movable sign, and §8.2's staleness clock applies: re-check against the museum's page rather than discounting it.",
+    "source_images": {
+      "entrance_board": "raw/2026-09-16-mcny/IMG_1287.HEIC",
+      "exterior_and_accessible_entrance": "raw/2026-09-16-mcny/IMG_1318.HEIC"
+    },
+    "source_image_note": "Bookend frames per D26. Both read by tools/ocr; the board (IMG_1287) yields the hours, the Wednesday rule, the three ZIP codes and the 104th St ramp verbatim. Neither carries GPS (camera permission was off that day)."
+  },
+  "hours": {
+    "mon": "10:00-17:00",
+    "tue": "10:00-17:00",
+    "wed": "10:00-17:00",
+    "thu": "10:00-17:00",
+    "fri": "10:00-17:00",
+    "sat": "10:00-18:00",
+    "sun": "10:00-18:00",
+    "source": "on-site sandwich board, observed 2026-09-16",
+    "caveat": "The board states Mon-Fri and Sat-Sun without naming a closed day. Open seven days is an INFERENCE from the absence of an exclusion, not something the sign asserts. Verify against the museum's own page before publishing."
+  },
+  "accessibility": {
+    "step_free_entrance": false,
+    "step_free_entrance_location": "104th Street",
+    "note": "The Fifth Avenue entrance is up a flight of marble steps. Ramp and accessible entrance are around the corner on 104th Street. This is a REACHABILITY property of the venue (§6.6), distinct from any admission concession — the two are different facts and both are needed."
+  },
+  "display_state_observations": [
+    {
+      "date": "2026-09-16",
+      "observation": "Building exterior under scaffolding and protective sheeting; facade renovation in progress.",
+      "relevance": "§8.3 — a feed reports what is scheduled, a sighting reports what is there. Construction can close galleries and no listings feed would say so. Exactly the class of fact only a visitor supplies."
+    },
+    {
+      "date": "2026-09-16",
+      "observation": "Exhibitions advertised on the exterior: 'The Occupied City: New York and the American Revolution', 'Another Wonderland' (Champanier's Alice mural), and a third on Joe Macken's model.",
+      "relevance": "Corroborates the galleries the fixtures came from."
+    }
+  ]
+}

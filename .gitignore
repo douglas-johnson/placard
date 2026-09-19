@@ -1,0 +1,86 @@
+# ── macOS ──────────────────────────────────────────────────────────────
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# ── Editors ────────────────────────────────────────────────────────────
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+
+# ── Node / Expo / React Native ─────────────────────────────────────────
+node_modules/
+.expo/
+.expo-shared/
+dist/
+web-build/
+*.tsbuildinfo
+.next/
+out/
+# Expo prebuild output — regenerated from app config, never hand-edited
+apps/learner/ios/
+apps/learner/android/
+
+# ── Xcode ──────────────────────────────────────────────────────────────
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+Pods/
+
+# ── Python ─────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+
+# ── Secrets & local config ─────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.p8
+*.p12
+*.mobileprovision
+secrets/
+
+# ── Data ───────────────────────────────────────────────────────────────
+# Raw capture is large and binary; it lives on disk, not in git.
+# See docs/capture-protocol.md and data/README.md for how it's handled.
+data/labels/raw/*
+!data/labels/raw/.gitkeep
+data/labels/derived/
+*.heic
+*.HEIC
+*.jpg
+*.JPG
+*.jpeg
+*.png
+!docs/**/*.png
+!**/assets/**/*.png
+
+# ── Databases & warehouse ──────────────────────────────────────────────
+*.duckdb
+*.duckdb.wal
+*.sqlite
+*.sqlite3
+pgdata/
+
+# ── Logs ───────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# ── Built tools ────────────────────────────────────────────────────────
+tools/ocr/bin/
+
+# Bundled test labels — small derived copies, not raw captures (see apps/learner/AGENTS.md)
+!apps/learner/assets/fixtures/*.jpg
