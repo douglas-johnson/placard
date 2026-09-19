@@ -160,6 +160,15 @@ why, in the app's own voice (§1).
 off what the app doesn't use. The default is permissive and it is never silent about it
 in the place users look.
 
+**Refinement (2026-09-19, first TestFlight delivery).** Apple rejected build 3 with
+ITMS-90683: `NSMotionUsageDescription` missing. The app never asks for motion data,
+but `expo-location` links CoreMotion, and Apple's check is static — a *referenced* API
+needs a purpose string whether or not it is ever called. So the Info.plist now
+carries a fourth entry, and the string says plainly that Placard does not use motion
+data and that a library it includes is why the notice exists. A purpose string is
+not a permission request: the sheet only appears if the API is called, and it is
+not. The standing rule holds; this is the one case where "off" is not an option.
+
 ---
 
 ## D8 — Local development builds are practical on this Intel Mac

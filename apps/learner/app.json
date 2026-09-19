@@ -68,7 +68,7 @@
           "locationWhenInUsePermission": "Placard uses your location to work out which museum you're in, which is what lets it identify a work from its label.",
           "locationAlwaysPermission": false,
           "locationAlwaysAndWhenInUsePermission": false,
-          "motionUsagePermission": false,
+          "motionUsagePermission": "Placard does not use motion data. A location library the app includes can access it, so Apple requires this notice; Placard never asks.",
           "isIosBackgroundLocationEnabled": false,
           "isAndroidBackgroundLocationEnabled": false
         }
