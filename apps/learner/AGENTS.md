@@ -126,12 +126,16 @@ Two paths, and the difference is whether the native surface changed (D33):
 
 ```sh
 # JS-only change — reaches every TestFlight phone on next launch, ~1 minute
-npx eas-cli@latest update --channel testflight --message "…" --non-interactive
+npx eas-cli@latest update --channel testflight --environment preview --message "…" --non-interactive
 
 # Native change (a new module, a plist string) — ~15 minutes plus Apple's processing
 npx eas-cli@latest build -p ios --profile testflight --non-interactive
 npx eas-cli@latest submit -p ios --profile testflight --id <build> --non-interactive --wait
 ```
+
+`--environment` is required in non-interactive mode; it selects which EAS
+server-side environment variables get bundled, and this project defines none, so
+`preview` is just the label that matches a TestFlight channel.
 
 Adding a dependency with native code silently puts you on the second path. Check
 before adding.
