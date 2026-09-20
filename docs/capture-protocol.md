@@ -173,15 +173,18 @@ great and tell us nothing. Go out of your way for:
 | **Low light** | Photography and works-on-paper galleries are kept dim | yes |
 | **Shared panel, many works** | Breaks 1:1 pairing | yes |
 | **Case panel, mixed ownership** | Some objects have keys, some can't | yes |
-| **Loan, no accession** | The degraded path | yes |
+| **Loan, no accession** | The degraded path | yes (×2 — MCNY, Met/Selinus) |
 | **Loan, lender's accession** | Wrong-namespace trap | yes |
 | **Bilingual label** | Field order differs per language | yes (en+es) |
 | **Object that isn't art** | No artist, and that's correct (D23) | yes |
 | **Vinyl-cut lettering on wall** | No label edge to detect | no |
 | **Non-Latin script** | Asia Society, Japan Society | no |
-| **Oblique angle, unavoidable** | High shelf, roped-off object | no |
-| **Attribution qualifier** | See below | one ("Attributed to") |
+| **Oblique angle, unavoidable** | High shelf, roped-off object | yes (Met vitrines) |
+| **Attribution qualifier** | See below | two ("Attributed to", MCNY and Met) |
 | **Gallery checklist** | Commercial galleries hand out a sheet instead | no |
+| **Label and catalog disagree** | Same institution, two claims, different dates (§4.7) | yes (Met 26.3.29, 48.160.1) |
+| **Facsimile / copy** | The artist is the copyist, not the original's maker | yes (Met 23.2.84) |
+| **Two keys in one parenthesis** | `(23.2.84, 23.2.86)` | yes |
 
 ### Attribution qualifiers — collect these on purpose
 
@@ -191,8 +194,22 @@ graph (§4.6). Every one you find is a high-value fixture:
 > Attributed to · Studio of · Workshop of · Circle of · Follower of · After · Manner of ·
 > Formerly attributed to · Unknown artist · and any "possibly" / "probably" hedge
 
-The Dawkins print gave us one. Old-master and decorative-arts galleries will give the
-rest.
+The Dawkins print gave one and the Cesnola krater at the Met a second — and the Met's
+API carries it in a separate `artistPrefix` field, so it survives on both surfaces.
+Old-master and decorative-arts galleries will give the rest.
+
+### Children's and student work — don't shoot the label
+
+Student exhibitions (P.S. Art at the Met, school shows, community centre walls) label
+each work with the child's full name, grade, school, and often the teacher's name. That
+is identifying information about a minor, and it is the one thing this corpus must
+never hold. **Do not photograph the label.** If the exhibition itself is interesting —
+and P.S. Art is, as a case where the venue's own accession system doesn't apply — shoot
+the *work* and the *exhibition wall text*, which carry everything we need without a
+name. A label of this kind that gets shot by mistake is deleted from `raw/` the same
+day, along with any OCR of it, and the manifest is edited to say so. That is the only
+exception to raw's immutability, and it doesn't wait for a discussion. See
+`data/README.md`, *Minors*.
 
 ---
 

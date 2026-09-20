@@ -1,0 +1,71 @@
+{
+  "id": "met-loan-selinus-metope",
+  "venue": "met",
+  "gallery": "158",
+  "gallery_dialect": "loan_card",
+  "captured": "2026-09-20",
+  "source_image": "raw/2026-09-20-met/IMG_1377.HEIC",
+  "frames": {
+    "work": "raw/2026-09-20-met/QIFF6482.JPG",
+    "label": "raw/2026-09-20-met/SFNL0866.JPG",
+    "label_stock_camera": "raw/2026-09-20-met/IMG_1377.HEIC",
+    "exhibition_wall_text": "raw/2026-09-20-met/CHXU9378.JPG",
+    "exhibition_wall_text_2": "raw/2026-09-20-met/GTVD6730.JPG"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": true,
+    "gps_note": "First take with GPS on every frame. App frames carry a 9-key GPS block written by the F0 build; stock-camera HEICs carry Apple's full 15-key block. Both bind the frame to the Met to within a few metres."
+  },
+  "source_note": "App frames are camera-roll copies (Image Capture over USB) bound to the manifest by capture time with tools/manifest/bind-frames.py — see derived/2026-09-20-met-frames.json. App label frame (SFNL0866) is soft — 'Lew hy the Repulile ef Buly' — transcribed from the stock retake.",
+  "label_form": "printed_card",
+  "verified_against": "label_only",
+  "verification_note": "No accession to dereference. The lender is named; its catalog (Museo Archeologico Regionale 'Antonino Salinas', Palermo) was not consulted. The Met's API has no record to find.",
+  "difficulty": [
+    "loan",
+    "no_accession",
+    "lender_named_not_numbered",
+    "app_frame_out_of_focus",
+    "date_range_read_as_accession",
+    "bce_date_range",
+    "reflective_glass",
+    "no_artist"
+  ],
+  "expected": {
+    "accession_number": null,
+    "title": "Limestone metope",
+    "culture": "Greek",
+    "date_raw": "480–470 B.C.",
+    "date_edtf": "-0479/-0469",
+    "date_edtf_note": "BCE years are astronomical: 375 BCE is -0374. Ranges are intervals; '~' marks each end when the label says 'ca.'. A named span like 'late 6th century' is written as the conventional interval and noted in date_raw. No 'ca.' on this label, so no '~'.",
+    "medium": "limestone",
+    "findspot": "From the Acropolis of Selinus",
+    "credit_line": "Lent by the Republic of Italy–Regione Siciliana, Museo Archeologico \"Antonino Salinas\"",
+    "owning_institution": "Museo Archeologico \"Antonino Salinas\"",
+    "owning_institution_location": "Palermo",
+    "lender_note": "The card names a state, a region and a museum in one line. The museum is the holder; the state and region are the authorities that lent.",
+    "venue_relationship": "loan",
+    "artist": null
+  },
+  "capture": {
+    "build": "F0, TestFlight update 01a0bbb0-c2fb-7bd9-b452-8e83fc2afda6",
+    "group": "g0007",
+    "on_device_candidates": [
+      "480-470"
+    ],
+    "accession_status": "none",
+    "machine_reading": "480-470",
+    "human_value": null,
+    "flags": [
+      "loan_no_accession"
+    ],
+    "hard_cases_tagged": [
+      "reflective_glass"
+    ],
+    "note": null
+  },
+  "traps": {
+    "nothing_to_key_on": "On-device OCR offered '480-470' — the date — because it was the only number-shaped token, and the human chose 'there isn't one' (status none, flag loan_no_accession). This is the D17 degraded path done right: the absence of a key is recorded as a fact with a reason, not as a failed read.",
+    "three_authorities_one_line": "'Republic of Italy–Regione Siciliana, Museo Archeologico' — an en dash joins the state and region, a comma separates the museum. A credit-line parser that splits on commas gets two entities; one that splits on dashes gets a different two."
+  }
+}

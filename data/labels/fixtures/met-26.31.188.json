@@ -1,0 +1,86 @@
+{
+  "id": "met-26.31.188",
+  "venue": "met",
+  "gallery": "151",
+  "gallery_dialect": "house_card",
+  "captured": "2026-09-20",
+  "source_image": "raw/2026-09-20-met/CIOT6849.JPG",
+  "frames": {
+    "work": "raw/2026-09-20-met/NKMW6940.JPG",
+    "label": "raw/2026-09-20-met/CIOT6849.JPG"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": true,
+    "gps_note": "First take with GPS on every frame. App frames carry a 9-key GPS block written by the F0 build; stock-camera HEICs carry Apple's full 15-key block. Both bind the frame to the Met to within a few metres."
+  },
+  "source_note": "App frames are camera-roll copies (Image Capture over USB) bound to the manifest by capture time with tools/manifest/bind-frames.py — see derived/2026-09-20-met-frames.json.",
+  "label_form": "printed_card",
+  "label_kind": "tombstone_in_case",
+  "verified_against": "catalog_api",
+  "catalog": {
+    "checked": "2026-09-20",
+    "object_id": 252139,
+    "url": "https://www.metmuseum.org/art/collection/search/252139",
+    "title": "Jasper Lentoid",
+    "object_date": "ca. 1450–1400 BCE",
+    "medium": "Jasper",
+    "credit_line": "Bequest of Richard B. Seager, 1926",
+    "gallery": "151"
+  },
+  "difficulty": [
+    "tiny_object",
+    "seal_and_impression_pair",
+    "neighbour_labels_in_frame",
+    "truncated_neighbour",
+    "title_with_subject_line",
+    "bce_date_range",
+    "circa_marker",
+    "no_artist"
+  ],
+  "expected": {
+    "accession_number": "26.31.188",
+    "title": "Jasper lentoid: Two waterfowl",
+    "title_note": "The card writes the material and form on one line and the subject on the next, joined by a colon. The API title is just 'Jasper Lentoid'.",
+    "culture": "Cretan",
+    "period": "Late Minoan II",
+    "date_raw": "ca. 1450–1400 BCE",
+    "date_edtf": "-1449~/-1399~",
+    "date_edtf_note": "BCE years are astronomical: 375 BCE is -0374. Ranges are intervals; '~' marks each end when the label says 'ca.'. A named span like 'late 6th century' is written as the conventional interval and noted in date_raw.",
+    "medium": "jasper",
+    "credit_line": "Bequest of Richard B. Seager, 1926",
+    "donation_year": 1926,
+    "artist": null,
+    "owning_institution": null
+  },
+  "label_vs_catalog": {
+    "agree": [
+      "accession",
+      "date",
+      "credit_line"
+    ],
+    "differ": {
+      "title": "label adds the subject line 'Two waterfowl'",
+      "culture": "label 'Cretan', API 'Minoan'",
+      "era_notation": "this card says BCE; the Greek and Roman cards two galleries away say B.C."
+    }
+  },
+  "capture": {
+    "build": "F0, TestFlight update 01a0bbb0-c2fb-7bd9-b452-8e83fc2afda6",
+    "group": "g0008",
+    "on_device_candidates": [
+      "26.31.188"
+    ],
+    "accession_status": "confirmed",
+    "machine_reading": "26.31.188",
+    "human_value": "26.31.188",
+    "flags": [],
+    "hard_cases_tagged": [],
+    "note": "Small piece"
+  },
+  "traps": {
+    "neighbours_bleed_in": "Two other cards are partly in frame at the bottom — 'Agate lentoid: Lion attacking goa…' and '…rd and woman'. Mac OCR flagged 4 of 10 lines as truncated; those are the neighbours, not this card. A reader has to pick the card that is whole, and the app's screen-aspect crop makes the bleed more likely, not less.",
+    "work_is_two_objects": "The seal and its modern impression are displayed as a pair; the work frame shows two things per accession. Pairing tests (D15) should expect this in any gem gallery.",
+    "note_from_the_field": "Group note: 'Small piece'."
+  }
+}

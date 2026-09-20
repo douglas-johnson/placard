@@ -1,0 +1,122 @@
+{
+  "id": "met-10.130.1178",
+  "venue": "met",
+  "gallery": "101",
+  "gallery_dialect": "house_card",
+  "captured": "2026-09-20",
+  "source_image": "raw/2026-09-20-met/VYJB8608.JPG",
+  "frames": {
+    "work": "raw/2026-09-20-met/AKWZ9875.JPG",
+    "label": "raw/2026-09-20-met/VYJB8608.JPG",
+    "exhibition_wall_text": "raw/2026-09-20-met/WBAO9000.JPG"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": true,
+    "gps_note": "First take with GPS on every frame. App frames carry a 9-key GPS block written by the F0 build; stock-camera HEICs carry Apple's full 15-key block. Both bind the frame to the Met to within a few metres."
+  },
+  "source_note": "App frames are camera-roll copies (Image Capture over USB) bound to the manifest by capture time with tools/manifest/bind-frames.py — see derived/2026-09-20-met-frames.json. The work frame is landscape (4032×1860) — the only one in the take.",
+  "label_form": "printed_card",
+  "label_kind": "shared_panel",
+  "verified_against": "catalog_api",
+  "catalog": {
+    "checked": "2026-09-20",
+    "object_id": 547366,
+    "url": "https://www.metmuseum.org/art/collection/search/547366",
+    "title": "Squat jar with lugs",
+    "object_date": "ca. 3300–2900 BCE",
+    "medium": "Limestone (fossiliferous)",
+    "credit_line": "Gift of Helen Miller Gould, 1910",
+    "gallery": "101"
+  },
+  "shared_panel": {
+    "count": 2,
+    "objects": [
+      {
+        "accession_number": "24.7.2",
+        "title": "Large Jar with Lugs",
+        "medium": "Red breccia",
+        "credit_line": "Gift of Dr. and Mrs. Thomas H. Foulds, 1924",
+        "catalog": {
+          "checked": "2026-09-20",
+          "object_id": 547380,
+          "url": "https://www.metmuseum.org/art/collection/search/547380",
+          "title": "Large jar with lugs"
+        }
+      },
+      {
+        "accession_number": "10.130.1178",
+        "title": "Squat Jar with Lugs",
+        "medium": "Fossiliferous limestone",
+        "credit_line": "Gift of Helen Miller Gould, 1910",
+        "catalog": {
+          "checked": "2026-09-20",
+          "object_id": 547366,
+          "url": "https://www.metmuseum.org/art/collection/search/547366",
+          "title": "Squat jar with lugs",
+          "object_date": "ca. 3300–2900 BCE",
+          "medium": "Limestone (fossiliferous)",
+          "credit_line": "Gift of Helen Miller Gould, 1910",
+          "gallery": "101"
+        }
+      }
+    ],
+    "note": "Two objects, each with the accession as a header above its own tombstone block and again in its credit line; one shared paragraph beneath. The app's shared_panel flag was set with count 2."
+  },
+  "difficulty": [
+    "shared_panel",
+    "accession_as_header",
+    "two_accessions_one_label",
+    "bulk_accession_long_token",
+    "period_and_date",
+    "circa_marker",
+    "bce_date_range",
+    "no_artist"
+  ],
+  "expected": {
+    "accession_number": "10.130.1178",
+    "title": "Squat Jar with Lugs",
+    "culture": null,
+    "period": "Naqada III–Dynasty I",
+    "date_raw": "ca. 3300–2900 B.C.",
+    "date_edtf": "-3299~/-2899~",
+    "date_edtf_note": "BCE years are astronomical: 375 BCE is -0374. Ranges are intervals; '~' marks each end when the label says 'ca.'. A named span like 'late 6th century' is written as the conventional interval and noted in date_raw.",
+    "medium": "Fossiliferous limestone",
+    "credit_line": "Gift of Helen Miller Gould, 1910",
+    "donation_year": 1910,
+    "artist": null,
+    "owning_institution": null
+  },
+  "label_vs_catalog": {
+    "agree": [
+      "title",
+      "date",
+      "medium",
+      "credit_line"
+    ],
+    "differ": {
+      "title_case": "label Title Case, API sentence case",
+      "period": "label 'Naqada III–Dynasty I' (roman numeral), API 'Naqada III–Dynasty 1'"
+    }
+  },
+  "capture": {
+    "build": "F0, TestFlight update 01a0bbb0-c2fb-7bd9-b452-8e83fc2afda6",
+    "group": "g0009",
+    "on_device_candidates": [
+      "10.130.1178",
+      "24.7.2"
+    ],
+    "accession_status": "confirmed",
+    "machine_reading": "10.130.1178",
+    "human_value": "10.130.1178",
+    "flags": [
+      "shared_panel"
+    ],
+    "hard_cases_tagged": [],
+    "note": null
+  },
+  "traps": {
+    "which_of_two": "On-device candidates ['10.130.1178', '24.7.2'] — both real, both on this card, in the order OCR met them. The machine offered the first and the human confirmed it, which is the right answer only because that's the work that was photographed. The panel is the unit; see met-91.1.1383.",
+    "egyptian_period_line": "'Naqada III–Dynasty I (ca. 3300–2900 B.C.)' puts the period name and the absolute date on one line with the date parenthesised. Greek and Roman cards put culture and date on one line without parentheses. Same department-level dialect, different line grammar."
+  }
+}

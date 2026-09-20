@@ -1,0 +1,137 @@
+{
+  "id": "met-91.1.1383",
+  "venue": "met",
+  "gallery": "158",
+  "gallery_dialect": "house_card",
+  "captured": "2026-09-20",
+  "source_image": "raw/2026-09-20-met/IMG_1363.HEIC",
+  "frames": {
+    "work": "raw/2026-09-20-met/FEWJ4445.JPG",
+    "label": "raw/2026-09-20-met/NAYH8832.JPG",
+    "label_stock_camera": "raw/2026-09-20-met/IMG_1363.HEIC"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": true,
+    "gps_note": "First take with GPS on every frame. App frames carry a 9-key GPS block written by the F0 build; stock-camera HEICs carry Apple's full 15-key block. Both bind the frame to the Met to within a few metres."
+  },
+  "source_note": "App frames are camera-roll copies (Image Capture over USB) bound to the manifest by capture time with tools/manifest/bind-frames.py — see derived/2026-09-20-met-frames.json. App label frame (NAYH8832) is unreadable — the Mac OCR returns 'Bastern Mednerranean er Sout fudun'. Transcribed from the stock retake.",
+  "label_form": "printed_card",
+  "label_kind": "shared_panel",
+  "verified_against": "catalog_api",
+  "catalog": {
+    "checked": "2026-09-20",
+    "object_id": 245769,
+    "url": "https://www.metmuseum.org/art/collection/search/245769",
+    "title": "Glass oinochoe (perfume jug)",
+    "object_date": "late 4th–early 3rd century BCE",
+    "medium": "Glass",
+    "credit_line": "Edward C. Moore Collection, Bequest of Edward C. Moore, 1891",
+    "gallery": "158"
+  },
+  "shared_panel": {
+    "count": 3,
+    "objects": [
+      {
+        "accession_number": "91.1.1383",
+        "object": "Oinochoe",
+        "credit_line": "The Edward C. Moore Collection, Bequest of Edward C. Moore, 1891",
+        "catalog": {
+          "checked": "2026-09-20",
+          "object_id": 245769,
+          "url": "https://www.metmuseum.org/art/collection/search/245769",
+          "title": "Glass oinochoe (perfume jug)",
+          "object_date": "late 4th–early 3rd century BCE",
+          "medium": "Glass",
+          "credit_line": "Edward C. Moore Collection, Bequest of Edward C. Moore, 1891",
+          "gallery": "158"
+        }
+      },
+      {
+        "accession_number": "17.194.601",
+        "object": "Oinochoe",
+        "credit_line": "Gift of J. Pierpont Morgan, 1917",
+        "catalog": {
+          "checked": "2026-09-20",
+          "object_id": 249835,
+          "url": "https://www.metmuseum.org/art/collection/search/249835",
+          "title": "Glass oinochoe (perfume jug)",
+          "object_date": "late 4th–early 3rd century BCE",
+          "medium": "Glass",
+          "credit_line": "Gift of J. Pierpont Morgan, 1917",
+          "gallery": "158"
+        }
+      },
+      {
+        "accession_number": "91.1.1348",
+        "object": "Lentoid aryballos",
+        "credit_line": "The Edward C. Moore Collection, Bequest of Edward C. Moore, 1891",
+        "catalog": {
+          "checked": "2026-09-20",
+          "object_id": 245736,
+          "url": "https://www.metmuseum.org/art/collection/search/245736",
+          "title": "Glass lentoid aryballos (perfume bottle)",
+          "object_date": "late 4th–early 3rd century BCE",
+          "medium": "Glass",
+          "credit_line": "Edward C. Moore Collection, Bequest of Edward C. Moore, 1891",
+          "gallery": "158"
+        }
+      }
+    ],
+    "note": "One card, one title, one date line, three credit lines each with its own accession. The app's shared_panel flag was set with count 3."
+  },
+  "difficulty": [
+    "app_frame_out_of_focus",
+    "shared_panel",
+    "three_accessions_one_label",
+    "object_tags_in_vitrine",
+    "truncated_tag",
+    "bulk_accession_long_token",
+    "bce_date_range",
+    "no_artist"
+  ],
+  "expected": {
+    "accession_number": "91.1.1383",
+    "title": "Three glass vessels",
+    "title_note": "The panel title. The API title for this accession is 'Glass oinochoe (perfume jug)' — a shared panel's title is not any one object's title.",
+    "culture": "Eastern Mediterranean or South Italian, core-formed, Mediterranean Group II",
+    "date_raw": "late 4th–early 3rd century B.C.",
+    "date_edtf": "-0349~/-0274~",
+    "date_edtf_note": "BCE years are astronomical: 375 BCE is -0374. Ranges are intervals; '~' marks each end when the label says 'ca.'. A named span like 'late 6th century' is written as the conventional interval and noted in date_raw.",
+    "medium": "glass",
+    "credit_line": "The Edward C. Moore Collection, Bequest of Edward C. Moore, 1891",
+    "donation_year": 1891,
+    "artist": null,
+    "owning_institution": null
+  },
+  "label_vs_catalog": {
+    "agree": [
+      "date",
+      "credit_line"
+    ],
+    "differ": {
+      "title": "panel 'Three glass vessels' vs API 'Glass oinochoe (perfume jug)'",
+      "culture": "label 'South Italian' for all three; API 'Italian' for the two Moore pieces and 'South Italian' for the Morgan one"
+    }
+  },
+  "capture": {
+    "build": "F0, TestFlight update 01a0bbb0-c2fb-7bd9-b452-8e83fc2afda6",
+    "group": "g0002",
+    "on_device_candidates": [
+      "013.1383"
+    ],
+    "accession_status": "corrected",
+    "machine_reading": "013.1383",
+    "human_value": "91.1.1383",
+    "flags": [
+      "shared_panel"
+    ],
+    "hard_cases_tagged": [],
+    "note": null
+  },
+  "traps": {
+    "on_device_read_the_wrong_number": "Candidates were ['013.1383'] — the first component lost to the frame edge (the app captures at screen aspect and cropped the card). The human corrected to 91.1.1383. The truncation warning fired; a locator should treat a warning on the accession line as 'ask', not 'offer'.",
+    "tags_in_the_case": "Two object tags are in frame: '91.1.1348' complete and '601' — the tail of 17.194.601 — cut by the tag's edge. A tag is a second, independent reading of the same key, and a truncated tag is a partial match, not a new number.",
+    "one_of_three": "The fixture's primary accession is the one the human confirmed; the panel is the unit. A pairing step that assigns this label to one work has a one-in-three chance of being right by luck."
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "id": "met-74.51.965",
+  "venue": "met",
+  "gallery": "152",
+  "gallery_dialect": "house_card",
+  "captured": "2026-09-20",
+  "source_image": "raw/2026-09-20-met/ATGX2197.JPG",
+  "frames": {
+    "work": "raw/2026-09-20-met/TZCY2575.JPG",
+    "label": "raw/2026-09-20-met/ATGX2197.JPG"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": true,
+    "gps_note": "First take with GPS on every frame. App frames carry a 9-key GPS block written by the F0 build; stock-camera HEICs carry Apple's full 15-key block. Both bind the frame to the Met to within a few metres."
+  },
+  "source_note": "App frames are camera-roll copies (Image Capture over USB) bound to the manifest by capture time with tools/manifest/bind-frames.py — see derived/2026-09-20-met-frames.json.",
+  "label_form": "printed_card",
+  "verified_against": "catalog_api",
+  "catalog": {
+    "checked": "2026-09-20",
+    "object_id": 240553,
+    "url": "https://www.metmuseum.org/art/collection/search/240553",
+    "title": "Terracotta krater with lid surmounted by a small hydria",
+    "object_date": "ca. 750–740 BCE",
+    "medium": "Terracotta",
+    "credit_line": "The Cesnola Collection, Purchased by subscription, 1874–76",
+    "gallery": "152"
+  },
+  "difficulty": [
+    "attribution_qualifier",
+    "date_range_read_as_accession",
+    "separator_dropped_by_ocr",
+    "bulk_accession_long_token",
+    "donation_year_is_a_range",
+    "title_wraps",
+    "mottled_background",
+    "bce_date_range"
+  ],
+  "expected": {
+    "accession_number": "74.51.965",
+    "title": "Terracotta krater with a lid surmounted by a small hydria",
+    "culture": "Greek, Euboean",
+    "date_raw": "ca. 750–740 B.C.",
+    "date_edtf": "-0749~/-0739~",
+    "date_edtf_note": "BCE years are astronomical: 375 BCE is -0374. Ranges are intervals; '~' marks each end when the label says 'ca.'. A named span like 'late 6th century' is written as the conventional interval and noted in date_raw.",
+    "medium": "terracotta",
+    "artist": "Cesnola Painter",
+    "attribution_qualifier": "Attributed to",
+    "attribution_raw": "Attributed to the Cesnola Painter",
+    "findspot": "Said to be from Kourion, Cyprus",
+    "credit_line": "The Cesnola Collection, Purchased by subscription, 1874–76",
+    "donation_year": 1874,
+    "donation_year_raw": "1874–76",
+    "owning_institution": null
+  },
+  "label_vs_catalog": {
+    "agree": [
+      "culture",
+      "date",
+      "credit_line",
+      "artist",
+      "attribution_qualifier"
+    ],
+    "differ": {
+      "title": "label 'with a lid', API 'with lid'",
+      "attribution_field": "The API carries the qualifier in a separate field, artistPrefix='Attributed to the', with artistRole='Artist'. A consumer reading artistDisplayName alone gets 'Cesnola Painter' as bare authorship — the API's own structure is the laundering risk §4.6 warns about."
+    }
+  },
+  "capture": {
+    "build": "F0, TestFlight update 01a0bbb0-c2fb-7bd9-b452-8e83fc2afda6",
+    "group": "g0005",
+    "on_device_candidates": [
+      "750-740",
+      "74.51.965",
+      "7451.965"
+    ],
+    "accession_status": "corrected",
+    "machine_reading": "750-740",
+    "human_value": "74.51.965",
+    "flags": [],
+    "hard_cases_tagged": [],
+    "note": null
+  },
+  "traps": {
+    "three_candidates": "On-device: ['750-740', '74.51.965', '7451.965']. The machine offered the date first; the human picked the second. The third is the real number with a period dropped, which is the D14 class of failure — a corrupted key at high confidence. Mac OCR of the same frame returned only '7451.965'.",
+    "donation_year_disagrees_with_prefix": "'1874–76' — the one label of fourteen where the credit-line year is a range. The agreement heuristic (year ↔ first component) still works on the first year.",
+    "second_qualifier_in_corpus": "After 'Attributed to' on the Dawkins print (mcny-38.447.4). Same vocabulary, different institution, different century — the qualifier survives on the label in both and must survive in the graph."
+  }
+}

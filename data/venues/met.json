@@ -1,0 +1,128 @@
+{
+  "slug": "met",
+  "name": "The Metropolitan Museum of Art",
+  "aliases": ["The Met", "Met Fifth Avenue", "the-metropolitan-museum-of-art"],
+  "alias_note": "The F0 build's manifest uses the tester-entered slug 'the-metropolitan-museum-of-art' (take 2026-09-20). Registry slug is 'met'; the alias keeps the two joinable.",
+  "type": "museum",
+  "location": {
+    "latitude": 40.7794,
+    "longitude": -73.9632,
+    "address": "1000 Fifth Ave, New York, NY 10028",
+    "city": "New York",
+    "region": "US-NY",
+    "footprint_note": "The building is ~400 m long. Frames from one visit (2026-09-20) ranged 40.7784–40.7800 N, 73.9619–73.9635 W, all at 'the Met' — a single point with a small radius will misfile Egyptian-wing frames as 'outside'. Use a polygon or a ~250 m radius for the §4.1b prior."
+  },
+  "collection_api": {
+    "available": true,
+    "base_url": "https://collectionapi.metmuseum.org/public/collection/v1",
+    "notes": "Open, no key. Accession lookup is search with the number QUOTED: /search?q=\"49.11.4\" returns exactly one objectID; unquoted, the same query returns 81,000 full-text hits. Then /objects/{id} carries accessionNumber, title, objectDate, objectBeginDate/EndDate, medium, creditLine, artistDisplayName, culture, period, department, GalleryNumber, objectURL. Verified 2026-09-20: 14 of 14 accessions from the first visit resolved to exactly one object each. GalleryNumber is a live display-state claim (§8.3), not a canonical fact — it says where the API thinks the object is, which the visit can contradict.",
+    "verified": "2026-09-20"
+  },
+  "accession_formats": {
+    "policy": "LOCATE, DO NOT VALIDATE (D11, D21). Patterns rank candidates; nothing is rejected for failing them.",
+    "samples_seen": [
+      "49.11.4", "91.1.1383", "17.194.601", "91.1.1348", "22.139.24", "27.228",
+      "74.51.965", "21.169.1", "26.31.188", "10.130.1178", "48.160.1", "26.3.29",
+      "20.3.1", "23.2.84"
+    ],
+    "shapes": [
+      {
+        "pattern": "^\\d{2}\\.\\d+\\.\\d+$",
+        "example": "49.11.4",
+        "sample_count": 11,
+        "notes": "Two-digit accession year, then lot, then item. The year runs from 1891 ('91') to 1974 ('74') in one gallery, so it cannot be used to order anything. Dominant shape."
+      },
+      {
+        "pattern": "^\\d{2}\\.\\d+$",
+        "example": "27.228",
+        "sample_count": 1,
+        "notes": "Two components. Same family as above without the item number."
+      },
+      {
+        "pattern": "^\\d{2}\\.\\d+\\.\\d+$ with four-digit third component",
+        "example": "10.130.1178",
+        "sample_count": 2,
+        "notes": "Same shape, large item numbers — bulk-accessioned collections (Cesnola 74.51.*, Moore 91.1.*). Longest tokens, most fragile to OCR."
+      }
+    ],
+    "locating_heuristic": "In parentheses at the end of the credit line, immediately after the donation year: 'Rogers Fund, 1922 (22.139.24)'. The donation year and the accession's first component agree in 13 of 14 samples — 74.51.965 is credited '1874–76' — which is a useful confirmation signal, never a rule.",
+    "traps": [
+      "Dates on Greek and Roman labels are BCE ranges written with an en dash — 'ca. 375–350 B.C.' — and on-device OCR offered '373-350' and '750-740' and '480-470' as accession candidates on three of fourteen labels. A date-range shape (two 3-digit numbers, a dash) needs to be scored DOWN as an accession, and the donation-year agreement above is what separates '750-740' from '74.51.965' on the same label.",
+      "Shared panels carry one credit line per object, each with its own accession in parentheses — three on the 'Three glass vessels' panel. One label, three primary keys.",
+      "Vitrines also carry small object tags with a bare accession ('91.1.1348', '601'), sometimes truncated by the tag edge. Same number, two surfaces."
+    ]
+  },
+  "labels": {
+    "dialects_observed": 2,
+    "note": "Two departments visited (Greek and Roman; Egyptian). Both use the same house card, so this is one dialect with a departmental variation, not two dialects in the MCNY sense. A loan card and a student-exhibition card are separate forms.",
+    "dialects": [
+      {
+        "id": "house_card",
+        "where": "Greek and Roman galleries 151–158; Egyptian galleries 101–105, 132",
+        "format": "printed_card",
+        "typeface": "serif (Times-like), black on white or on ochre (Greek and Roman)",
+        "field_order": [
+          "title (bold) — an object description, not a name: 'Marble funerary lekythos of Aristomache'",
+          "culture, period / date: 'Greek, Attic, ca. 375–350 B.C.'",
+          "findspot or provenance line, optional: 'Said to have been found near the Kerameikos in Athens'",
+          "inscription / condition notes, optional",
+          "credit line, small type: 'Purchase, Joseph Pulitzer Bequest, 1949 (49.11.4)'",
+          "interpretive paragraph"
+        ],
+        "has_medium": "in the title, not as a field — 'Marble …', 'Terracotta …', 'Glass …'. The API's medium field ('Marble, Pentelic') is richer than the label.",
+        "has_artist": "rarely — 'Cesnola Painter' appears in the API but not on the label; the label leads with culture",
+        "bilingual": false,
+        "notes": "Antiquities labels have no artist and that is correct (D23). The 'title' is a descriptive phrase the museum wrote, so title matching against the API is exact but title matching against any other source is not."
+      },
+      {
+        "id": "loan_card",
+        "where": "Greek and Roman, gallery 158 (Selinus loan)",
+        "format": "printed_card",
+        "field_order": ["title", "culture, date", "findspot", "credit line 'Lent by …' with no accession", "interpretive paragraph"],
+        "notes": "No accession at all — not the lender's, not the Met's. The degraded path (D17)."
+      },
+      {
+        "id": "student_exhibition_card",
+        "where": "P.S. Art 2026, Uris Center for Education",
+        "format": "printed_card",
+        "notes": "Names a minor. NOT PHOTOGRAPHED under the protocol; see docs/capture-protocol.md and data/README.md 'Minors'. Wall text and work only."
+      }
+    ],
+    "photography": "permitted",
+    "photography_source": "Welcome sign at the 81st Street entrance, 2026-09-20: 'Take photos: Just no flash or tripods, please.' Frames raw/2026-09-20-met/LCGW3693.JPG (app) and IMG_1356.HEIC (stock camera).",
+    "lighting": "Greek and Roman: bright, daylit, ochre cards under glass with reflections. Egyptian: dimmer, works behind glass, oblique angles unavoidable in vitrines."
+  },
+  "access_rules": [],
+  "access_rules_note": "None captured first-hand. The admissions desk and any posted policy were not photographed on 2026-09-20; the field log records only 'Paid'. Do not fill this from memory or from a third party — the rule is the institution's own page or its own signage (§8.2).",
+  "provenance": {
+    "source": "first-hand visit, 2026-09-20, F0 collector's build (TestFlight, update 01a0bbb0) plus stock camera",
+    "source_type": "institutional_signage",
+    "verified": "2026-09-20",
+    "verified_by": "visit",
+    "source_images": {
+      "welcome_sign_photo_policy": "raw/2026-09-20-met/IMG_1356.HEIC",
+      "uris_center_name_sign": "raw/2026-09-20-met/AJIG7042.JPG",
+      "accessible_entrance": "raw/2026-09-20-met/EIZY6434.JPG"
+    },
+    "source_image_note": "Every frame carries GPS and a UTC offset — the first take where that's true. The app's frame of the welcome sign (LCGW3693) is out of focus and OCRs to garbage; the stock-camera frame reads clean. Rain limited exterior shots to the 81st Street side."
+  },
+  "hours": null,
+  "hours_note": "Not observed. The 'hours_admission' frame in the manifest (f0039, EIZY6434) turned out to be the entrance sign, not an hours board.",
+  "accessibility": {
+    "step_free_entrance": true,
+    "step_free_entrance_location": "81st Street — Uris Center for Education",
+    "note": "The entrance used on 2026-09-20 is signed with the wheelchair symbol (EIZY6434). The Fifth Avenue entrance is up the main steps. A reachability property (§6.6), separate from any admission concession."
+  },
+  "display_state_observations": [
+    {
+      "date": "2026-09-20",
+      "observation": "P.S. Art 2026 on view in the Uris Center — 24th year of the exhibition, 19th at the Met, 125 works from ~1,000 submissions (exhibition wall text, OLOU4070).",
+      "relevance": "§8.3 — a temporary exhibition with no accession numbers and a labelling convention the house parser must not be applied to."
+    },
+    {
+      "date": "2026-09-20",
+      "observation": "Gallery numbers from the API matched the walk for all 14 objects (158 → 152 → 151, then 101 → 105 → 132).",
+      "relevance": "Corroborates GalleryNumber as a usable display-state claim on this date."
+    }
+  ]
+}

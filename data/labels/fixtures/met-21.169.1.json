@@ -1,0 +1,73 @@
+{
+  "id": "met-21.169.1",
+  "venue": "met",
+  "gallery": "152",
+  "gallery_dialect": "house_card",
+  "captured": "2026-09-20",
+  "source_image": "raw/2026-09-20-met/MXNX8968.JPG",
+  "frames": {
+    "work": "raw/2026-09-20-met/BIQP4237.JPG",
+    "label": "raw/2026-09-20-met/MXNX8968.JPG"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": true,
+    "gps_note": "First take with GPS on every frame. App frames carry a 9-key GPS block written by the F0 build; stock-camera HEICs carry Apple's full 15-key block. Both bind the frame to the Met to within a few metres."
+  },
+  "source_note": "App frames are camera-roll copies (Image Capture over USB) bound to the manifest by capture time with tools/manifest/bind-frames.py — see derived/2026-09-20-met-frames.json.",
+  "label_form": "printed_card",
+  "verified_against": "catalog_api",
+  "catalog": {
+    "checked": "2026-09-20",
+    "object_id": 251161,
+    "url": "https://www.metmuseum.org/art/collection/search/251161",
+    "title": "Terracotta sarcophagus rim",
+    "object_date": "last quarter of the 6th century BCE",
+    "medium": "Terracotta",
+    "credit_line": "Rogers Fund, 1921",
+    "gallery": "152"
+  },
+  "difficulty": [
+    "clean_case",
+    "bce_named_span",
+    "no_artist"
+  ],
+  "expected": {
+    "accession_number": "21.169.1",
+    "title": "Terracotta sarcophagus rim",
+    "culture": "East Greek, Clazomenian",
+    "date_raw": "last quarter of the 6th century B.C.",
+    "date_edtf": "-0524/-0500",
+    "date_edtf_note": "BCE years are astronomical: 375 BCE is -0374. Ranges are intervals; '~' marks each end when the label says 'ca.'. A named span like 'late 6th century' is written as the conventional interval and noted in date_raw.",
+    "medium": "terracotta",
+    "credit_line": "Rogers Fund, 1921",
+    "donation_year": 1921,
+    "artist": null,
+    "owning_institution": null
+  },
+  "label_vs_catalog": {
+    "agree": [
+      "title",
+      "culture",
+      "date",
+      "credit_line"
+    ],
+    "differ": {}
+  },
+  "capture": {
+    "build": "F0, TestFlight update 01a0bbb0-c2fb-7bd9-b452-8e83fc2afda6",
+    "group": "g0006",
+    "on_device_candidates": [
+      "21.169.1"
+    ],
+    "accession_status": "confirmed",
+    "machine_reading": "21.169.1",
+    "human_value": "21.169.1",
+    "flags": [],
+    "hard_cases_tagged": [],
+    "note": null
+  },
+  "traps": {
+    "the_easy_one": "No OCR warnings on device or on the Mac, one candidate, confirmed first try. Keep it as the baseline every other Met fixture is measured against."
+  }
+}

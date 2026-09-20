@@ -87,6 +87,18 @@ the first visit — the camera had no location permission — and a fixture with
 establishes its venue from the bookend frames and shot order instead, which is what the
 bookends are for.
 
+### Minors
+
+A fixture never carries the name of a child, or the name of a child's teacher or school,
+whatever the label said. This applies to the `expected` block, the `traps`, the notes —
+all of it. The first case was a P.S. Art label at the Met on 2026-09-20 (group g0014):
+the label frame was deleted from `raw/`, its OCR lines were stripped from the manifest
+(the record stays, marked `redacted`, so replay and sequence numbers are intact), and
+`derived/` was regenerated. The fixture for that group records the work and the
+exhibition wall text, and `expected.artist` is `null` with a note saying why. This is
+the one edit that is ever made to a raw take, and the capture protocol says not to shoot
+the label in the first place.
+
 ## labels/derived/ — regenerable
 
 OCR output and intermediate parses. Gitignored on purpose: anything here must be
