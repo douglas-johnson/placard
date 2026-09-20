@@ -19,7 +19,7 @@ import {
   type Take,
 } from '../take';
 import { type, usePalette } from '../theme';
-import { Button, Chip, ChipRow, Field, H2, P, Rule, Screen } from '../ui';
+import { Button, Chip, ChipRow, Field, H2, P, Rule, Screen, Sheet } from '../ui';
 import { Capture, type Picture } from './Capture';
 
 /**
@@ -254,7 +254,7 @@ export function LabelFlow({
     const last = labelFrames[labelFrames.length - 1];
     return (
       <Screen>
-        <ScrollView contentContainerStyle={[styles.sheet, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 24 }]} keyboardShouldPersistTaps="handled">
+        <Sheet contentContainerStyle={[styles.sheet, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 24 }]}>
           {last ? <Image source={{ uri: last.file.uri }} style={styles.thumbSmall} /> : null}
           {lastEmpty && !typing ? (
             <>
@@ -325,7 +325,7 @@ export function LabelFlow({
           <Rule />
           <Button label="The label needed another frame" tone="quiet" onPress={() => setStep('label')} />
           {ocrNote && top ? <Text style={[type.small, { color: p.muted, marginTop: 12 }]}>{ocrNote}</Text> : null}
-        </ScrollView>
+        </Sheet>
       </Screen>
     );
   }
@@ -386,7 +386,7 @@ export function LabelFlow({
   // flags
   return (
     <Screen>
-      <ScrollView contentContainerStyle={[styles.sheet, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 24 }]} keyboardShouldPersistTaps="handled">
+      <Sheet contentContainerStyle={[styles.sheet, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 24 }]}>
         <H2>Anything unusual about this one?</H2>
         <P muted>Skip straight to Close if not — most labels are ordinary, and that's fine.</P>
         <ChipRow>
@@ -412,7 +412,7 @@ export function LabelFlow({
         </ChipRow>
         <Field label="Note" value={note} onChangeText={setNote} placeholder="Anything the frames won't show" multiline />
         <Button label="Close this label" onPress={finish} style={{ marginTop: 24 }} />
-      </ScrollView>
+      </Sheet>
     </Screen>
   );
 }

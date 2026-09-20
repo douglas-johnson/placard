@@ -6,7 +6,7 @@ import { awaitFix, type Gps } from '../location';
 import { nearby, slugify, type Venue } from '../registry';
 import { startTake, type FieldLog, type Take, type VenueRef } from '../take';
 import { type, usePalette } from '../theme';
-import { Button, Chip, ChipRow, Field, H1, H2, P, Rule, Screen } from '../ui';
+import { Button, Chip, ChipRow, Field, H1, H2, P, Rule, Screen, Sheet } from '../ui';
 import { PastTakes } from './PastTakes';
 
 /**
@@ -126,7 +126,7 @@ export function Arrive({ onStarted }: { onStarted: (take: Take) => void }) {
   if (stage === 'add') {
     return (
       <Screen>
-        <ScrollView contentContainerStyle={[styles.sheet, pad]} keyboardShouldPersistTaps="handled">
+        <Sheet contentContainerStyle={[styles.sheet, pad]}>
           <H1>Placard</H1>
           <H2>Where are you?</H2>
           <P muted>
@@ -140,14 +140,14 @@ export function Arrive({ onStarted }: { onStarted: (take: Take) => void }) {
           {candidates.length > 0 ? <Button label="Back to the list" tone="quiet" onPress={() => setStage('choose')} /> : null}
           <Rule />
           <PastTakes />
-        </ScrollView>
+        </Sheet>
       </Screen>
     );
   }
 
   return (
     <Screen>
-      <ScrollView contentContainerStyle={[styles.sheet, pad]} keyboardShouldPersistTaps="handled">
+      <Sheet contentContainerStyle={[styles.sheet, pad]}>
         <H2>{venue?.name}</H2>
         <P muted>Thirty seconds of field log, then the door.</P>
         <Rule />
@@ -167,7 +167,7 @@ export function Arrive({ onStarted }: { onStarted: (take: Take) => void }) {
         <Field label="Notes" value={notes} onChangeText={setNotes} placeholder="Bilingual labels; vinyl in the lobby; checklist at the desk…" multiline />
         <Button label="Start" onPress={start} style={{ marginTop: 24 }} />
         <Button label="Different venue" tone="quiet" onPress={() => setStage(candidates.length > 0 ? 'choose' : 'add')} />
-      </ScrollView>
+      </Sheet>
     </Screen>
   );
 }

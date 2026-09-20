@@ -1,13 +1,5 @@
 import { ReactNode } from 'react';
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  TextInputProps,
-  View,
-  ViewStyle,
-} from 'react-native';
+import { Pressable, ScrollView, type ScrollViewProps, StyleSheet, Text, TextInput, TextInputProps, View, ViewStyle } from 'react-native';
 import { type, usePalette } from './theme';
 
 /** Primary or secondary action. `tone="quiet"` is for the choices the app must offer but shouldn't nudge toward. */
@@ -108,6 +100,28 @@ export function Rule() {
 export function Screen({ children }: { children: ReactNode }) {
   const p = usePalette();
   return <View style={[styles.screen, { backgroundColor: p.bg }]}>{children}</View>;
+}
+
+/**
+ * A scrolling form. The one thing a plain ScrollView gets wrong with a text field
+ * near the bottom is the keyboard: it doesn't know it has lost the lower third of the
+ * screen, so the field you're typing into stays underneath it (the Met, the Note on
+ * the flags step — field-beta §6.1). `automaticallyAdjustKeyboardInsets` is iOS's fix:
+ * the content inset grows with the keyboard and the focused input is scrolled into
+ * view. Taps outside a field still land on buttons and chips.
+ */
+export function Sheet({ children, contentContainerStyle, ...rest }: ScrollViewProps & { children: ReactNode }) {
+  return (
+    <ScrollView
+      automaticallyAdjustKeyboardInsets
+      keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="interactive"
+      contentContainerStyle={contentContainerStyle}
+      {...rest}
+    >
+      {children}
+    </ScrollView>
+  );
 }
 
 export function H1({ children }: { children: ReactNode }) {

@@ -331,6 +331,12 @@ Capture names the camera-roll copies `AJIG7042.JPG`. `tools/manifest/bind-frames
 rejoins them by capture time — 38 of 38 within two seconds — and that step is now
 part of every import.
 
+**The keyboard hid the note you were typing.** The flags step's Note field sits at the
+foot of the sheet; with the keyboard up it was underneath it, and the only way to read
+what you'd written was to close the keyboard. A plain scroll view doesn't know the
+keyboard has taken the bottom third of the screen. Every sheet with a text field now
+adjusts its insets for it (`Sheet` in `src/ui.tsx`) — JS-only.
+
 **And one thing the plan did not anticipate.** A student exhibition was on in the
 education centre, and one label was a child's, with name, grade, school and
 teacher. The frame was deleted the same day and the rule is in the protocol now; the
