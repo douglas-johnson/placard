@@ -92,6 +92,9 @@ export function LabelFlow({
       : [],
   );
   const [ocrNote, setOcrNote] = useState<string | null>(null);
+  // The last label frame read as nothing at all — a floor, a plinth, a frame that
+  // never focused (Met f0030, field-beta §6.1). Offer the retake before any confirm.
+  const [lastEmpty, setLastEmpty] = useState(false);
   const [accession, setAccession] = useState<{ status: AccessionStatus; reading: string | null; value: string | null } | null>(null);
   const [typed, setTyped] = useState('');
   const [typing, setTyping] = useState(false);
@@ -147,6 +150,7 @@ export function LabelFlow({
           for (const c of found) if (!all.has(c.value) || all.get(c.value)!.score < c.score) all.set(c.value, c);
           return [...all.values()].sort((a, b) => b.score - a.score).slice(0, 3);
         });
+        setLastEmpty(result.observations.length === 0);
         setOcrNote(
           result.observations.length === 0
             ? 'Nothing legible in that frame.'
@@ -252,7 +256,17 @@ export function LabelFlow({
       <Screen>
         <ScrollView contentContainerStyle={[styles.sheet, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 24 }]} keyboardShouldPersistTaps="handled">
           {last ? <Image source={{ uri: last.file.uri }} style={styles.thumbSmall} /> : null}
-          {top && !typing ? (
+          {lastEmpty && !typing ? (
+            <>
+              <H2>Nothing read in that frame</H2>
+              <P muted>
+                Not a single line — usually the camera hadn't focused, or the label isn't in the
+                shot. The frame is kept either way. Another go?
+              </P>
+              <Button label="Retake the label" onPress={() => { setLastEmpty(false); setStep('label'); }} style={{ marginTop: 20 }} />
+              <Button label="Carry on with this frame" tone="quiet" onPress={() => setLastEmpty(false)} />
+            </>
+          ) : top && !typing ? (
             <>
               <H2>Is this the accession number?</H2>
               <Text style={[type.mono, { color: p.text, fontSize: 28, marginTop: 8 }]}>{top.value}</Text>

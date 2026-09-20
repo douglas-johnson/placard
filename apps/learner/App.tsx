@@ -4,6 +4,7 @@ import { File, Paths } from 'expo-file-system';
 import { useColorScheme } from 'react-native';
 import { startWatching, stopWatching } from './src/location';
 import { Arrive } from './src/screens/Arrive';
+import { Done } from './src/screens/Done';
 import { Home, type Input } from './src/screens/Home';
 import { LabelFlow } from './src/screens/LabelFlow';
 import { Preflight } from './src/screens/Preflight';
@@ -23,6 +24,7 @@ import { endTake, resumeTake, type Take } from './src/take';
 type Route =
   | { name: 'arrive' }
   | { name: 'home' }
+  | { name: 'done' }
   | { name: 'preflight' }
   | { name: 'flow'; input: Input; devPreset?: 'readback' | 'flags' };
 
@@ -76,6 +78,16 @@ export default function App() {
         }}
       />
     );
+  } else if (route.name === 'done') {
+    screen = (
+      <Done
+        take={take}
+        onClose={() => {
+          setTake(null);
+          setRoute({ name: 'arrive' });
+        }}
+      />
+    );
   } else if (route.name === 'preflight') {
     screen = <Preflight onBack={home} />;
   } else if (route.name === 'flow') {
@@ -98,8 +110,7 @@ export default function App() {
             onDone={() => {
               endTake(take);
               stopWatching();
-              setTake(null);
-              setRoute({ name: 'arrive' });
+              setRoute({ name: 'done' });
             }}
           />
         );

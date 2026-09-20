@@ -32,7 +32,7 @@ const TOKEN = /(?<![\w.])[A-Za-z]{0,4}\.?\d{1,4}(?:[.-]\d{1,6}){1,5}(?:[A-Za-z]{
 // `normalizedVariants` field on the native side, which waits for the next rebuild (D33).
 const CONFUSABLE: Record<string, string> = {
   '\u2022': '.', '\u00B7': '.', '\u2027': '.', '\u22C5': '.', '\u30FB': '.', '\uFF0E': '.', '\u2219': '.',
-  '\u2010': '-', '\u2011': '-', '\u2012': '-', '\u2212': '-', '\uFF0D': '-',
+  '\u2010': '-', '\u2011': '-', '\u2012': '-', '\u2013': '-', '\u2212': '-', '\uFF0D': '-',
   '\u00A0': ' ', '\u2007': ' ', '\u202F': ' ',
 };
 const CONFUSABLE_RE = new RegExp(`[${Object.keys(CONFUSABLE).join('')}]`, 'g');
@@ -45,6 +45,34 @@ const YEAR_RANGE = /^\d{4}-\d{2,4}$/;
 // Lines that are almost certainly dimensions or dates, not keys.
 const DIMENSION = /\b(cm|in\.?|inches|mm|x|×)\b/i;
 const ACCESSION_WORD = /\b(accession|acc\.?\s*no|object\s*(number|no)|inv\.?)\b/i;
+
+// The Met, 2026-09-20: on 3 of 14 labels the device offered the DATE as the accession —
+// `373-350`, `750-740`, `480-470` — because a BCE range is two number groups joined by
+// a dash and nothing said otherwise. Two signals separate a date line from a credit
+// line, and both are on the card (fixtures met-49.11.4, met-74.51.965, met-loan-selinus):
+//
+//   - an era marker or "century" or "ca." on the line means the numbers are a date;
+//   - a credit line ends "…Fund, 1922 (22.139.24)": the donation year and the key's
+//     first component agreed on 13 of 14 Met labels and all 5 dated MCNY ones.
+//
+// Both are ranks, not gates (D11) — a venue that keys on years would still surface.
+// Era markers are set in small caps on the cards, and Vision reads small-cap B.C. as
+// Cyrillic в.с. often enough (Met g0007: 'Grock, 480-470 в.с.') that the look-alikes
+// are matched here directly. No trailing \b: "B.C." at the end of a line has no word
+// character after the period, so a boundary there never matches.
+const ERA_LINE = /((?<![A-Za-z])[BВв]\.?\s?[CСс]\.?(?:[EЕе]\.?)?(?![A-Za-z])|(?<![A-Za-z])[AАа]\.?\s?D\.?(?![A-Za-z])|(?<![A-Za-z])[CСс]\.?[EЕе]\.?(?![A-Za-z])|\bcentury\b|\bca\.|\bcirca\b|\bmillennium\b)/i;
+const DASHED_PAIR = /^\d{2,4}-\d{2,4}$/;
+const CREDIT_WORD = /\b(fund|gift|bequest|purchase|purchased|collection|lent|loan|subscription|donors?|exchange)\b/i;
+const CREDIT_YEAR = /\b(1[6-9]\d{2}|20\d{2})(?:[-–]\d{2,4})?\b/;
+
+/** The year at the end of a credit line agrees with the key's first component: "1949 (49.11.4)", "2013 (2013.3.1.454)". */
+function yearAgrees(value: string, text: string): boolean {
+  const m = text.match(CREDIT_YEAR);
+  if (!m) return false;
+  const year = m[1];
+  const head = value.replace(/^[A-Za-z]+/, '').split(/[.-]/)[0];
+  return head === year || head === year.slice(2);
+}
 
 export function findAccessionCandidates(
   observations: Observation[],
@@ -66,9 +94,14 @@ export function findAccessionCandidates(
         const value = raw.replace(/^\./, '');
         if (YEAR_RANGE.test(value)) continue;
         let score = 0;
-        if (shapes.some((re) => re.test(value))) score += 3;
+        // Shapes describe the number; a part designator (14A-B, D24) is not part of it.
+        const bare = value.replace(/[A-Za-z]{1,2}(?:-[A-Za-z]{1,2})?$/, '');
+        if (shapes.some((re) => re.test(bare))) score += 3;
         if (ACCESSION_WORD.test(text)) score += 2;
         if (DIMENSION.test(text)) score -= 2;
+        if (ERA_LINE.test(text) && DASHED_PAIR.test(value)) score -= 4;
+        if (CREDIT_WORD.test(text)) score += 1;
+        if (yearAgrees(value, text)) score += 2;
         if (obs.contested) score -= 0.5;
         // Accessions sit at the foot of a tombstone far more often than the head.
         if (index / total > 0.5) score += 0.5;
@@ -83,5 +116,11 @@ export function findAccessionCandidates(
   });
 
   // Three candidates at most — ask rather than guess, but don't ask forty questions (§4.1).
-  return [...found.values()].sort((a, b) => b.score - a.score).slice(0, 3);
+  // A token the evidence argues against (a date on an era line, a dimension) is not
+  // offered even when it's the only one: "I couldn't find a number" with a crop or a
+  // typed answer is the honest read-back, and the frame is still in the take for the Mac.
+  return [...found.values()]
+    .filter((c) => c.score >= 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3);
 }

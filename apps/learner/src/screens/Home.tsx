@@ -1,9 +1,10 @@
-import { useState } from 'react';
-import { Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useInsets } from '../insets';
-import { listTakes, manifestFile, type Take } from '../take';
+import { shareManifest } from '../share';
+import type { Take } from '../take';
 import { type, usePalette } from '../theme';
 import { Button, H1, P, Rule, Screen } from '../ui';
+import { PastTakes } from './PastTakes';
 
 export type Input = 'venue' | 'label' | 'wall_text' | 'exterior';
 
@@ -23,11 +24,8 @@ export function Home({
 }) {
   const p = usePalette();
   const insets = useInsets();
-  const [pastOpen, setPastOpen] = useState(false);
   const since = new Date(take.started).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
   const c = take.counts;
-
-  const past = pastOpen ? listTakes().filter((t) => t.id !== take.id) : [];
 
   return (
     <Screen>
@@ -53,25 +51,11 @@ export function Home({
 
         <Rule />
 
-        <Button label="Share the manifest" tone="secondary" onPress={() => share(take)} />
+        <Button label="Share the manifest" tone="secondary" onPress={() => shareManifest(take)} />
         <Button label="Leaving — shoot the exterior" tone="secondary" onPress={() => onInput('exterior')} />
 
         <Rule />
-        <Pressable onPress={() => setPastOpen((o) => !o)} hitSlop={8}>
-          <Text style={[type.small, { color: p.muted }]}>{pastOpen ? 'Hide earlier visits' : 'Earlier visits'}</Text>
-        </Pressable>
-        {pastOpen
-          ? past.length === 0
-            ? <P muted>This is the first.</P>
-            : past.map((t) => (
-                <Pressable key={t.id} onPress={() => share(t)} style={[styles.pastRow, { borderColor: p.rule }]}>
-                  <Text style={[type.body, { color: p.text }]}>{t.venue.name}</Text>
-                  <Text style={[type.small, { color: p.muted }]}>
-                    {t.id} · {t.counts.labels} labels · {t.counts.frames} frames · tap to share
-                  </Text>
-                </Pressable>
-              ))
-          : null}
+        <PastTakes except={take.id} />
         <Pressable onPress={onPreflight} hitSlop={8} style={{ marginTop: 20 }}>
           <Text style={[type.small, { color: p.muted }]}>Check this build</Text>
         </Pressable>
@@ -79,17 +63,6 @@ export function Home({
       </ScrollView>
     </Screen>
   );
-}
-
-/** The manifest goes out through the share sheet — AirDrop, Files, Mail. The frames are already in the camera roll. */
-async function share(take: Take) {
-  const f = manifestFile(take);
-  if (!f.exists) return;
-  try {
-    await Share.share({ url: f.uri, title: `${take.id} manifest` });
-  } catch (e) {
-    console.warn('[home] share failed', e);
-  }
 }
 
 function Count({ n, label }: { n: number; label: string }) {
@@ -117,5 +90,4 @@ const styles = StyleSheet.create({
   counts: { flexDirection: 'row', marginTop: 20 },
   count: { marginRight: 28 },
   big: { paddingVertical: 18, paddingHorizontal: 18, borderRadius: 12, marginBottom: 12 },
-  pastRow: { paddingVertical: 12, borderBottomWidth: StyleSheet.hairlineWidth },
 });
