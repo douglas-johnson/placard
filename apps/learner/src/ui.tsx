@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, createContext, useCallback, useContext, useRef } from 'react';
 import { Pressable, ScrollView, type ScrollViewProps, StyleSheet, Text, TextInput, TextInputProps, View, ViewStyle } from 'react-native';
 import { type, usePalette } from './theme';
 
@@ -73,12 +73,27 @@ export function Field({
   ...input
 }: { label: string; hint?: string } & TextInputProps) {
   const p = usePalette();
+  const sheet = useContext(SheetContext);
+  const focused = useRef(false);
   return (
     <View style={styles.field}>
       <Text style={[type.small, { color: p.muted, marginBottom: 6 }]}>{label}</Text>
       <TextInput
         placeholderTextColor={p.pending}
         {...input}
+        onFocus={(e) => {
+          focused.current = true;
+          input.onFocus?.(e);
+        }}
+        onBlur={(e) => {
+          focused.current = false;
+          input.onBlur?.(e);
+        }}
+        onContentSizeChange={(e) => {
+          // A multiline field that grew while being typed into: keep its end on screen.
+          if (input.multiline && focused.current) sheet?.revealEnd();
+          input.onContentSizeChange?.(e);
+        }}
         style={[
           styles.input,
           { color: p.text, borderColor: p.rule, backgroundColor: p.card },
@@ -110,17 +125,27 @@ export function Screen({ children }: { children: ReactNode }) {
  * the content inset grows with the keyboard and the focused input is scrolled into
  * view. Taps outside a field still land on buttons and chips.
  */
+const SheetContext = createContext<{ revealEnd: () => void } | null>(null);
+
 export function Sheet({ children, contentContainerStyle, ...rest }: ScrollViewProps & { children: ReactNode }) {
+  const ref = useRef<ScrollView>(null);
+  // iOS scrolls a field into view when it takes focus, but not as a multiline field
+  // grows: the new lines extend down behind the keyboard (seen in the simulator after
+  // the first fix). A growing field asks the sheet to show its end.
+  const revealEnd = useCallback(() => ref.current?.scrollToEnd({ animated: true }), []);
   return (
-    <ScrollView
-      automaticallyAdjustKeyboardInsets
-      keyboardShouldPersistTaps="handled"
-      keyboardDismissMode="interactive"
-      contentContainerStyle={contentContainerStyle}
-      {...rest}
-    >
-      {children}
-    </ScrollView>
+    <SheetContext.Provider value={{ revealEnd }}>
+      <ScrollView
+        ref={ref}
+        automaticallyAdjustKeyboardInsets
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="interactive"
+        contentContainerStyle={contentContainerStyle}
+        {...rest}
+      >
+        {children}
+      </ScrollView>
+    </SheetContext.Provider>
   );
 }
 
