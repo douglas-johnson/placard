@@ -274,6 +274,75 @@ camera on the rest. That comparison *is* the A1 milestone test, and it is more u
 than a whole day on an untested build. Hard rule for that visit: if the build is not
 on the phone when the doors open, it is a stock camera day, no exceptions.
 
+### 6.1 What happened at the Met — 2026-09-20
+
+The membership came through the evening before, so the visit that was going to be a
+stock camera day became the first app visit, with the stock camera as the fallback.
+Fourteen label groups in Greek and Roman and in Egyptian, five wall texts, three
+venue signs, one exterior; rain cut the exterior short. Every one of the 41 frames
+came home with a time, a UTC offset, and a fix within a few metres, which is the
+first take where that is true, and the app's own EXIF write is what did it for 38 of
+them. All fourteen accessions resolve to exactly one object through the Met's API
+when the number is quoted, so the corpus now has its first `catalog_api` fixtures —
+fourteen of them, against nine `label_only` from MCNY. What the take holds for §4 is
+in the fixtures and the venue entry; what it holds for *this* plan is below.
+
+**The camera doesn't focus on labels.** Four of fifteen label and sign shots had to
+be retaken with the stock camera, and the app's frames are not merely soft: the Mac
+OCR of the app's frame of the "Three glass vessels" card returns *Bastern
+Mednerranean er Sout fudun*, and its frame of the welcome sign returns Cyrillic. The
+stock camera's frames of the same surfaces, seconds later, read clean. The on-device
+pass only *looked* adequate because it ran on the less-blurred cards and because the
+tester corrected what it offered. This is F1's first job, ahead of everything in §7:
+tap-to-focus or a close-focus mode in `expo-camera`, and it is a native-surface
+question, so it rides the first rebuild.
+
+**The capture is cropped to the screen.** App frames are 1860 × 4032 — the phone's
+screen aspect, not the sensor's 3024 × 4032 — so forty percent of the width never
+reaches the file. The shared-panel card lost its accession's first component to the
+edge that way (`013.1383` for `91.1.1383`), and the gem-gallery tombstone picked up
+its neighbours instead of margin. Capture at sensor aspect; preview however you like.
+
+**Three of fourteen accession candidates were dates.** `373-350`, `750-740`,
+`480-470` — BCE ranges with an en dash, offered as the accession because they were
+number-shaped and nothing scored them down. The tester caught all three, which is
+the read-back working as designed, but the locator should know that two three-digit
+numbers and a dash is a date on every antiquities card. The counter-signal is on the
+same line: the credit-line year and the accession's first component agreed on
+thirteen of fourteen labels.
+
+**A frame with no text was accepted as a label.** `f0030` is the floor and a plinth;
+on-device OCR returned zero lines in 209 ms and the app said nothing. The tester
+shot again. The read-back screen should say *nothing read — retake?* before
+offering a confirm button for an empty result.
+
+**There is no door to a finished take.** Ending a visit with the exterior shot lands
+on Arrive, and Arrive lists nothing; the past-takes list with *tap to share* is on
+Home, which needs an open take. The manifest — the only thing that turns 38 randomly
+named camera-roll files back into groups, roles, and confirmations — was on the
+phone and unreachable until a throwaway take was started. Two fixes, both JS-only
+under D33: Arrive shows past takes, and ending a take lands on a screen whose one
+job is *share the manifest*. The larger point is §4's: the manifest should not
+depend on the tester remembering to share it at all. Until the upload queue exists,
+it should at least be written alongside the frames wherever they go.
+
+**The frames and the manifest leave the phone by different routes**, and Image
+Capture names the camera-roll copies `AJIG7042.JPG`. `tools/manifest/bind-frames.py`
+rejoins them by capture time — 38 of 38 within two seconds — and that step is now
+part of every import.
+
+**And one thing the plan did not anticipate.** A student exhibition was on in the
+education centre, and one label was a child's, with name, grade, school and
+teacher. The frame was deleted the same day and the rule is in the protocol now; the
+app should have the rule too — a *don't shoot this label* prompt when the venue
+input says education centre or temporary show, before F1 puts the build in the hands
+of testers who haven't read the protocol.
+
+What was proven: the whole path from a tap in the app to a fixture verified against
+the institution's catalog, on a phone in airplane mode, with the Mac out of the loop
+until the evening. What was not: that the app's camera can replace the stock one.
+For the next visit it can't, and the protocol's *stock camera comes too* stands.
+
 ---
 
 ## 7. Milestones
@@ -290,6 +359,11 @@ ships to build 4 as a JS update (D33). The accession locator finds the right num
 in its three candidates for every MCNY fixture when run over the corpus tool's own
 readings. Not yet field-tested; the Met on the 20th is the first chance, and the
 stock camera comes too.
+
+*Status, 2026-09-20 evening:* field-tested at the Met; see §6.1. The data path held
+end to end. The camera did not — four retakes in fifteen — and the manifest was
+unreachable after the take ended. Both are on the list for the next iteration;
+focus is a native change, the rest ship as an update.
 
 **F1 — many collectors.** The consent screen; the contributor ID; face blur in the
 native module; the ingest service and bucket; the upload queue; `eas.json` and
