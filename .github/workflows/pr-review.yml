@@ -1,0 +1,57 @@
+# Automated PR review. Comments only — this job cannot write to the repository.
+#
+# The reviewer's instructions are not here; they are the /pr-review skill in
+# .claude/skills/pr-review/SKILL.md, checked in so the prompt is versioned and
+# editable. When the reviewer keeps raising something we've decided is fine, the
+# fix is a paragraph in that file, not a reply on the PR.
+#
+# Three things keep it read-only, and all three matter:
+#   1. `contents: read` — the workflow token can't push.
+#   2. `--allowedTools` below is the complete tool list. No Edit, no Write, no
+#      `git push`, no `gh pr edit`. Bash is limited to the named read commands
+#      plus `gh pr comment`.
+#   3. The skill says so, for the cases the first two don't mechanically cover.
+#
+# The reviewer is pinned to a different model than the one writing the code on
+# purpose: two models are two slightly different opinions, which is the point of a
+# second reader. Don't "upgrade" it to match the editor session.
+#
+# Keep the `--allowedTools` line even though the skill's own frontmatter names
+# the same tools: the action starts the inline-comment MCP server only when
+# claude_args names it.
+
+name: PR review
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review, reopened]
+
+# A new push to the same PR cancels a review still running on the old head.
+concurrency:
+  group: pr-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # The skill reads the diff through `gh pr diff`, but it also needs to
+          # walk the files around a change, and `git log` for the why.
+          fetch-depth: 0
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: "/pr-review ${{ github.repository }} ${{ github.event.pull_request.number }}"
+          claude_args: |
+            --model claude-sonnet-5
+            --max-turns 40
+            --allowedTools "Read,Grep,Glob,Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr comment:*),Bash(gh api repos/*/pulls/*/comments),Bash(gh api repos/*/issues/*/comments),mcp__github_inline_comment__create_inline_comment"
