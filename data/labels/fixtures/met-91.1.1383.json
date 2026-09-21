@@ -96,7 +96,7 @@
     "title_note": "The panel title. The API title for this accession is 'Glass oinochoe (perfume jug)' — a shared panel's title is not any one object's title.",
     "culture": "Eastern Mediterranean or South Italian, core-formed, Mediterranean Group II",
     "date_raw": "late 4th–early 3rd century B.C.",
-    "date_edtf": "-0349~/-0274~",
+    "date_edtf": "-0349/-0274",
     "date_edtf_note": "BCE years are astronomical: 375 BCE is -0374. Ranges are intervals; '~' marks each end when the label says 'ca.'. A named span like 'late 6th century' is written as the conventional interval and noted in date_raw.",
     "medium": "glass",
     "credit_line": "The Edward C. Moore Collection, Bequest of Edward C. Moore, 1891",
