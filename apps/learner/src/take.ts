@@ -102,7 +102,15 @@ export type ManifestRecord =
   | (Base & {
       type: 'frame';
       frame: string;
-      file: string;
+      /** Null only when the frame was redacted after the fact (D4 amendment). */
+      file: string | null;
+      /**
+       * Set by hand on the Mac, never by the app: the frame identified a minor and was
+       * deleted from raw/ (D4 amendment, data/README.md "Minors"). The record stays so
+       * replay and sequence numbers hold; tools/manifest/bind-frames.py reports it
+       * rather than binding it.
+       */
+      redacted?: string;
       kind: FrameKind;
       group: string | null;
       sign_kind?: VenueSignKind;

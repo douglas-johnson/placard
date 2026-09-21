@@ -98,6 +98,18 @@ review, and diffs.
 Corollary: raw is **immutable**. No cropping, rotating, or renaming. A tidied corpus
 makes every evaluation optimistic about conditions the app will actually meet.
 
+**Amendment (2026-09-20, the Met).** One exception, and it is the only one: a frame
+that identifies a minor is deleted from `raw/` the day it's found, its OCR is stripped
+from the manifest (the record stays, marked `redacted`, so replay and sequence numbers
+hold), and `derived/` is regenerated. The first case was a P.S. Art label carrying a
+child's name, grade, school and teacher. The immutability rule exists so that nobody
+tidies images to flatter the pipeline; a child's name is not that case, and reading the
+rule as forbidding the deletion would put a corpus convention above the one thing the
+project promises never to hold. The capture protocol now says not to shoot such a label
+in the first place, and `data/README.md` (*Minors*) says what a fixture for that group
+may contain — the work and the wall text, and no name. This amendment is the settled
+answer; it does not get re-argued per case.
+
 ---
 
 ## D5 — Dates are stored as EDTF, everywhere, from the start

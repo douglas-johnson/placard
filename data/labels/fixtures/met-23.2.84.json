@@ -1,0 +1,135 @@
+{
+  "id": "met-23.2.84",
+  "venue": "met",
+  "gallery": "132",
+  "gallery_dialect": "house_card",
+  "captured": "2026-09-20",
+  "source_image": "raw/2026-09-20-met/PMHG9499.JPG",
+  "frames": {
+    "work": "raw/2026-09-20-met/CPCE8776.JPG",
+    "work_2": "raw/2026-09-20-met/CEPK3874.JPG",
+    "label": "raw/2026-09-20-met/PMHG9499.JPG",
+    "label_misfire": "raw/2026-09-20-met/MWFU3479.JPG",
+    "exhibition_wall_text": "raw/2026-09-20-met/VHID2823.JPG"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": true,
+    "gps_note": "First take with GPS on every frame. App frames carry a 9-key GPS block written by the F0 build; stock-camera HEICs carry Apple's full 15-key block. Both bind the frame to the Met to within a few metres."
+  },
+  "source_note": "App frames are camera-roll copies (Image Capture over USB) bound to the manifest by capture time with tools/manifest/bind-frames.py — see derived/2026-09-20-met-frames.json. f0030 (MWFU3479) is a misfire — floor and plinth, zero text. Kept as the negative case: the app accepted a label frame with no OCR result and let the tester shoot again; it did not warn.",
+  "label_form": "printed_card",
+  "label_kind": "shared_panel",
+  "verified_against": "catalog_api",
+  "catalog": {
+    "checked": "2026-09-20",
+    "object_id": 557793,
+    "url": "https://www.metmuseum.org/art/collection/search/557793",
+    "title": "The King with Anubis, Tomb of Haremhab",
+    "object_date": "1910–1911; original ca. 1314–1300 BCE",
+    "medium": "Tempera on paper",
+    "credit_line": "Rogers Fund, 1923",
+    "gallery": "132"
+  },
+  "shared_panel": {
+    "count": 2,
+    "objects": [
+      {
+        "accession_number": "23.2.84",
+        "title": "King Haremhab with Anubis",
+        "catalog": {
+          "checked": "2026-09-20",
+          "object_id": 557793,
+          "url": "https://www.metmuseum.org/art/collection/search/557793",
+          "title": "The King with Anubis, Tomb of Haremhab",
+          "object_date": "1910–1911; original ca. 1314–1300 BCE",
+          "medium": "Tempera on paper",
+          "credit_line": "Rogers Fund, 1923",
+          "gallery": "132"
+        }
+      },
+      {
+        "accession_number": "23.2.86",
+        "title": "King Haremhab with Horus Son of Isis",
+        "catalog": {
+          "checked": "2026-09-20",
+          "object_id": 557795,
+          "url": "https://www.metmuseum.org/art/collection/search/557795",
+          "title": "The King and Horus, Tomb of Haremhab",
+          "object_date": "1910–1911; original ca. 1314–1300 BCE"
+        }
+      }
+    ],
+    "note": "Two facsimiles, one credit line: 'Rogers Fund, 1923 (23.2.84, 23.2.86)'. Two accessions inside one pair of parentheses, comma-separated. The app's shared_panel flag was set with count 2 and both candidates were offered; the human confirmed the first."
+  },
+  "difficulty": [
+    "shared_panel",
+    "two_accessions_one_parenthesis",
+    "facsimile",
+    "artist_is_the_copyist",
+    "two_dates_original_and_copy",
+    "date_differs_from_catalog",
+    "section_header_above_title",
+    "kv_number",
+    "reflective_glass",
+    "bce_date_range",
+    "circa_marker"
+  ],
+  "expected": {
+    "accession_number": "23.2.84",
+    "section_header": "Kings and Queens Meet the Gods",
+    "title": "King Haremhab with Anubis (left) and Horus Son of Isis (right)",
+    "object_class": "facsimile",
+    "artist": "Lancelot Crane",
+    "artist_role": "facsimile painter",
+    "date_raw": "painted in 1910–11",
+    "date_edtf": "1910/1911",
+    "original": {
+      "period": "New Kingdom, Dynasty 18, reign of Haremhab",
+      "date_raw": "ca. 1323–1295 BCE",
+      "date_edtf": "-1322~/-1294~",
+      "findspot": "Thebes, Valley of the Kings, tomb of Haremhab (KV 57)"
+    },
+    "date_edtf_note": "BCE years are astronomical: 375 BCE is -0374. Ranges are intervals; '~' marks each end when the label says 'ca.'. A named span like 'late 6th century' is written as the conventional interval and noted in date_raw. Two dates on one label: the copy's and the original's. The object's date is the copy's; the original's is a relationship to another thing.",
+    "medium": null,
+    "medium_note": "Not on the label. API: 'Tempera on paper'.",
+    "credit_line": "Rogers Fund, 1923",
+    "donation_year": 1923,
+    "owning_institution": null
+  },
+  "label_vs_catalog": {
+    "agree": [
+      "accession",
+      "artist",
+      "credit_line",
+      "copy_date"
+    ],
+    "differ": {
+      "original_date": "label 'ca. 1323–1295 BCE' vs API 'original ca. 1314–1300 BCE'. Reign dates for Haremhab differ by chronology; both are the Met's.",
+      "title": "label 'King Haremhab with Anubis (left) and Horus Son of Isis (right)' covers both objects; API 'The King with Anubis, Tomb of Haremhab' is one of them"
+    }
+  },
+  "capture": {
+    "build": "F0, TestFlight update 01a0bbb0-c2fb-7bd9-b452-8e83fc2afda6",
+    "group": "g0013",
+    "on_device_candidates": [
+      "23.2.84",
+      "23.2.86"
+    ],
+    "accession_status": "confirmed",
+    "machine_reading": "23.2.84",
+    "human_value": "23.2.84",
+    "flags": [
+      "shared_panel"
+    ],
+    "hard_cases_tagged": [
+      "reflective_glass"
+    ],
+    "note": null
+  },
+  "traps": {
+    "the_artist_is_the_copyist": "Lancelot Crane painted the facsimile in 1910–11. He is the artist of accession 23.2.84 and has nothing to do with the tomb painting it copies. Attach him to the wrong node and the graph says a British painter worked in Dynasty 18.",
+    "kv_57": "'(KV 57)' — another parenthesised alphanumeric near the bottom of the tombstone block; Mac OCR read it 'KV S7'. Not an accession.",
+    "section_header": "'Kings and Queens Meet the Gods' sits above the title in the same bold weight. A title extractor taking the first bold line gets the gallery section, not the object."
+  }
+}

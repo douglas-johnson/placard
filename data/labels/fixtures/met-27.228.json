@@ -1,0 +1,81 @@
+{
+  "id": "met-27.228",
+  "venue": "met",
+  "gallery": "154",
+  "gallery_dialect": "house_card",
+  "captured": "2026-09-20",
+  "source_image": "raw/2026-09-20-met/JHTS7480.JPG",
+  "frames": {
+    "work": "raw/2026-09-20-met/RIAC7668.JPG",
+    "label": "raw/2026-09-20-met/JHTS7480.JPG"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": true,
+    "gps_note": "First take with GPS on every frame. App frames carry a 9-key GPS block written by the F0 build; stock-camera HEICs carry Apple's full 15-key block. Both bind the frame to the Met to within a few metres."
+  },
+  "source_note": "App frames are camera-roll copies (Image Capture over USB) bound to the manifest by capture time with tools/manifest/bind-frames.py — see derived/2026-09-20-met-frames.json.",
+  "label_form": "printed_card",
+  "verified_against": "catalog_api",
+  "catalog": {
+    "checked": "2026-09-20",
+    "object_id": 252948,
+    "url": "https://www.metmuseum.org/art/collection/search/252948",
+    "title": "Terracotta loutrophoros (ceremonial vase for water)",
+    "object_date": "late 6th century BCE",
+    "medium": "Terracotta",
+    "credit_line": "Funds from various donors, 1927",
+    "gallery": "154"
+  },
+  "difficulty": [
+    "two_column_layout",
+    "accession_as_header",
+    "two_component_accession",
+    "reflective_glass",
+    "bce_named_span",
+    "no_artist",
+    "small_type"
+  ],
+  "expected": {
+    "accession_number": "27.228",
+    "title": "Terracotta loutrophoros (ceremonial vase for water)",
+    "culture": "Greek, Attic, black-figure",
+    "date_raw": "late 6th century B.C.",
+    "date_edtf": "-0549/-0500",
+    "date_edtf_note": "BCE years are astronomical: 375 BCE is -0374. Ranges are intervals; '~' marks each end when the label says 'ca.'. A named span like 'late 6th century' is written as the conventional interval and noted in date_raw. 'Late 6th century BCE' is written -0549/-0500; the API stores -550/-500.",
+    "medium": "terracotta",
+    "subject": "Prothesis (laying out of the dead); below, horsemen. On the neck, mourners",
+    "credit_line": "Funds from various donors, 1927",
+    "donation_year": 1927,
+    "artist": null,
+    "owning_institution": null
+  },
+  "label_vs_catalog": {
+    "agree": [
+      "title",
+      "culture",
+      "date",
+      "credit_line"
+    ],
+    "differ": {}
+  },
+  "capture": {
+    "build": "F0, TestFlight update 01a0bbb0-c2fb-7bd9-b452-8e83fc2afda6",
+    "group": "g0004",
+    "on_device_candidates": [
+      "27.228"
+    ],
+    "accession_status": "confirmed",
+    "machine_reading": "27.228",
+    "human_value": "27.228",
+    "flags": [],
+    "hard_cases_tagged": [
+      "reflective_glass"
+    ],
+    "note": null
+  },
+  "traps": {
+    "two_columns": "The interpretive text runs in two columns. Mac OCR interleaves them line by line ('tional gestures of lamentation' lands between the title block and the credit line). Column detection has to happen before reading order; the tombstone block is single-column above the columns and survives.",
+    "shortest_accession": "Two components, no item number. The 'digits.digits' shape also matches a decimal, a version number, and half of every date on the card."
+  }
+}

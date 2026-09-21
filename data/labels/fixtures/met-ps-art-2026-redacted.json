@@ -1,0 +1,65 @@
+{
+  "id": "met-ps-art-2026-redacted",
+  "venue": "met",
+  "gallery": "Uris Center for Education",
+  "gallery_dialect": "student_exhibition_card",
+  "captured": "2026-09-20",
+  "source_image": null,
+  "frames": {
+    "work": "raw/2026-09-20-met/UQXE2479.JPG",
+    "exhibition_wall_text": "raw/2026-09-20-met/OLOU4070.JPG"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": true,
+    "gps_note": "First take with GPS on every frame. App frames carry a 9-key GPS block written by the F0 build; stock-camera HEICs carry Apple's full 15-key block. Both bind the frame to the Met to within a few metres."
+  },
+  "source_note": "The label frame (f0035) was DELETED from raw/ on 2026-09-20 and its OCR lines stripped from the manifest: it carried a child's full name, grade, school and teacher. See data/README.md 'Minors' and the capture protocol. The work and the exhibition wall text are kept; neither names anyone.",
+  "label_form": "printed_card",
+  "verified_against": "not_applicable",
+  "verification_note": "A student exhibition. No accession, no catalog record, and by policy no transcription of the label.",
+  "difficulty": [
+    "minor_artist",
+    "no_accession",
+    "temporary_exhibition",
+    "redacted_label",
+    "house_parser_must_not_apply"
+  ],
+  "expected": {
+    "accession_number": null,
+    "title": null,
+    "artist": null,
+    "artist_note": "A child. Not recorded, by rule.",
+    "medium": "Tempera paint sticks and oil pastel",
+    "medium_note": "The one field from the label that identifies nobody, retained from the on-device read before redaction.",
+    "exhibition": "P.S. Art 2026: Celebrating the Creative Spirit of New York City Kids",
+    "exhibition_facts_from_wall_text": {
+      "edition": "24th annual; 19th year at The Met",
+      "works_on_view": 125,
+      "submissions": "nearly 1,000",
+      "grades": "prekindergarten through grade 12",
+      "organisers": [
+        "New York City Public Schools",
+        "NYCPS Arts Office",
+        "Studio in a School",
+        "The Metropolitan Museum of Art"
+      ]
+    },
+    "owning_institution": null,
+    "venue_relationship": "temporary exhibition"
+  },
+  "capture": {
+    "build": "F0, TestFlight update 01a0bbb0-c2fb-7bd9-b452-8e83fc2afda6",
+    "group": "g0014",
+    "on_device_candidates": [],
+    "accession_status": "none",
+    "machine_reading": null,
+    "human_value": null,
+    "flags": [],
+    "hard_cases_tagged": [],
+    "note": "Work by school age child"
+  },
+  "traps": {
+    "the_label_is_the_hazard": "Every field a house-card parser wants — name, 'Grade', 'School', 'Teacher' — is identifying information about a minor. The venue prior (§4.1b) says 'the Met'; the gallery says 'education centre, temporary show'; the label grammar says 'not a tombstone'. Any one of those should stop the extractor before it stores a name. The rule is in the protocol now so the frame is never taken; this fixture is what a compliant record of such a work looks like."
+  }
+}

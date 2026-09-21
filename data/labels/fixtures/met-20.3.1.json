@@ -1,0 +1,87 @@
+{
+  "id": "met-20.3.1",
+  "venue": "met",
+  "gallery": "105",
+  "gallery_dialect": "house_card",
+  "captured": "2026-09-20",
+  "source_image": "raw/2026-09-20-met/YKFX4553.JPG",
+  "frames": {
+    "work": "raw/2026-09-20-met/AVHO2217.JPG",
+    "label": "raw/2026-09-20-met/YKFX4553.JPG"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": true,
+    "gps_note": "First take with GPS on every frame. App frames carry a 9-key GPS block written by the F0 build; stock-camera HEICs carry Apple's full 15-key block. Both bind the frame to the Met to within a few metres."
+  },
+  "source_note": "App frames are camera-roll copies (Image Capture over USB) bound to the manifest by capture time with tools/manifest/bind-frames.py — see derived/2026-09-20-met-frames.json.",
+  "label_form": "printed_card",
+  "verified_against": "catalog_api",
+  "catalog": {
+    "checked": "2026-09-20",
+    "object_id": 544214,
+    "url": "https://www.metmuseum.org/art/collection/search/544214",
+    "title": "Travelling Boat being Rowed",
+    "object_date": "ca. 1981–1975 B.C.",
+    "medium": "Wood, paint, gesso, linen twine and linen fabric",
+    "credit_line": "Rogers Fund and Edward S. Harkness Gift, 1920",
+    "gallery": "105"
+  },
+  "difficulty": [
+    "title_differs_from_catalog",
+    "title_with_model_letter",
+    "excavation_number_in_provenance",
+    "two_donors_one_credit_line",
+    "reflective_glass",
+    "low_light",
+    "bce_date_range",
+    "circa_marker",
+    "no_artist"
+  ],
+  "expected": {
+    "accession_number": "20.3.1",
+    "title": "Traveling boat rowing (O)",
+    "title_note": "'(O)' is the Meketre model's letter, part of the label title. The API title is 'Travelling Boat being Rowed' — different spelling of travelling, different construction, no letter.",
+    "period": "Dynasty 12, early reign of Amenemhat I",
+    "date_raw": "ca. 1981–1975 B.C.",
+    "date_edtf": "-1980~/-1974~",
+    "date_edtf_note": "BCE years are astronomical: 375 BCE is -0374. Ranges are intervals; '~' marks each end when the label says 'ca.'. A named span like 'late 6th century' is written as the conventional interval and noted in date_raw.",
+    "medium": "Painted wood",
+    "findspot": "Model chamber, tomb of Meketre (MMA 1101), western Thebes",
+    "credit_line": "Rogers Fund and Edward S. Harkness Gift, 1920",
+    "donation_year": 1920,
+    "artist": null,
+    "owning_institution": null
+  },
+  "label_vs_catalog": {
+    "agree": [
+      "accession",
+      "date",
+      "credit_line"
+    ],
+    "differ": {
+      "title": "see title_note",
+      "medium": "label 'Painted wood', API 'Wood, paint, gesso, linen twine and linen fabric'"
+    }
+  },
+  "capture": {
+    "build": "F0, TestFlight update 01a0bbb0-c2fb-7bd9-b452-8e83fc2afda6",
+    "group": "g0012",
+    "on_device_candidates": [
+      "20.3.1"
+    ],
+    "accession_status": "confirmed",
+    "machine_reading": "20.3.1",
+    "human_value": "20.3.1",
+    "flags": [],
+    "hard_cases_tagged": [
+      "reflective_glass",
+      "low_light"
+    ],
+    "note": null
+  },
+  "traps": {
+    "mma_1101_is_not_an_accession": "'(MMA 1101)' is the excavation's tomb number, parenthesised exactly like an accession, three lines above the real one. A locator keyed on 'parenthesised number near the end' has two hits. The credit-line position and the year agreement (1920 ↔ 20.) pick the right one.",
+    "parenthetical_in_title": "'(O)' — a single capital letter in parentheses is title content here. Don't strip parentheticals from titles."
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "id": "met-22.139.24",
+  "venue": "met",
+  "gallery": "156",
+  "gallery_dialect": "house_card",
+  "captured": "2026-09-20",
+  "source_image": "raw/2026-09-20-met/UAOX4498.JPG",
+  "frames": {
+    "work": "raw/2026-09-20-met/RXZK4994.JPG",
+    "work_2": "raw/2026-09-20-met/KCWJ6073.JPG",
+    "label": "raw/2026-09-20-met/UAOX4498.JPG"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": true,
+    "gps_note": "First take with GPS on every frame. App frames carry a 9-key GPS block written by the F0 build; stock-camera HEICs carry Apple's full 15-key block. Both bind the frame to the Met to within a few metres."
+  },
+  "source_note": "App frames are camera-roll copies (Image Capture over USB) bound to the manifest by capture time with tools/manifest/bind-frames.py — see derived/2026-09-20-met-frames.json.",
+  "label_form": "printed_card",
+  "verified_against": "catalog_api",
+  "catalog": {
+    "checked": "2026-09-20",
+    "object_id": 251202,
+    "url": "https://www.metmuseum.org/art/collection/search/251202",
+    "title": "Marble statuette of Kybele",
+    "object_date": "1st–2nd century CE",
+    "medium": "Marble",
+    "credit_line": "Rogers Fund, 1922",
+    "gallery": "156"
+  },
+  "difficulty": [
+    "accession_three_times",
+    "accession_as_header",
+    "object_tag_in_vitrine",
+    "ce_date_range",
+    "no_artist",
+    "soft_focus"
+  ],
+  "expected": {
+    "accession_number": "22.139.24",
+    "title": "Marble statuette of Kybele",
+    "culture": "Roman",
+    "date_raw": "1st–2nd century A.D.",
+    "date_edtf": "0001/0200",
+    "date_edtf_note": "BCE years are astronomical: 375 BCE is -0374. Ranges are intervals; '~' marks each end when the label says 'ca.'. A named span like 'late 6th century' is written as the conventional interval and noted in date_raw.",
+    "medium": "marble",
+    "source_work_note": "Based on a gold and ivory statue by the Greek sculptor Pheidias or Agorakritos of the late 5th century B.C.",
+    "credit_line": "Rogers Fund, 1922",
+    "donation_year": 1922,
+    "artist": null,
+    "owning_institution": null
+  },
+  "label_vs_catalog": {
+    "agree": [
+      "title",
+      "culture",
+      "date",
+      "credit_line"
+    ],
+    "differ": {
+      "era_notation": "label 'A.D.', API 'CE'"
+    }
+  },
+  "capture": {
+    "build": "F0, TestFlight update 01a0bbb0-c2fb-7bd9-b452-8e83fc2afda6",
+    "group": "g0003",
+    "on_device_candidates": [
+      "22.139.24",
+      "130.24"
+    ],
+    "accession_status": "confirmed",
+    "machine_reading": "22.139.24",
+    "human_value": "22.139.24",
+    "flags": [],
+    "hard_cases_tagged": [],
+    "note": null
+  },
+  "traps": {
+    "three_copies_of_the_key": "22.139.24 appears as a header at the card's top-left, in the credit line in parentheses, and on a tag beside the object. Three readings of one key is corroboration, not three candidates — but the on-device pass also offered '130.24', a fragment of one of them, so a fragment can survive as a rival.",
+    "after_the_greek_sculptor": "The label names Pheidias and Agorakritos as the makers of the lost original this copies. Neither is the artist of this object (§4.6 — 'after' is a relationship, not authorship)."
+  }
+}

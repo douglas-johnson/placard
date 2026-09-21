@@ -1,0 +1,85 @@
+{
+  "id": "met-48.160.1",
+  "venue": "met",
+  "gallery": "103",
+  "gallery_dialect": "house_card",
+  "captured": "2026-09-20",
+  "source_image": "raw/2026-09-20-met/IYKC2872.JPG",
+  "frames": {
+    "work": "raw/2026-09-20-met/UIKU6792.JPG",
+    "label": "raw/2026-09-20-met/IYKC2872.JPG"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": true,
+    "gps_note": "First take with GPS on every frame. App frames carry a 9-key GPS block written by the F0 build; stock-camera HEICs carry Apple's full 15-key block. Both bind the frame to the Met to within a few metres."
+  },
+  "source_note": "App frames are camera-roll copies (Image Capture over USB) bound to the manifest by capture time with tools/manifest/bind-frames.py — see derived/2026-09-20-met-frames.json.",
+  "label_form": "printed_card",
+  "verified_against": "catalog_api",
+  "catalog": {
+    "checked": "2026-09-20",
+    "object_id": 543904,
+    "url": "https://www.metmuseum.org/art/collection/search/543904",
+    "title": "Wall tiles from the funerary apartments of king Djoser",
+    "object_date": "ca. 2630–2611 BCE",
+    "medium": "faience",
+    "credit_line": "Rogers Fund, by exchange, 1948",
+    "gallery": "103"
+  },
+  "difficulty": [
+    "title_differs_from_catalog",
+    "restoration_stated_in_medium",
+    "credit_line_with_clause",
+    "reflective_glass",
+    "oblique_angle",
+    "bce_date_range",
+    "circa_marker",
+    "no_artist"
+  ],
+  "expected": {
+    "accession_number": "48.160.1",
+    "title": "Wall Decoration from the Funerary Apartments of King Djoser",
+    "period": "Dynasty 3, reign of Djoser",
+    "date_raw": "ca. 2630–2611 B.C.",
+    "date_edtf": "-2629~/-2610~",
+    "date_edtf_note": "BCE years are astronomical: 375 BCE is -0374. Ranges are intervals; '~' marks each end when the label says 'ca.'. A named span like 'late 6th century' is written as the conventional interval and noted in date_raw.",
+    "medium": "Blue-green faience",
+    "medium_qualifier": "ledges are modern plaster restoration",
+    "credit_line": "Rogers Fund, by exchange, 1948",
+    "donation_year": 1948,
+    "artist": null,
+    "owning_institution": null
+  },
+  "label_vs_catalog": {
+    "agree": [
+      "accession",
+      "date",
+      "credit_line"
+    ],
+    "differ": {
+      "title": "label 'Wall Decoration from the Funerary Apartments of King Djoser' vs API 'Wall tiles from the funerary apartments of king Djoser'. Same object, two titles from the same institution. Title is not a key.",
+      "medium": "label 'Blue-green faience; ledges are modern plaster restoration' vs API 'faience'"
+    }
+  },
+  "capture": {
+    "build": "F0, TestFlight update 01a0bbb0-c2fb-7bd9-b452-8e83fc2afda6",
+    "group": "g0010",
+    "on_device_candidates": [
+      "48.160.1"
+    ],
+    "accession_status": "confirmed",
+    "machine_reading": "48.160.1",
+    "human_value": "48.160.1",
+    "flags": [],
+    "hard_cases_tagged": [
+      "reflective_glass",
+      "oblique_angle"
+    ],
+    "note": null
+  },
+  "traps": {
+    "title_is_not_stable": "The clearest case in the take that a title matched against the museum's own catalog can fail while the accession matches. Constraint 2: the label's title and the API's title are two claims about one object, both from the same source, made at different times.",
+    "restoration_in_the_medium_line": "'ledges are modern plaster restoration' after a semicolon. Medium parsers that take the whole line get a restoration note as a material."
+  }
+}

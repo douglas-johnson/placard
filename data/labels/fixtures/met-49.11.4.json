@@ -1,0 +1,88 @@
+{
+  "id": "met-49.11.4",
+  "venue": "met",
+  "gallery": "158",
+  "gallery_dialect": "house_card",
+  "captured": "2026-09-20",
+  "source_image": "raw/2026-09-20-met/IMG_1359.HEIC",
+  "frames": {
+    "work": "raw/2026-09-20-met/SVEG0870.JPG",
+    "label": "raw/2026-09-20-met/HWFN5677.JPG",
+    "label_stock_camera": "raw/2026-09-20-met/IMG_1359.HEIC"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": true,
+    "gps_note": "First take with GPS on every frame. App frames carry a 9-key GPS block written by the F0 build; stock-camera HEICs carry Apple's full 15-key block. Both bind the frame to the Met to within a few metres."
+  },
+  "source_note": "App frames are camera-roll copies (Image Capture over USB) bound to the manifest by capture time with tools/manifest/bind-frames.py — see derived/2026-09-20-met-frames.json. The app's label frame (HWFN5677) is out of focus; the transcription is from the stock-camera retake shot 30 s later. Keep both: the pair is the focus-failure regression case for F1.",
+  "label_form": "printed_card",
+  "verified_against": "catalog_api",
+  "catalog": {
+    "checked": "2026-09-20",
+    "object_id": 254614,
+    "url": "https://www.metmuseum.org/art/collection/search/254614",
+    "title": "Marble funerary lekythos of Aristomache",
+    "object_date": "ca. 375–350 BCE",
+    "medium": "Marble, Pentelic",
+    "credit_line": "Purchase, Joseph Pulitzer Bequest, 1949",
+    "gallery": "158"
+  },
+  "difficulty": [
+    "app_frame_out_of_focus",
+    "bce_date_range",
+    "date_range_read_as_accession",
+    "circa_marker",
+    "inscription_line",
+    "condition_line",
+    "ochre_card",
+    "no_artist"
+  ],
+  "expected": {
+    "accession_number": "49.11.4",
+    "title": "Marble funerary lekythos of Aristomache",
+    "culture": "Greek, Attic",
+    "date_raw": "ca. 375–350 B.C.",
+    "date_edtf": "-0374~/-0349~",
+    "date_edtf_note": "BCE years are astronomical: 375 BCE is -0374. Ranges are intervals; '~' marks each end when the label says 'ca.'. A named span like 'late 6th century' is written as the conventional interval and noted in date_raw.",
+    "medium": "marble",
+    "medium_note": "Only in the title on the label; the API says 'Marble, Pentelic'.",
+    "findspot": "Said to have been found near the Kerameikos in Athens",
+    "inscription": "Inscribed above the large standing figures, from left to right, Stratokleia Aiolos Aristomache Axiomache; below the seated woman, Leonike",
+    "condition": "Restored foot, mouth, and most of neck and handle",
+    "credit_line": "Purchase, Joseph Pulitzer Bequest, 1949",
+    "donation_year": 1949,
+    "artist": null,
+    "attribution_qualifier": null,
+    "owning_institution": null
+  },
+  "label_vs_catalog": {
+    "agree": [
+      "title",
+      "culture",
+      "date",
+      "credit_line"
+    ],
+    "differ": {
+      "era_notation": "label 'B.C.' (small caps), API 'BCE'"
+    }
+  },
+  "capture": {
+    "build": "F0, TestFlight update 01a0bbb0-c2fb-7bd9-b452-8e83fc2afda6",
+    "group": "g0001",
+    "on_device_candidates": [
+      "373-350",
+      "375-350"
+    ],
+    "accession_status": "corrected",
+    "machine_reading": "373-350",
+    "human_value": "49.11.4",
+    "flags": [],
+    "hard_cases_tagged": [],
+    "note": null
+  },
+  "traps": {
+    "date_looks_like_an_accession": "On-device OCR of the soft frame offered '373-350' and '375-350' — the date range — as the accession, and the human corrected it to 49.11.4. Two three-digit numbers joined by a dash is a BCE date on every Greek and Roman label in this gallery; score that shape down. The donation year 1949 agreeing with '49.' is the positive signal.",
+    "focus": "The app frame reads 'Purchase, Joseph Pulitzer Bequest, 1949 (49.11.4)' at 12 lines with 11 contested; the stock frame reads all of it clean. Same label, same phone, 30 seconds apart. See docs/field-beta.md findings."
+  }
+}

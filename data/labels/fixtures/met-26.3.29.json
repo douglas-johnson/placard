@@ -1,0 +1,84 @@
+{
+  "id": "met-26.3.29",
+  "venue": "met",
+  "gallery": "104",
+  "gallery_dialect": "house_card",
+  "captured": "2026-09-20",
+  "source_image": "raw/2026-09-20-met/XPYT6355.JPG",
+  "frames": {
+    "work": "raw/2026-09-20-met/TZWD4231.JPG",
+    "label": "raw/2026-09-20-met/XPYT6355.JPG"
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": true,
+    "gps_note": "First take with GPS on every frame. App frames carry a 9-key GPS block written by the F0 build; stock-camera HEICs carry Apple's full 15-key block. Both bind the frame to the Met to within a few metres."
+  },
+  "source_note": "App frames are camera-roll copies (Image Capture over USB) bound to the manifest by capture time with tools/manifest/bind-frames.py — see derived/2026-09-20-met-frames.json.",
+  "label_form": "printed_card",
+  "verified_against": "catalog_api",
+  "catalog": {
+    "checked": "2026-09-20",
+    "object_id": 544008,
+    "url": "https://www.metmuseum.org/art/collection/search/544008",
+    "title": "Statue of Nebhepetre Mentuhotep II in the Jubilee Garment",
+    "object_date": "ca. 2051–2000 B.C.",
+    "medium": "Sandstone, paint",
+    "credit_line": "Rogers Fund, 1926",
+    "gallery": "104"
+  },
+  "difficulty": [
+    "date_differs_from_catalog",
+    "title_differs_from_catalog",
+    "two_column_layout",
+    "title_wraps",
+    "excavation_provenance",
+    "confusable_unicode",
+    "bce_date_range",
+    "circa_marker",
+    "no_artist"
+  ],
+  "expected": {
+    "accession_number": "26.3.29",
+    "title": "Statue of King Mentuhotep II Standing in the Jubilee Garment",
+    "period": "Dynasty 11, late reign of Mentuhotep II",
+    "date_raw": "ca. 2030–2000 B.C.",
+    "date_edtf": "-2029~/-1999~",
+    "date_edtf_note": "BCE years are astronomical: 375 BCE is -0374. Ranges are intervals; '~' marks each end when the label says 'ca.'. A named span like 'late 6th century' is written as the conventional interval and noted in date_raw.",
+    "medium": "Sandstone, traces of paint",
+    "findspot": "From Thebes, Deir el-Bahri, courtyard in front of the temple of Mentuhotep II; MMA excavations, 1921–22",
+    "credit_line": "Rogers Fund, 1926",
+    "donation_year": 1926,
+    "artist": null,
+    "owning_institution": null
+  },
+  "label_vs_catalog": {
+    "agree": [
+      "accession",
+      "credit_line"
+    ],
+    "differ": {
+      "date": "label 'ca. 2030–2000 B.C.' vs API 'ca. 2051–2000 B.C.' — the label says 'late reign', the catalog gives the whole reign. Both are the Met's; the label is the narrower, later claim.",
+      "title": "label 'Statue of King Mentuhotep II Standing in the Jubilee Garment' vs API 'Statue of Nebhepetre Mentuhotep II in the Jubilee Garment'",
+      "medium": "label 'traces of paint', API 'paint'"
+    }
+  },
+  "capture": {
+    "build": "F0, TestFlight update 01a0bbb0-c2fb-7bd9-b452-8e83fc2afda6",
+    "group": "g0011",
+    "on_device_candidates": [
+      "26.3.29"
+    ],
+    "accession_status": "confirmed",
+    "machine_reading": "26.3.29",
+    "human_value": "26.3.29",
+    "flags": [],
+    "hard_cases_tagged": [],
+    "note": null
+  },
+  "traps": {
+    "the_catalog_disagrees_with_the_wall": "The first fixture where label and API give different dates for one accession. Neither is wrong; they are claims with different scope. A pipeline that overwrote the label's date with the API's would lose 'late reign', and one that trusted the wall over the catalog would lose the catalog's precision. Store both, cite both (§4.7, §8.3).",
+    "title_wraps_above_itself": "Mac OCR read 'in the Jubilee Garment' as the FIRST line — the wrapped second line of the title landed above the first in reading order. Bold title lines that wrap are a reading-order problem, not a recognition problem.",
+    "confusable": "Vision flagged one line with non-ASCII look-alike punctuation (the II in 'Mentuhotep Il' came back as lowercase L in one pass). The D14 class again, on a name rather than a key."
+  }
+}
