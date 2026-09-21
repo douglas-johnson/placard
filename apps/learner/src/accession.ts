@@ -16,6 +16,12 @@ export type Candidate = {
   line: number;
   contested: boolean;
   score: number;
+  /**
+   * Set when the line itself says the token is not a key — a BCE range on an era
+   * line, a number on a dimension line. Only these are withheld from the read-back;
+   * a low score never is (D21: the score narrows the field, the human closes it).
+   */
+  disqualified: boolean;
 };
 
 // A run of digit groups joined by dots — or hyphens, which Vision produces for a dot
@@ -98,8 +104,10 @@ export function findAccessionCandidates(
         const bare = value.replace(/[A-Za-z]{1,2}(?:-[A-Za-z]{1,2})?$/, '');
         if (shapes.some((re) => re.test(bare))) score += 3;
         if (ACCESSION_WORD.test(text)) score += 2;
-        if (DIMENSION.test(text)) score -= 2;
-        if (ERA_LINE.test(text) && DASHED_PAIR.test(value)) score -= 4;
+        const onDimensionLine = DIMENSION.test(text);
+        const dateOnEraLine = ERA_LINE.test(text) && DASHED_PAIR.test(value);
+        if (onDimensionLine) score -= 2;
+        if (dateOnEraLine) score -= 4;
         if (CREDIT_WORD.test(text)) score += 1;
         if (yearAgrees(value, text)) score += 2;
         if (obs.contested) score -= 0.5;
@@ -109,18 +117,20 @@ export function findAccessionCandidates(
         score += Math.min(value.length, 12) / 12;
         const prior = found.get(value);
         if (!prior || prior.score < score) {
-          found.set(value, { value, line: index, contested: obs.contested, score });
+          found.set(value, { value, line: index, contested: obs.contested, score, disqualified: dateOnEraLine || onDimensionLine });
         }
       }
     }
   });
 
   // Three candidates at most — ask rather than guess, but don't ask forty questions (§4.1).
-  // A token the evidence argues against (a date on an era line, a dimension) is not
-  // offered even when it's the only one: "I couldn't find a number" with a crop or a
-  // typed answer is the honest read-back, and the frame is still in the take for the Mac.
+  // A token the line itself argues against (a date on an era line, a number on a
+  // dimension line) is not offered even when it's the only one: "I couldn't find a
+  // number" with a crop or a typed answer is the honest read-back, and the frame is
+  // still in the take for the Mac. Nothing else is withheld — a contested reading with
+  // a low score is still offered, because the score ranks and the human decides (D21).
   return [...found.values()]
-    .filter((c) => c.score >= 0)
+    .filter((c) => !c.disqualified)
     .sort((a, b) => b.score - a.score)
     .slice(0, 3);
 }

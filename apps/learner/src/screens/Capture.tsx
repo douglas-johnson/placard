@@ -123,8 +123,10 @@ export function Capture({
         - The still is cropped to the preview's aspect (CameraPhotoCapture.swift,
           AVMakeRect(aspectRatio: previewSize …)). A full-screen preview on a 19.5:9
           phone threw away 40% of the sensor's width and clipped the first component
-          off an accession. The preview is now 3:4 — the sensor's shape — letterboxed,
-          and the strip and shutter sit in the bars.
+          off an accession. The preview is now 3:4 — the sensor's shape — letterboxed.
+          On a 19.5:9 phone the strip and shutter sit in the bars; on a shorter
+          screen (an SE) they overlap the preview's edges instead, which costs
+          nothing — the still is the full sensor either way.
       */}
       <View style={styles.viewport} pointerEvents="none">
         <View style={styles.sensorFrame}>

@@ -86,8 +86,8 @@ export function LabelFlow({
   const [candidates, setCandidates] = useState<Candidate[]>(
     __DEV__ && devPreset === 'readback'
       ? [
-          { value: '38.447.4', line: 7, contested: true, score: 3 },
-          { value: '38.447-4', line: 7, contested: true, score: 0.2 },
+          { value: '38.447.4', line: 7, contested: true, score: 3, disqualified: false },
+          { value: '38.447-4', line: 7, contested: true, score: 0.2, disqualified: false },
         ]
       : [],
   );
