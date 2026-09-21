@@ -1,13 +1,5 @@
-import { ReactNode } from 'react';
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  TextInputProps,
-  View,
-  ViewStyle,
-} from 'react-native';
+import { ReactNode, createContext, useCallback, useContext, useRef } from 'react';
+import { Pressable, ScrollView, type ScrollViewProps, StyleSheet, Text, TextInput, TextInputProps, View, ViewStyle } from 'react-native';
 import { type, usePalette } from './theme';
 
 /** Primary or secondary action. `tone="quiet"` is for the choices the app must offer but shouldn't nudge toward. */
@@ -81,12 +73,27 @@ export function Field({
   ...input
 }: { label: string; hint?: string } & TextInputProps) {
   const p = usePalette();
+  const sheet = useContext(SheetContext);
+  const focused = useRef(false);
   return (
     <View style={styles.field}>
       <Text style={[type.small, { color: p.muted, marginBottom: 6 }]}>{label}</Text>
       <TextInput
         placeholderTextColor={p.pending}
         {...input}
+        onFocus={(e) => {
+          focused.current = true;
+          input.onFocus?.(e);
+        }}
+        onBlur={(e) => {
+          focused.current = false;
+          input.onBlur?.(e);
+        }}
+        onContentSizeChange={(e) => {
+          // A multiline field that grew while being typed into: keep its end on screen.
+          if (input.multiline && focused.current) sheet?.revealEnd();
+          input.onContentSizeChange?.(e);
+        }}
         style={[
           styles.input,
           { color: p.text, borderColor: p.rule, backgroundColor: p.card },
@@ -108,6 +115,38 @@ export function Rule() {
 export function Screen({ children }: { children: ReactNode }) {
   const p = usePalette();
   return <View style={[styles.screen, { backgroundColor: p.bg }]}>{children}</View>;
+}
+
+/**
+ * A scrolling form. The one thing a plain ScrollView gets wrong with a text field
+ * near the bottom is the keyboard: it doesn't know it has lost the lower third of the
+ * screen, so the field you're typing into stays underneath it (the Met, the Note on
+ * the flags step — field-beta §6.1). `automaticallyAdjustKeyboardInsets` is iOS's fix:
+ * the content inset grows with the keyboard and the focused input is scrolled into
+ * view. Taps outside a field still land on buttons and chips.
+ */
+const SheetContext = createContext<{ revealEnd: () => void } | null>(null);
+
+export function Sheet({ children, contentContainerStyle, ...rest }: ScrollViewProps & { children: ReactNode }) {
+  const ref = useRef<ScrollView>(null);
+  // iOS scrolls a field into view when it takes focus, but not as a multiline field
+  // grows: the new lines extend down behind the keyboard (seen in the simulator after
+  // the first fix). A growing field asks the sheet to show its end.
+  const revealEnd = useCallback(() => ref.current?.scrollToEnd({ animated: true }), []);
+  return (
+    <SheetContext.Provider value={{ revealEnd }}>
+      <ScrollView
+        ref={ref}
+        automaticallyAdjustKeyboardInsets
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="interactive"
+        contentContainerStyle={contentContainerStyle}
+        {...rest}
+      >
+        {children}
+      </ScrollView>
+    </SheetContext.Provider>
+  );
 }
 
 export function H1({ children }: { children: ReactNode }) {

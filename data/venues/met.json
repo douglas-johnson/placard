@@ -1,7 +1,11 @@
 {
   "slug": "met",
   "name": "The Metropolitan Museum of Art",
-  "aliases": ["The Met", "Met Fifth Avenue", "the-metropolitan-museum-of-art"],
+  "aliases": [
+    "The Met",
+    "Met Fifth Avenue",
+    "the-metropolitan-museum-of-art"
+  ],
   "alias_note": "The F0 build's manifest uses the tester-entered slug 'the-metropolitan-museum-of-art' (take 2026-09-20). Registry slug is 'met'; the alias keeps the two joinable.",
   "type": "museum",
   "location": {
@@ -21,9 +25,20 @@
   "accession_formats": {
     "policy": "LOCATE, DO NOT VALIDATE (D11, D21). Patterns rank candidates; nothing is rejected for failing them.",
     "samples_seen": [
-      "49.11.4", "91.1.1383", "17.194.601", "91.1.1348", "22.139.24", "27.228",
-      "74.51.965", "21.169.1", "26.31.188", "10.130.1178", "48.160.1", "26.3.29",
-      "20.3.1", "23.2.84"
+      "49.11.4",
+      "91.1.1383",
+      "17.194.601",
+      "91.1.1348",
+      "22.139.24",
+      "27.228",
+      "74.51.965",
+      "21.169.1",
+      "26.31.188",
+      "10.130.1178",
+      "48.160.1",
+      "26.3.29",
+      "20.3.1",
+      "23.2.84"
     ],
     "shapes": [
       {
@@ -39,10 +54,10 @@
         "notes": "Two components. Same family as above without the item number."
       },
       {
-        "pattern": "^\\d{2}\\.\\d+\\.\\d+$ with four-digit third component",
+        "pattern": "^\\d{2}\\.\\d+\\.\\d{4}$",
         "example": "10.130.1178",
         "sample_count": 2,
-        "notes": "Same shape, large item numbers — bulk-accessioned collections (Cesnola 74.51.*, Moore 91.1.*). Longest tokens, most fragile to OCR."
+        "notes": "Same family, four-digit item numbers — bulk-accessioned collections (Cesnola 74.51.*, Moore 91.1.*). Longest tokens, most fragile to OCR."
       }
     ],
     "locating_heuristic": "In parentheses at the end of the credit line, immediately after the donation year: 'Rogers Fund, 1922 (22.139.24)'. The donation year and the accession's first component agree in 13 of 14 samples — 74.51.965 is credited '1874–76' — which is a useful confirmation signal, never a rule.",
@@ -78,7 +93,13 @@
         "id": "loan_card",
         "where": "Greek and Roman, gallery 158 (Selinus loan)",
         "format": "printed_card",
-        "field_order": ["title", "culture, date", "findspot", "credit line 'Lent by …' with no accession", "interpretive paragraph"],
+        "field_order": [
+          "title",
+          "culture, date",
+          "findspot",
+          "credit line 'Lent by …' with no accession",
+          "interpretive paragraph"
+        ],
         "notes": "No accession at all — not the lender's, not the Met's. The degraded path (D17)."
       },
       {

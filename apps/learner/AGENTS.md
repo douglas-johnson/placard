@@ -40,9 +40,11 @@ test.** What it does, and where:
 |---|---|
 | `App.tsx` | The router — four screens and one flow at a time, no navigation library (D33) |
 | `src/take.ts` | A visit: frames plus an append-only NDJSON manifest under `Documents/takes/<date>-<venue>/`, replayed on launch to resume |
-| `src/screens/Arrive.tsx` | GPS fix → registry venues nearby → pick or add (a low-confidence claim) → the field log |
+| `src/screens/Arrive.tsx` | GPS fix → registry venues nearby → pick or add (a low-confidence claim) → the field log. Earlier visits, with share, live here too |
+| `src/screens/Done.tsx` | After the exterior: the manifest, and nothing else, before the take is let go |
+| `src/screens/Capture.tsx` | The viewfinder. Preview is 3:4 on purpose — expo-camera crops the still to the preview — and there is no `autofocus` prop on purpose: `"on"` means focus-once-and-lock (field-beta §6.1) |
 | `src/screens/LabelFlow.tsx` | A label → on-device read → accession shown back → C only if nothing read → B enforced, or a stated reason → flags and hard cases |
-| `src/accession.ts` | Finds and ranks accession-shaped lines; locates, never validates (D11). 9/9 on the MCNY fixtures against the corpus tool's own output |
+| `src/accession.ts` | Finds and ranks accession-shaped lines; locates, never validates (D11). `npm run locator-eval` scores it against every reading in the corpus — device manifests and Mac OCR — 32/35 first-candidate correct after the Met |
 | `src/screens/VenueFlow.tsx` | Arrival signage in the protocol's order; the exterior on leaving, which ends the take |
 | `src/screens/WallTextFlow.tsx` | The interpretive panel, optionally linked to the last label group |
 | `src/location.ts` | One position watcher per session; the fix is written into each JPEG's EXIF via `additionalExif` |
@@ -115,6 +117,11 @@ Expo Go still loads the bundle but can't link the Vision module, so a label grou
 reads nothing there. In the simulator the shutter produces a blank 200px frame; every
 camera screen has a **Fixture (dev)** action that hands the flow the bundled 38.447.4
 label instead, which exercises the read-back path. It's compiled out of release builds.
+
+`npm run locator-eval` runs the accession locator over every reading the corpus holds
+(`scripts/locator-eval.ts`) and prints one line per label with the expected number
+and the candidates offered. Run it after any change to `src/accession.ts`; the
+manifests under `data/labels/raw/` are the device rows, so the count is machine-dependent.
 
 The preflight that used to be the whole app is now `src/screens/Preflight.tsx`, behind
 "Check this build" on the hub. It reports whether the native modules the capture path

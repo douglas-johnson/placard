@@ -19,7 +19,7 @@ import {
   type Take,
 } from '../take';
 import { type, usePalette } from '../theme';
-import { Button, Chip, ChipRow, Field, H2, P, Rule, Screen } from '../ui';
+import { Button, Chip, ChipRow, Field, H2, P, Rule, Screen, Sheet } from '../ui';
 import { Capture, type Picture } from './Capture';
 
 /**
@@ -86,12 +86,15 @@ export function LabelFlow({
   const [candidates, setCandidates] = useState<Candidate[]>(
     __DEV__ && devPreset === 'readback'
       ? [
-          { value: '38.447.4', line: 7, contested: true, score: 3 },
-          { value: '38.447-4', line: 7, contested: true, score: 0.2 },
+          { value: '38.447.4', line: 7, contested: true, score: 3, disqualified: false },
+          { value: '38.447-4', line: 7, contested: true, score: 0.2, disqualified: false },
         ]
       : [],
   );
   const [ocrNote, setOcrNote] = useState<string | null>(null);
+  // The last label frame read as nothing at all — a floor, a plinth, a frame that
+  // never focused (Met f0030, field-beta §6.1). Offer the retake before any confirm.
+  const [lastEmpty, setLastEmpty] = useState(false);
   const [accession, setAccession] = useState<{ status: AccessionStatus; reading: string | null; value: string | null } | null>(null);
   const [typed, setTyped] = useState('');
   const [typing, setTyping] = useState(false);
@@ -147,6 +150,7 @@ export function LabelFlow({
           for (const c of found) if (!all.has(c.value) || all.get(c.value)!.score < c.score) all.set(c.value, c);
           return [...all.values()].sort((a, b) => b.score - a.score).slice(0, 3);
         });
+        setLastEmpty(result.observations.length === 0);
         setOcrNote(
           result.observations.length === 0
             ? 'Nothing legible in that frame.'
@@ -250,9 +254,19 @@ export function LabelFlow({
     const last = labelFrames[labelFrames.length - 1];
     return (
       <Screen>
-        <ScrollView contentContainerStyle={[styles.sheet, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 24 }]} keyboardShouldPersistTaps="handled">
+        <Sheet contentContainerStyle={[styles.sheet, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 24 }]}>
           {last ? <Image source={{ uri: last.file.uri }} style={styles.thumbSmall} /> : null}
-          {top && !typing ? (
+          {lastEmpty && !typing ? (
+            <>
+              <H2>Nothing read in that frame</H2>
+              <P muted>
+                Not a single line — usually the camera hadn't focused, or the label isn't in the
+                shot. The frame is kept either way. Another go?
+              </P>
+              <Button label="Retake the label" onPress={() => { setLastEmpty(false); setStep('label'); }} style={{ marginTop: 20 }} />
+              <Button label="Carry on with this frame" tone="quiet" onPress={() => setLastEmpty(false)} />
+            </>
+          ) : top && !typing ? (
             <>
               <H2>Is this the accession number?</H2>
               <Text style={[type.mono, { color: p.text, fontSize: 28, marginTop: 8 }]}>{top.value}</Text>
@@ -311,7 +325,7 @@ export function LabelFlow({
           <Rule />
           <Button label="The label needed another frame" tone="quiet" onPress={() => setStep('label')} />
           {ocrNote && top ? <Text style={[type.small, { color: p.muted, marginTop: 12 }]}>{ocrNote}</Text> : null}
-        </ScrollView>
+        </Sheet>
       </Screen>
     );
   }
@@ -372,7 +386,7 @@ export function LabelFlow({
   // flags
   return (
     <Screen>
-      <ScrollView contentContainerStyle={[styles.sheet, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 24 }]} keyboardShouldPersistTaps="handled">
+      <Sheet contentContainerStyle={[styles.sheet, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 24 }]}>
         <H2>Anything unusual about this one?</H2>
         <P muted>Skip straight to Close if not — most labels are ordinary, and that's fine.</P>
         <ChipRow>
@@ -398,7 +412,7 @@ export function LabelFlow({
         </ChipRow>
         <Field label="Note" value={note} onChangeText={setNote} placeholder="Anything the frames won't show" multiline />
         <Button label="Close this label" onPress={finish} style={{ marginTop: 24 }} />
-      </ScrollView>
+      </Sheet>
     </Screen>
   );
 }

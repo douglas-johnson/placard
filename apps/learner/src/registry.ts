@@ -7,6 +7,7 @@
  * Metro can't glob a directory, so the list is explicit; it's short.
  */
 import mcny from '../../../data/venues/mcny.json';
+import met from '../../../data/venues/met.json';
 
 export type AccessionShape = { pattern: string; example?: string; sample_count?: number };
 
@@ -44,7 +45,7 @@ function load(raw: any): Venue {
   };
 }
 
-export const venues: Venue[] = [load(mcny)];
+export const venues: Venue[] = [load(mcny), load(met)];
 
 /** Great-circle distance in metres. */
 export function distanceMetres(

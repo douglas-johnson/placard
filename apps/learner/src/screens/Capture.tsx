@@ -111,14 +111,34 @@ export function Capture({
   return (
     <View style={styles.root}>
       <StatusBar style="light" />
-      <CameraView
-        ref={camera}
-        style={StyleSheet.absoluteFill}
-        facing="back"
-        autofocus="on"
-        animateShutter={false}
-        onCameraReady={() => setReady(true)}
-      />
+      {/*
+        Two things the Met visit taught about this view (field-beta §6.1), both
+        verified against expo-camera's iOS source rather than its prop names:
+
+        - No `autofocus` prop. `autofocus="on"` maps to AVCaptureDevice.FocusMode
+          .autoFocus — focus ONCE and lock — so the camera focused on whatever was
+          in front of it when the view mounted and never again; 4 of 15 labels had
+          to be retaken with the stock camera. Unset means .continuousAutoFocus.
+
+        - The still is cropped to the preview's aspect (CameraPhotoCapture.swift,
+          AVMakeRect(aspectRatio: previewSize …)). A full-screen preview on a 19.5:9
+          phone threw away 40% of the sensor's width and clipped the first component
+          off an accession. The preview is now 3:4 — the sensor's shape — letterboxed.
+          On a 19.5:9 phone the strip and shutter sit in the bars; on a shorter
+          screen (an SE) they overlap the preview's edges instead, which costs
+          nothing — the still is the full sensor either way.
+      */}
+      <View style={styles.viewport} pointerEvents="none">
+        <View style={styles.sensorFrame}>
+          <CameraView
+            ref={camera}
+            style={StyleSheet.absoluteFill}
+            facing="back"
+            animateShutter={false}
+            onCameraReady={() => setReady(true)}
+          />
+        </View>
+      </View>
 
       <View style={[styles.strip, { paddingTop: insets.top + 8 }]}>
         <Pressable onPress={onBack} hitSlop={12} style={styles.back}>
@@ -164,6 +184,8 @@ export function Capture({
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#000' },
+  viewport: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center' },
+  sensorFrame: { width: '100%', aspectRatio: 3 / 4 },
   strip: {
     paddingHorizontal: 20,
     paddingBottom: 14,

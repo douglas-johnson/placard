@@ -6,7 +6,8 @@ import { awaitFix, type Gps } from '../location';
 import { nearby, slugify, type Venue } from '../registry';
 import { startTake, type FieldLog, type Take, type VenueRef } from '../take';
 import { type, usePalette } from '../theme';
-import { Button, Chip, ChipRow, Field, H1, H2, P, Rule, Screen } from '../ui';
+import { Button, Chip, ChipRow, Field, H1, H2, P, Rule, Screen, Sheet } from '../ui';
+import { PastTakes } from './PastTakes';
 
 /**
  * Arrival: where are we, and the thirty-second field log. The fix is awaited here —
@@ -115,6 +116,8 @@ export function Arrive({ onStarted }: { onStarted: (take: Take) => void }) {
             ))}
           </View>
           <Button label="Somewhere else" tone="secondary" onPress={() => setStage('add')} style={{ marginTop: 20 }} />
+          <Rule />
+          <PastTakes />
         </ScrollView>
       </Screen>
     );
@@ -123,7 +126,7 @@ export function Arrive({ onStarted }: { onStarted: (take: Take) => void }) {
   if (stage === 'add') {
     return (
       <Screen>
-        <ScrollView contentContainerStyle={[styles.sheet, pad]} keyboardShouldPersistTaps="handled">
+        <Sheet contentContainerStyle={[styles.sheet, pad]}>
           <H1>Placard</H1>
           <H2>Where are you?</H2>
           <P muted>
@@ -135,14 +138,16 @@ export function Arrive({ onStarted }: { onStarted: (take: Take) => void }) {
           <Field label="Website, if you know it" value={website} onChangeText={setWebsite} placeholder="optional" autoCapitalize="none" keyboardType="url" />
           <Button label="This is it" onPress={addVenue} disabled={name.trim().length < 2} style={{ marginTop: 24 }} />
           {candidates.length > 0 ? <Button label="Back to the list" tone="quiet" onPress={() => setStage('choose')} /> : null}
-        </ScrollView>
+          <Rule />
+          <PastTakes />
+        </Sheet>
       </Screen>
     );
   }
 
   return (
     <Screen>
-      <ScrollView contentContainerStyle={[styles.sheet, pad]} keyboardShouldPersistTaps="handled">
+      <Sheet contentContainerStyle={[styles.sheet, pad]}>
         <H2>{venue?.name}</H2>
         <P muted>Thirty seconds of field log, then the door.</P>
         <Rule />
@@ -162,7 +167,7 @@ export function Arrive({ onStarted }: { onStarted: (take: Take) => void }) {
         <Field label="Notes" value={notes} onChangeText={setNotes} placeholder="Bilingual labels; vinyl in the lobby; checklist at the desk…" multiline />
         <Button label="Start" onPress={start} style={{ marginTop: 24 }} />
         <Button label="Different venue" tone="quiet" onPress={() => setStage(candidates.length > 0 ? 'choose' : 'add')} />
-      </ScrollView>
+      </Sheet>
     </Screen>
   );
 }
