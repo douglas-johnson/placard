@@ -165,10 +165,17 @@ question that silently kills an Intel Mac:
 - **`apps/learner`** — bundles and renders in the iOS 26.5 simulator and on the phone.
   `expo-camera` and `expo-location` both link and report permission correctly.
   Re-checked under Node 22.23.2 on 2026-09-22 after the default moved: `tsc --noEmit`
-  clean and `expo export --platform ios` bundles 662 modules to Hermes from a cold
-  cache. **The native build was not re-run under 22** — `expo run:ios` is slow here, and
-  Xcode's bundle phase is the place a Node change would most plausibly bite. Treat the
-  next device build as the confirmation.
+  clean and `expo export --platform ios` bundles 662 modules to Hermes from a cold cache.
+- **The native build is BROKEN as of 2026-09-22**, and not because of Node.
+  `npx expo run:ios` fails in `[CP-User] Build ExpoModulesJSI xcframework` with
+  `'hermes/hermes.h' file not found` (xcodebuild exit 65). Reproduced identically on
+  Node 20.20.2 and 22.23.2, so the version change is not the cause. Nothing has needed a
+  native rebuild since D33 made field-beta iterations ship as JS updates, so this could
+  have been broken for days without anyone noticing. **It blocks F1**, whose first jobs —
+  face blur in the Vision module and the Met's camera-focus fix (field-beta §6.1) — both
+  require a rebuild. First lead: `expo-modules-jsi` resolves to 57.1.0 while the rest of
+  the SDK is pinned `~57.0.x`; `expo-modules-core` requires it at `~57.1.0`, so it floats
+  independently.
 - **React Native 0.86.3 prebuilt artifacts** — both `react-native-artifacts-0.86.3-reactnative-core-debug`
   and `-reactnative-dependencies-debug` contain an `ios-arm64_x86_64-simulator`
   slice. **Development builds are therefore viable on Intel**, which matters because
