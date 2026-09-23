@@ -75,6 +75,12 @@ frame, so `frames` names each one by its role:
 }
 ```
 
+**This shape changes when raw moves to a bucket.** A frame reference becomes
+`{"key": "...", "sha256": "..."}` rather than a bare path — the key is the address, the
+hash is the identity, and the hash is what says if the two ever disagree (D37). Nothing
+has migrated yet; all 23 fixtures are rebound in one pass, and the examples above are
+the current committed shape until then.
+
 Roles are free text but reuse the ones already in the set (`work`, `label`,
 `accession_crop`, `tombstone`, `numbered_panel_key`, `artist_biography_panel`,
 `exhibition_wall_text`, `case_panel`). The `work` frame matters for D15's pairing tests
