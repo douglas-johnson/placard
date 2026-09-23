@@ -164,18 +164,9 @@ question that silently kills an Intel Mac:
   Expo Go path is fully supported.
 - **`apps/learner`** — bundles and renders in the iOS 26.5 simulator and on the phone.
   `expo-camera` and `expo-location` both link and report permission correctly.
-  Re-checked under Node 22.23.2 on 2026-09-22 after the default moved: `tsc --noEmit`
-  clean and `expo export --platform ios` bundles 662 modules to Hermes from a cold cache.
-- **The native build is BROKEN as of 2026-09-22**, and not because of Node.
-  `npx expo run:ios` fails in `[CP-User] Build ExpoModulesJSI xcframework` with
-  `'hermes/hermes.h' file not found` (xcodebuild exit 65). Reproduced identically on
-  Node 20.20.2 and 22.23.2, so the version change is not the cause. Nothing has needed a
-  native rebuild since D33 made field-beta iterations ship as JS updates, so this could
-  have been broken for days without anyone noticing. **It blocks F1**, whose first jobs —
-  face blur in the Vision module and the Met's camera-focus fix (field-beta §6.1) — both
-  require a rebuild. First lead: `expo-modules-jsi` resolves to 57.1.0 while the rest of
-  the SDK is pinned `~57.0.x`; `expo-modules-core` requires it at `~57.1.0`, so it floats
-  independently.
+  Re-verified end to end under Node 22.23.2 on 2026-09-22: `tsc --noEmit` clean,
+  `expo export --platform ios` bundles from a cold cache, and `expo run:ios` builds,
+  installs and launches on the iOS 26.5 simulator (786 modules).
 - **React Native 0.86.3 prebuilt artifacts** — both `react-native-artifacts-0.86.3-reactnative-core-debug`
   and `-reactnative-dependencies-debug` contain an `ios-arm64_x86_64-simulator`
   slice. **Development builds are therefore viable on Intel**, which matters because
@@ -193,6 +184,29 @@ question that silently kills an Intel Mac:
 - **Vision OCR on the phone** — the local module compiles and runs the shared
   pipeline on-device: 13 lines in ~650 ms on the bundled 38.447.4 label (D30). This
   build is the only host for it; Expo Go reports the module as not linked.
+
+### When the iOS build fails on a header, regenerate `ios/` before debugging it
+
+On 2026-09-22 `npx expo run:ios` failed in `[CP-User] Build ExpoModulesJSI xcframework`
+with `'hermes/hermes.h' file not found`, xcodebuild exit 65. The cause was a stale
+`ios/` tree generated on 09-19: `Pods/Headers/Public` held **4** entries instead of 88,
+so the React and Hermes headers every native target expects were simply not mirrored
+there. `npx expo prebuild --clean --platform ios` repopulated it and the build went
+green with no other change.
+
+Two things make this worth writing down. First, the failure reads like a dependency bug
+and is not one — it survived a Node downgrade, and the same missing-header shape appears
+in `expo-modules-jsi` for reasons that look upstream until you count the entries in
+`Headers/Public`. Check that count first: it should be in the dozens.
+
+Second, `ios/` is gitignored and fully regenerable, and D29's manual setup survives the
+regeneration — `appleTeamId` is read from `app.json`, and the script-sandboxing item is
+about declining an Xcode prompt rather than a saved build setting. So a clean prebuild
+is cheap, which is not the instinct on a machine where native builds are slow.
+
+Expect this class of problem to stay invisible: D33 ships field-beta iterations as JS
+updates, so nothing exercises the native path between rebuilds. The Met's camera-focus
+fix is native, and would have met this while packing for a museum.
 
 ### Homebrew has almost no Intel bottles on macOS 26 — check before installing
 
