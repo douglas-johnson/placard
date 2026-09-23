@@ -1514,3 +1514,39 @@ never holds a bucket credential.
 take instead of 42 would begin to matter. Serving speed would not — the generated
 NDJSON in `derived/` is the cache and Postgres is the index, and neither changes what is
 canonical.
+
+---
+
+## D39 — Hard constraint 1 names a goal; separate credentials are its preferred mechanism
+
+**Date:** 2026-09-22 · **Status:** accepted, Doug's call · **Amends:** `CLAUDE.md` hard
+constraint 1 · **Related:** D25, D28, D35
+
+CLAUDE.md's first constraint said: *"Enforce it with separate database credentials, not
+with application code."* That sentence conflates two things — the boundary itself, which
+is not negotiable, and one mechanism for holding it, which is.
+
+**Decision:** the constraint is the **goal**. No learner ever sees another learner's
+notes, photos, or interest profile, and the back office has no read path to the private
+layer — absent, not permission-gated. Separate database credentials remain the
+*preferred* enforcement, because they hold when application code is wrong, which is the
+failure mode that actually happens. But a different mechanism may be proposed, and
+should be accepted if it meets the goal as well or better.
+
+**Reasoning.** Doug's own words on being asked: *"I am significantly more flexible than
+that as long as the privacy goals are met."* The prescription had also started doing
+work it was never meant to do. While the corpus infrastructure was being designed, this
+sentence was cited repeatedly as though it governed where raw frames live — it does not
+(§1 of `docs/field-beta.md`: a contribution is not the private layer), and that borrowed
+authority is the same class of confusion D28 already caught once. Constraint 1 now says
+which data class it governs, and that scope note is the more important half of the
+change.
+
+Recording it because the review of PR #5 was right that it wasn't. The scope
+clarification was justified by D28 and D35; the softening of the mechanism rode along
+inside it with nothing behind it but a conversation — which is the exact failure this
+file exists to prevent, on the repository's most safety-critical constraint.
+
+**What would reverse this:** a proposed alternative mechanism that turns out to depend
+on application code being correct. That is not a different mechanism, it is the absence
+of one, and the preference for credentials exists precisely to rule it out.
