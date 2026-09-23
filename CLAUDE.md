@@ -8,7 +8,7 @@ Solo project. Every architectural choice is also a learning-budget choice.
 
 | File | What it is | When to read it |
 |---|---|---|
-| `PLANNING.md` | The strategy document — long, argued, load-bearing | Has its own section map at the top. **Use it.** Don't read end to end for a narrow question. |
+| `docs/PLANNING.md` | The strategy document — long, argued, load-bearing | Has its own section map at the top. **Use it.** Don't read end to end for a narrow question. |
 | `DECISIONS.md` | Settled architectural calls, with reasoning | Before proposing an approach, and after settling one |
 | `docs/capture-protocol.md` | Field procedure for collecting labels | Corpus work |
 | `data/README.md` | Corpus layout and fixture format | Anything touching `data/` |
