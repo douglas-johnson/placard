@@ -148,7 +148,7 @@ Intel Mac. This is a real constraint, not a footnote.
 | macOS | 26.7 Tahoe (Darwin 25.6) — the last macOS that supports Intel |
 | Xcode | 26.6 — **capped at 26.x**; Xcode 27 will be Apple Silicon only |
 | iOS simulators | 26.5, 18.3 |
-| Node | 20.20.2 default · npm 10.8.2 (x64 build; no pnpm, no bun). **`railway config` needs ≥22.6** — `nvm use 22` first; 22.23.2 is installed and the default stays 20 for Expo (D34) |
+| Node | **22.23.2** default (`nvm alias default lts/jod`) · npm 10.9.8 (x64; no pnpm, no bun). Was 20.20.2 until 2026-09-22; moved up because `railway config` needs ≥22.6 (D34) and RN 0.86.3 accepts `^22.13.0`. 20.20.2 is still installed |
 | Python | 3.14.3 — **ahead of many ML wheels**; pin services to 3.12/3.13 |
 | CocoaPods | 1.17.0, on Homebrew Ruby 4.0.6 — **install with `gem`, never `brew`**, see below |
 | Postgres | not installed (Homebrew available) |
@@ -164,6 +164,11 @@ question that silently kills an Intel Mac:
   Expo Go path is fully supported.
 - **`apps/learner`** — bundles and renders in the iOS 26.5 simulator and on the phone.
   `expo-camera` and `expo-location` both link and report permission correctly.
+  Re-checked under Node 22.23.2 on 2026-09-22 after the default moved: `tsc --noEmit`
+  clean and `expo export --platform ios` bundles 662 modules to Hermes from a cold
+  cache. **The native build was not re-run under 22** — `expo run:ios` is slow here, and
+  Xcode's bundle phase is the place a Node change would most plausibly bite. Treat the
+  next device build as the confirmation.
 - **React Native 0.86.3 prebuilt artifacts** — both `react-native-artifacts-0.86.3-reactnative-core-debug`
   and `-reactnative-dependencies-debug` contain an `ios-arm64_x86_64-simulator`
   slice. **Development builds are therefore viable on Intel**, which matters because

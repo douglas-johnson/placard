@@ -1245,8 +1245,12 @@ volume.
 **Amendment (2026-09-22, first apply).** TypeScript costs more on this machine than the
 choice anticipated, and the cost is worth recording rather than rediscovering. The CLI
 evaluates the authoring file with `node --experimental-strip-types`, so it needs **Node
-≥22.6**; the machine default is 20.20.2 and pinned there for Expo, so every
-`railway config` command runs under `nvm use 22`. And because `.railway/railway.ts`
+≥22.6**, which the machine default of 20.20.2 did not meet. That turned out to cost
+nothing: React Native 0.86.3 declares `^20.19.4 || ^22.13.0 || ^24.3.0` and Expo
+declares no constraint at all, so the default moved to 22.23.2 the same day and serves
+the app and the CLI alike. `apps/learner` typechecks and bundles under it; the native
+build has not been re-run. The claim in an earlier draft that Node 20 was pinned for
+Expo was wrong — nothing pinned it. And because `.railway/railway.ts`
 imports `railway/iac`, the repository needed a **root `package.json`** where it
 previously had no Node project at all. The decision stands — beta is a poor property for
 the file that defines the infrastructure, and CI has neither problem — but had both
