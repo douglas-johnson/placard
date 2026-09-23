@@ -275,6 +275,8 @@ export default defineRailway((ctx) => {
       B2_BUCKET: preserve(),
       // Rotated with every TestFlight build (field-beta §4).
       UPLOAD_TOKEN: preserve(),
+      // Railway's own bucket: shared variables, not `derived.env.*` — see below.
+      DERIVED_BUCKET: ctx.shared.DERIVED_BUCKET,
     },
   });
 
@@ -282,9 +284,13 @@ export default defineRailway((ctx) => {
 });
 ```
 
-Whether Railway's own bucket credentials are referenced as `derived.env.*` or wired
-through shared variables was the one thing the IaC reference did not settle; confirm
-against what `railway config init` generates.
+**Bucket credentials are not referenced from the bucket node.** This was open in §8 and
+is now settled by the SDK's own types: `postgres()` returns a `ReferencableDatabaseNode`
+carrying `readonly env`, so `canon.env.DATABASE_URL` will work — but `bucket()` returns a
+plain `BucketNode` with only `address`, `type` and `config`. There is no `derived.env.*`.
+Credentials reach a service through Railway **shared variables**, referenced in the IaC
+file as `ctx.shared.<NAME>` and wired to the bucket in the dashboard (or by its
+auto-provisioning presets). The sketch above is written accordingly.
 
 **Cost.** Hobby, $5/month with $5 of usage included. `ingest` idle is roughly 0.1 vCPU
 and 256 MB, about $4.50 at list and less with app sleeping; Railway's bucket is
@@ -348,14 +354,35 @@ Two findings changed the document: conditional writes do not exist on B2, which 
 written into §3.1 and D35; and botocore's `Expect: 100-continue` breaks against B2
 under Python's `http.client`, which is written into §4.
 
-Still open, on the Railway side:
+### Railway, 2026-09-22
 
-- **A Railway sealed variable referenced via `preserve()`** survives `railway config
-  plan` in CI without appearing in plan output or a PR comment.
-- **How the IaC file exposes a Railway bucket's credentials to a service.**
+Project `placard` exists in the personal workspace, with one environment, `testflight`
+(D34). `railway config apply` created the `derived` bucket in `iad`, and a subsequent
+`config plan` reports the configuration already up to date, so the file and the live
+environment agree.
 
-Housekeeping: delete the `placard-scratch` bucket and its key when the Railway checks
-are done, and rotate any key that has been pasted anywhere but a terminal prompt.
+Two findings, both of which cost something:
+
+- **The TypeScript IaC file needs Node ≥22.6**, because the CLI evaluates it with
+  `--experimental-strip-types`. This machine's default is 20.20.2 and is pinned there
+  for Expo, so every `railway config` command runs under `nvm use 22` first. Node 22.23.2
+  was already installed; the default was not changed.
+- **It also needs a root `package.json`**, since `.railway/railway.ts` imports
+  `railway/iac` and the repository had no Node project at its root. It holds one
+  devDependency and exists for nothing else, which its `description` says.
+
+Neither was known when D34 chose TypeScript over the beta Python variant. The choice
+stands — beta is a poor property for the file that defines your infrastructure — but the
+cost is real and is recorded in D34's amendment.
+
+**Bucket credential references: answered.** See §6 — `bucket()` has no `env`, so shared
+variables it is.
+
+**Sealed variables in CI: still open**, and not testable yet. Railway documents that
+plan output redacts variable values as `«hidden»`; whether that holds in a PR comment is
+a property of the `railwayapp/config` action, which nothing has run.
+
+Housekeeping: the `placard-scratch` bucket and key are gone (2026-09-22).
 
 ---
 

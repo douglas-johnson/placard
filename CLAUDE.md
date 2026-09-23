@@ -148,7 +148,7 @@ Intel Mac. This is a real constraint, not a footnote.
 | macOS | 26.7 Tahoe (Darwin 25.6) — the last macOS that supports Intel |
 | Xcode | 26.6 — **capped at 26.x**; Xcode 27 will be Apple Silicon only |
 | iOS simulators | 26.5, 18.3 |
-| Node | 20.20.2 · npm 10.8.2 (x64 build; no pnpm, no bun) |
+| Node | 20.20.2 default · npm 10.8.2 (x64 build; no pnpm, no bun). **`railway config` needs ≥22.6** — `nvm use 22` first; 22.23.2 is installed and the default stays 20 for Expo (D34) |
 | Python | 3.14.3 — **ahead of many ML wheels**; pin services to 3.12/3.13 |
 | CocoaPods | 1.17.0, on Homebrew Ruby 4.0.6 — **install with `gem`, never `brew`**, see below |
 | Postgres | not installed (Homebrew available) |

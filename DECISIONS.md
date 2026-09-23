@@ -1242,6 +1242,22 @@ not a factor either way: Hobby is $5/month with $5 of usage included, `ingest` i
 about $4.50 at list, B2 is $6/TB-month, and bucket egress is free to three times stored
 volume.
 
+**Amendment (2026-09-22, first apply).** TypeScript costs more on this machine than the
+choice anticipated, and the cost is worth recording rather than rediscovering. The CLI
+evaluates the authoring file with `node --experimental-strip-types`, so it needs **Node
+≥22.6**; the machine default is 20.20.2 and pinned there for Expo, so every
+`railway config` command runs under `nvm use 22`. And because `.railway/railway.ts`
+imports `railway/iac`, the repository needed a **root `package.json`** where it
+previously had no Node project at all. The decision stands — beta is a poor property for
+the file that defines the infrastructure, and CI has neither problem — but had both
+costs been known, the Python variant would have been a closer call than the entry
+implies.
+
+Also settled by the first apply: a `bucket()` node exposes no `env`, unlike
+`postgres()`, so bucket credentials reach a service through Railway shared variables
+(`ctx.shared.<NAME>`) rather than by referencing the node. `docs/infrastructure.md` §6
+carries the corrected sketch.
+
 **What would reverse this:** Railway's IaC failing to cover buckets or Postgres, which
 are the two resources that would otherwise pull the project back to a second control
 plane. On the B2 side, AWS S3 is the upgrade path if the conditional write it lacks
