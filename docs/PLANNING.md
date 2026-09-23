@@ -1,7 +1,8 @@
 # Placard — Planning Document
 
-**Status:** v0.10, draft for discussion
+**Status:** v0.11, draft for discussion
 **Date:** September 2026
+**Changed in v0.11:** Moved to `docs/`. §12.3 and §13 lost their positioning and commercial passages to private notes, and §12.5's outreach tactics were struck entirely (D32). Every section and heading stays, so existing `§` citations still resolve.
 **Changed in v0.10:** Project renamed from *Wall Text* to *Placard* after a second name collision (D31). Repository made public; §12 now argues from the category of existing aggregators rather than from one site, and the site-specific analysis moved to private notes ahead of outreach (D32).
 **Changed in v0.9:** Project renamed from *Art Book* to *Wall Text*. §11 phasing reordered — B0 split, its label-corpus half promoted to A0, Track A now leads. §12.5 and §13 updated for a name collision.
 
