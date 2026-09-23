@@ -1197,3 +1197,300 @@ have been.
 **What would reverse this:** a JS-only change that misbehaves against the embedded
 native modules — the runtime-version policy is what guards against that, and if
 `appVersion` proves too coarse the policy moves to `fingerprint`.
+
+---
+
+## D34 — Railway for compute, Backblaze B2 for raw, git for fixtures
+
+**Date:** 2026-09-22 · **Status:** accepted · **Supersedes:** `docs/field-beta.md` §4's
+hosting proposal · **Detail:** `docs/infrastructure.md`
+
+field-beta §4 proposed Vercel for the ingest function and Cloudflare R2 for the bucket,
+and asserted "bucket versioning on" as the enforcement of raw immutability. That section
+was written without checking the providers. R2 does not offer bucket versioning, so the
+promise could not have been kept as written — the design rested on a property the chosen
+store did not have.
+
+**Decision:** three stores, chosen for the guarantee each tier needs.
+
+**Railway** runs `ingest`, the workers, the `derived` bucket, and eventually B1's
+Postgres. One project, one bill, one file. Infrastructure is declared in
+`.railway/railway.ts` and applied with `railway config plan` / `railway config apply`,
+through a GitHub Action that plans on pull requests and applies on merge. TypeScript
+because that variant is GA and the Python one is beta; the file is configuration, not
+application code, so it does not contradict §10's choice of Python for the API.
+Railway's older `railway.json` config-as-code is deprecated and stops working
+2026-12-01, so we start on the right side of that line. The first environment is named
+`testflight`, matching D33's `expo-updates` channel so the mapping is one word;
+`production` arrives with a public app.
+
+**B2** holds raw, because it is the only store examined that offers versioning together
+with keys scoped to a bucket, a filename prefix, and a capability set. That combination
+is what D35 rests on.
+
+**Git** holds fixtures. A pull request is the review gate and history is supersession —
+the two guarantees a fixture needs (§8.3) — and the repository is already off the Mac.
+
+**Reasoning.** The second vendor is the cost, and it is deliberate: the vendor boundary
+*is* the enforcement boundary. That resembles the separate Postgres credential in
+`db/README.md`, but the resemblance is structural only — that split serves the privacy
+constraint and this one serves the corpus, which is a different data class
+(`field-beta.md` §1). Consolidating raw onto Railway's bucket — one full-access
+credential, no versioning, no scoped keys — would trade D35's bounded blast radius for
+one fewer login. Cost is
+not a factor either way: Hobby is $5/month with $5 of usage included, `ingest` idle is
+about $4.50 at list, B2 is $6/TB-month, and bucket egress is free to three times stored
+volume.
+
+**What would reverse this:** Railway's IaC failing to cover buckets or Postgres, which
+are the two resources that would otherwise pull the project back to a second control
+plane. On the B2 side, AWS S3 is the upgrade path if the conditional write it lacks
+(D35) ever becomes load-bearing; the migration is an `rclone sync`.
+
+---
+
+## D35 — In `raw/`, only a redaction ever replaces or removes a key
+
+**Date:** 2026-09-22 · **Status:** accepted · **Builds on:** D4 and its amendment ·
+**Verified against the live account:** 2026-09-22
+
+Two rules, one checkable and one about credentials:
+
+> In `raw/`, the only operation that ever replaces or removes an existing key is a
+> redaction. Every other write creates a key that did not exist.
+
+> No service, deployed anywhere, holds a credential that can delete from `raw/`.
+
+Absent, not permission-gated. That is the same *shape* as the back office having no read
+path into the private layer, and no more than that — constraint 1 governs learner
+material, this governs the corpus, and the two are separate rules that are easy to run
+together (D28). The first draft of this went further and said no delete-capable
+credential should exist at all, "and if one is ever needed, that is a decision to record,
+not a key to mint." D4's amendment is that decision, recorded four days earlier. So the
+capability is not forbidden to exist; it is forbidden to *persist* (D36).
+
+**The two halves are enforced differently, and only one by the store.** Removal is real:
+no standing key carries `deleteFiles`, and B2 refuses the call — checked against
+`placard-raw`, where a write with the read-only key returns `unauthorized` and nothing
+lands. Replacement is not, and cannot be: **B2 has no conditional write.** `PutObject`
+with `If-None-Match: *` returns `NotImplemented`, and the same header on a presigned URL
+returns HTTP 501. What carries the create-only half is three weaker things in series —
+the app's frame counter, monotonic and replayed from the manifest on launch; the
+contributor ID above the take in the key, so two phones cannot collide; and `ingest`'s
+HEAD before it signs a PUT, which is a check-then-act and therefore a guard against bugs
+and retries rather than a guarantee against a compromised client.
+
+**Versioning stays at full retention, and what it buys is soft delete — not overwrite
+protection.** Two earlier framings were wrong. The first called it belt-and-braces; the
+second oversold it as the only thing standing between a write credential and an
+overwrite. The overwrite case is real but narrow: `ingest` is the sole holder of
+`writeFiles` and it checks before it signs. What versioning actually gives is that **a
+plain delete is soft and only an explicit delete by version ID destroys**, which is
+precisely the split this project needs — redaction must be hard, and every other delete
+is a mistake that should be recoverable. It comes from the store, so it does not depend
+on every future caller routing through our service, and D36's tool is the deliberate
+version-by-version path for exactly that reason. Setting the bucket to "keep only the
+last version" would remove the property and buy nothing.
+
+*Checked:* an unconditional PUT over an existing key was accepted and the prior version
+retained; version-by-version deletion destroys. *Not yet checked:* that a plain
+`DeleteObject` leaves a marker rather than destroying. Expected — the API lists
+`DeleteMarkers` as a category — but it is load-bearing now and should be tested.
+
+**Object Lock is ruled out permanently, not deferred.** The first draft deferred it
+until a contributor's frames carried legal weight; one already had, four days earlier.
+Object Lock makes deletion impossible for a retention period and D4 makes deletion an
+obligation that can arrive at any time, including months later when someone reviewing
+fixtures notices a name nobody caught in the gallery. Both cannot be true, and D4 wins.
+The cost is accepted and stated rather than mitigated: without it, an attacker holding a
+delete-capable credential can destroy raw. A replica in a separate account would be the
+answer, and it has a catch — every replica multiplies the redaction surface, because a
+redaction must reach all of them or it has not happened.
+
+**Two buckets do not help**, which was the first idea and is worth recording as
+rejected. Splitting raw into a redactable tier and a locked tier needs a boundary that
+bounds where a minor's identity can appear, and there is none. Not by frame kind: the
+Met case deleted the *label* and kept the work and the wall text, and a name can appear
+on either. Not by age: the case can surface at any distance from the capture, including
+during fixture review months later. One bucket, with redaction able to reach any object
+in it, is the honest model.
+
+**What would reverse this:** a store offering versioning *and* conditional writes at a
+cost worth the move, which today means AWS S3. That would make the create-only half
+store-enforced and let this decision be stated without its caveat.
+
+---
+
+## D36 — Redaction is a tool that mints and revokes its own key
+
+**Date:** 2026-09-22 · **Status:** accepted · **Implements:** the D4 amendment ·
+**Builds on:** D35
+
+D4's amendment settles *that* a frame identifying a minor is deleted from `raw/`, its
+OCR stripped from the manifest, and `derived/` regenerated. This is only about making it
+reliable, because the failure mode is specific and silent: you delete the object, the
+console shows it gone, and three prior versions of it are still there. An incomplete
+redaction is indistinguishable from a complete one unless something checks.
+
+**Decision:** `tools/redact/`, run from the Mac, never deployed. Given a take, a frame,
+and a reason it mints a B2 key with `deleteFiles` restricted to that take's prefix with
+an hour's duration; enumerates **every version** of the frame's key and deletes each by
+ID, then re-lists and fails loudly if anything remains; rewrites the manifest and then
+deletes every prior version of the manifest key, because those contain the text that was
+stripped; purges and regenerates the take's `derived/` objects; appends a line to
+`data/labels/redactions.ndjson`; revokes the key; and exits non-zero if any step could
+not be verified.
+
+The loop was exercised against a throwaway bucket before being written as a tool: four
+versions across two keys enumerated, deleted by ID, re-listed, nothing surviving.
+
+**Lifecycle rules are not a substitute.** They run once a day and a one-day rule can
+take 48 hours. "The child's name is gone within two days" is not the promise.
+
+**The manifest is therefore write-once except under redaction**, which is the single
+exception to D35's invariant. `field-beta.md` §4 calls the manifest a take's commit
+marker and that still holds in the sense that matters — a take without one is incomplete,
+not corrupt — but its content is mutable, by exactly one writer. F0's format already
+anticipates this: `take.ts` carries a `redacted` field on the frame record, and the
+record stays so replay and sequence numbers hold.
+
+**Amendment (2026-09-22, D38).** The two paragraphs above assume the manifest reaches
+the bucket as one file. It does not: D38 uploads it as one immutable object per record,
+so there is nothing to rewrite. The tool's third step becomes *destroy every version of
+the `ocr` record's key* — the same operation as the frame's, not a special case — and
+the `redacted` marker is an appended record rather than an edit to an existing one. The
+manifest stops being an exception to D35's invariant, and `raw/` holds nothing that is
+ever rewritten. The device format is untouched: `take.ts` still marks its own record,
+and it is only the uploaded form that splits.
+
+**The audit record** is `data/labels/redactions.ndjson`, committed, one line per
+redaction, carrying nothing identifying — take, group, frames, reason, what was removed,
+what was kept, the fixture. Constraint 2 says nothing is ever hard-deleted and
+superseded versions stay queryable; redaction is the one case that cannot honour it, and
+this record stands in its place, so the fact, scope, and reason of a removal remain
+queryable forever even though its content does not. Naming the exception is better than
+leaving it an unmarked contradiction, and it makes the rule testable: every manifest
+record marked `redacted` should have a matching line, and every line a matching record.
+The Met case is the first line.
+
+**What would reverse this:** nothing short of D4 changing. If redactions ever became
+frequent enough that minting a key per case is friction, that is a signal about the
+capture protocol, not about this tool.
+
+---
+
+## D37 — Fixtures stay in git, and frame references become `{key, sha256}`
+
+**Date:** 2026-09-22 · **Status:** accepted · **Builds on:** D32, D34
+
+A fixture is a test suite entry, not a record of the world (PLANNING.md §11 A0 sizes the
+set at 300–500 labels across 15+ institutions). It does not grow with usage: early it
+grows with coverage — a new venue, a new accession format, a non-Latin script, an
+attribution qualifier not yet seen — and in steady state with discovered difficulty,
+when the pipeline misreads a label and that label becomes a fixture so it cannot
+silently regress again. When forty learners photograph the same label and the extractor
+reads it the same way forty times, that is corroboration on a claim in the canon (§4.7),
+not forty fixtures and not one.
+
+**Decision:** fixtures stay in git. F2's drafter runs as a Railway worker, reads the
+manifest and label frame from B2 with a read-only key, runs OCR and the accession
+locator, checks the venue's catalog API where one exists, and **opens a pull request**
+against `data/labels/fixtures/`. Merge is verification. Its GitHub credential is scoped
+to this repository with `contents` and `pull_requests` write, and branch protection on
+`main` requires review, so the token cannot merge its own work.
+
+This is §4.8's claim lifecycle without building B1: the draft is an inferred claim, and
+the merged fixture is verified with a citation. The drafter writes the fields migration
+into the canon will need — `verified_against`, the catalog record ID, the reading it
+corrected from — which the Met fixtures already carry by hand. A fixture's commentary
+(`traps`, `work_photo_note`, cross-references to decisions) documents why a case is hard
+and stays in git even after B1.
+
+**Frame references become `{key, sha256}`.** Fixtures currently bind to raw by path —
+`raw/2026-09-16-mcny/IMG_E1308.HEIC`, and after the Met, Image Capture's names. Once raw
+is a bucket the reference is a key, and it carries a content hash: the key is the
+address, the hash is the identity. Raw is immutable so the two should never disagree,
+and the hash is what says if they ever do — a shadowed key (D35), a corrupted upload, a
+half-finished sync. It also keeps a fixture valid across a move off B2. This covers all
+23 fixtures and should be done while the frames are still on the Mac. A redacted frame
+gets no hash: it is not identifying on its own, but it would let someone holding a copy
+confirm they hold the right one, and there is no use for it once the object is gone.
+
+**What would reverse this:** fixtures outgrowing review, which would mean the extractor
+is failing in more distinct ways than a person can vouch for — a different problem than
+where the files live.
+
+---
+
+## D38 — The manifest uploads as immutable per-record objects, not as a file
+
+**Date:** 2026-09-22 · **Status:** accepted · **Amends:** D36 · **Builds on:** D35, the
+D4 amendment · **Detail:** `docs/infrastructure.md`
+
+F0 writes one append-only NDJSON per take and that does not change. It is the app's only
+state, replayed on launch to resume a visit, and it has to work in airplane mode. This
+decision is about what leaves the phone.
+
+`field-beta.md` §4 has the manifest arriving in the bucket as `manifest.ndjson` beside
+the frames. That makes it the one mutable object in an immutable store, which is why D36
+carried a step that rewrote it and then destroyed its prior versions — the step most
+likely to be got wrong, and the one where getting it wrong leaves behind exactly the
+text the redaction existed to remove.
+
+**Decision:** the manifest uploads as one object per record.
+
+```
+raw/doug/2026-09-20-met/records/000014-frame.json
+raw/doug/2026-09-20-met/records/000015-ocr.json
+raw/doug/2026-09-20-met/f0007-label.jpg
+```
+
+Three things follow. **Redaction becomes one uniform operation** — destroying a frame's
+OCR text is "destroy every version of this key," the same call as for the frame itself.
+**D35's invariant holds with no exception**, because nothing in `raw/` is ever
+rewritten. And **the redaction marker becomes an appended record** rather than a
+mutation: `{"type":"redacted","frame":"f0035","removed":["frame","ocr"]}`. The log is
+already append-only on the device; this keeps it that way in the bucket, and it makes
+`data/labels/redactions.ndjson` derivable rather than separately maintained.
+
+**Why not rows in Postgres.** Considered first and rejected. If the manifest lives only
+in a database, the bucket stops being a complete archive — forty-one files named
+`f0007-label.jpg` with nothing to interpret them are not a corpus. Raw is the thing the
+Mac no longer holds (D35), so it has to be self-describing. It would also make A0 work
+server-dependent: everything done for the Met take ran on the Mac with no service at
+all, and that should stay true.
+
+**Why per record rather than per group.** A group object would be written once at close
+and would be immutable too — but removing one frame's OCR from it means rewriting it,
+which is the problem this decision exists to remove. Redaction has to target a key, not
+a fragment of one. The cost is object count: roughly 130 objects per take against 41
+today, and a few tens of kilobytes of records. B2 bills per GB and its API operations
+are free, so this is close to nothing. *(Claude's call; the alternative is coherent and
+was rejected on this reasoning, not on measurement.)*
+
+**The commit marker survives.** `take_ended` carries the take's final `seq` and its
+frame counts, both of which `take.ts` already maintains. It is a claim about what should
+exist, not an assertion that all of it has arrived — a tester can end a visit in a
+basement gallery with the upload queue still full. Completeness is the service's
+determination, when observed records and frames match the claim. *(Also Claude's call.)*
+
+**The convenient form is derived.** Mac-side tools want a `manifest.ndjson` next to the
+frames. Generate it — list the records, sort by `seq`, write it into `derived/`, which
+is regenerable by definition and so may be freely rewritten, including after a redaction
+regenerates that take. The `raw`/`derived` split in `data/README.md` does exactly the
+right work here.
+
+**Postgres is an index, not the truth.** The service ingests records into rows for
+querying, for the reconciler, and eventually for B1's canon, but the bucket stays
+canonical. A database loss is repaired by re-ingesting from the bucket, not by restoring
+a backup.
+
+**Transport splits by size.** Frames are large and go straight to B2 by presigned PUT.
+Records are a few hundred bytes, so the app POSTs them to the API and `ingest` writes
+them, which also lets the bucket write and the row insert happen together. The app still
+never holds a bucket credential.
+
+**What would reverse this:** a store that charges per operation, where 130 objects per
+take instead of 42 would begin to matter. Serving speed would not — the generated
+NDJSON in `derived/` is the cache and Postgres is the index, and neither changes what is
+canonical.

@@ -40,9 +40,16 @@ that is cheap to honor now and effectively impossible to retrofit.
 **1. Privacy is a boundary, not a setting (§5, §8.5).** No learner ever sees another
 learner's notes, photos, or interest profile. The back office has **no read path** to
 the private layer — not permission-gated, *absent*. No query, no join, no export, no
-debug view. Enforce it with separate database credentials, not with application code.
+debug view. Separate database credentials are the preferred way to enforce it, because
+they hold when application code is wrong — but the mechanism is a means, not the
+constraint. Propose a different one if it meets the goal as well or better.
 When a debugging need seems to require crossing this line, that's the exact disguise
 the leak always arrives in.
+
+This constraint governs the **private layer** — learner notes, photos, interest
+profiles. It does not govern the corpus (raw frames, manifests, fixtures), which is a
+separate data class with its own consent and its own storage; `docs/field-beta.md` §1
+says why. Don't borrow this constraint's authority for a decision it doesn't cover.
 
 > **Don't overstate this.** Three separate rules get confused easily, and I already
 > confused them once (D28): learners never see each other's material; personal material
