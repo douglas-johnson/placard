@@ -108,8 +108,15 @@ update (D33). What exists:
 - `data/` — 23 fixtures (MCNY label-only, the Met verified against its API); venue registry
 - `docs/capture-protocol.md` — the field procedure
 
-**Next:** F1 (field-beta §7) — the consent screen, face blur, external testers. The
-upload path's live checks are listed in `docs/infrastructure.md` §9.
+**Deployed 2026-09-27:** `ingest` and its Postgres on Railway
+(`ingest-testflight.up.railway.app`), the EAS variables, and the OTA update carrying the
+upload queue. The B2 live checks passed (infrastructure §8). **Not yet done:** the first
+real upload. It waits on a museum visit: turn on "Send your visits" on the phone before
+starting the visit, shoot as usual with the stock camera alongside, then run
+`corpus-pull`. Don't test with throwaway photos, since `placard-raw` keeps everything.
+
+**Next:** that first upload; then F1 (field-beta §7), meaning the consent screen, face
+blur, the app camera's focus and crop fixes (a native build), and external testers.
 
 ## Repository layout
 
