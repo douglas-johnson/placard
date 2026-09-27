@@ -16,6 +16,11 @@
 # purpose: two models are two slightly different opinions, which is the point of a
 # second reader. Don't "upgrade" it to match the editor session.
 #
+# `--max-turns` was 40 until the third review round on PR #8 used 50. That review
+# finished and posted, but the action fails the check when a run goes past the limit.
+# Re-reviews read the earlier rounds too, so the skill now scopes them to the commits
+# since the last review. 60 is headroom, not a target.
+#
 # Keep the `--allowedTools` line even though the skill's own frontmatter names
 # the same tools: the action starts the inline-comment MCP server only when
 # claude_args names it.
@@ -53,5 +58,5 @@ jobs:
           prompt: "/pr-review ${{ github.repository }} ${{ github.event.pull_request.number }}"
           claude_args: |
             --model claude-sonnet-5
-            --max-turns 40
+            --max-turns 60
             --allowedTools "Read,Grep,Glob,Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr comment:*),Bash(gh api repos/*/pulls/*/comments),Bash(gh api repos/*/issues/*/comments),mcp__github_inline_comment__create_inline_comment"
