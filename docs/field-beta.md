@@ -162,6 +162,10 @@ than leaving it to be discovered.
 
 ## 4. Storage and transport
 
+The architecture here is settled in **D34–D38**, and `docs/infrastructure.md` holds the
+working detail — the key layout, the verification results, the Railway file. This
+section says what F1 builds; those say why.
+
 **Capture never fails offline** (AGENTS.md). Every frame is written to the app's own
 document directory the instant it is taken, with an append-only NDJSON manifest
 recording the group it belongs to, the input kind, the flags, the OCR reading and its
@@ -170,38 +174,59 @@ is already declared) so the tester keeps their own photos and so Doug's existing
 USB-and-`exif-check` path still works unchanged as a fallback.
 
 **Upload is a queue** that drains when there is signal, retries, and never deletes the
-local copy until the server has acknowledged the manifest as well as the frames.
+local copy until the server has acknowledged the records as well as the frames.
 
 **The server is deliberately tiny.** `services/ingest/`, FastAPI, because §10 chose
-Python for the API and this is the first API. It does two things: issue pre-signed
-upload URLs for a private S3-compatible bucket, and accept a manifest once the frames
-are in. It has no database. Manifests are JSON objects in the bucket beside their
-frames, and the bucket's layout mirrors `data/labels/raw/<date>-<venue-slug>/`, with
-the contributor ID one level up, so that everything on the Mac side —
-`placard-ocr`, `exif-check`, the fixture format — runs over a synced copy without
-change. B1's Postgres ingests the manifests when it exists; nothing here has to be
-redone for that.
+Python for the API and this is the first API. It does three things: allocate a frame's
+key and issue a presigned PUT for it, accept manifest records, and report whether a take
+is complete. The app never holds a bucket credential; it holds a token and talks only to
+this service.
 
-**Write-once.** Bucket versioning on; the app's credential can PUT new keys and can
-neither overwrite nor delete. Raw immutability (data/README.md) enforced by the
-store, in the same spirit as the credential boundary in db/README.md.
+Key allocation is the interesting one. `ingest` inserts a row with
+`UNIQUE (contributor, take, frame)` *before* it signs anything, so a duplicate key
+cannot be issued — Postgres enforces create-only where the store cannot (D35: B2 has no
+conditional write). Postgres is an index over the records, not the truth; the bucket
+stays canonical, and a database loss is repaired by re-ingesting from it.
+
+**What the bucket holds.** Frames, and the manifest as one immutable object per record
+rather than as a file (D38). The bucket layout still mirrors
+`data/labels/raw/<date>-<venue-slug>/` with the contributor ID one level up, so the Mac
+side runs over a synced copy unchanged. The commit marker for a take is its `take_ended`
+record, carrying the final `seq` and the frame counts — a claim about what should exist,
+since a tester can end a visit underground with the queue still full. Completeness is
+the service's determination when observed matches claimed.
+
+**Immutability, stated honestly.** The rule is D35's: in `raw/`, only a redaction ever
+replaces or removes a key. Its two halves are enforced differently and it is worth not
+overstating which. *Removal* is store-enforced — no standing credential carries
+`deleteFiles`, and B2 refuses the call. *Replacement* is not, because B2 has no
+conditional write: what carries it is the app's monotonic frame counter, the contributor
+prefix, and `ingest`'s allocate-then-sign. Versioning is underneath all of it, and what
+it buys is that a plain delete is soft while only delete-by-version-ID destroys — which
+is exactly the split D4's amendment needs.
+
+This supersedes what this section used to claim. It proposed Cloudflare R2 with
+"bucket versioning on," and R2 has no versioning, so the guarantee could not have been
+kept as written.
 
 **Access to the service** is a per-build shared token plus the contributor ID. That is
 enough to keep the bucket from being an open upload endpoint for a closed beta and not
 enough for a public app; the token rotates with each TestFlight build.
 
-**Where it runs.** Two constraints from the machine section of CLAUDE.md: no Docker, no
-Postgres, and an Intel Mac that should not become a build server. So: a host that runs
-a Python function from a git push, and object storage with no egress charge for
-pulling the take back down. Proposal: **Vercel** for the function (Python on Fluid
-Compute; the CLI is already installed) and **Cloudflare R2** for the bucket (S3 API,
-free egress, ten gigabytes free — a few thousand frames). Backblaze B2 is the
-equivalent alternative. Neither choice is load-bearing; both are a day to swap.
+**Where it runs.** Railway for the service and for `derived/`; Backblaze B2 for raw
+(D34). The constraints that drove it are unchanged and still from the machine section of
+CLAUDE.md — no Docker, no local Postgres, and an Intel Mac that should not become a
+build server — but the choice is now made on what each store can enforce rather than on
+convenience. Both accounts exist; `placard-raw` is provisioned with its three scoped
+keys and nothing else is.
 
-**Pulling the take back.** A `tools/corpus-pull` script (rclone against R2) syncs new
-prefixes into `data/labels/raw/`, after which the existing pipeline applies. The
-contributor's on-device OCR reading and confirmation arrive in the manifest, so
-drafting a fixture starts from a confirmed accession rather than from nothing.
+**Pulling the take back.** `tools/corpus-pull` syncs new prefixes into
+`data/labels/raw/` with rclone against B2, then reconstructs `manifest.ndjson` into
+`derived/` by listing the take's records and sorting by `seq` — the Mac-side tools want
+a file beside the frames, and a generated one is regenerable by definition. After that
+the existing pipeline applies. The contributor's on-device OCR reading and confirmation
+arrive in the records, so drafting a fixture starts from a confirmed accession rather
+than from nothing.
 
 ---
 
@@ -396,8 +421,10 @@ Proposals, mine, not yet accepted. Each becomes a D-entry when Doug settles it.
    exists off the phone.
 3. **Contributors are pseudonymous by construction.** Device-generated ID, no accounts,
    the mapping to people kept off every server.
-4. **Ingest is FastAPI on Vercel with R2 as the bucket**, write-once, no database until
-   B1. Or the equivalents; the shape matters more than the vendors.
+4. **Ingest is FastAPI on Railway, with Backblaze B2 as the raw bucket** — settled as
+   D34, along with why the vendors turned out to matter after all: the shape this
+   proposal wanted depends on scoped keys and versioning, and not every S3-compatible
+   store has them.
 5. **Distribution is EAS Build and TestFlight.** Local Xcode builds remain for native
    debugging only.
 6. **What contributors are licensing.** The code is GPL-3.0; the fixtures — the

@@ -8,7 +8,7 @@ Solo project. Every architectural choice is also a learning-budget choice.
 
 | File | What it is | When to read it |
 |---|---|---|
-| `PLANNING.md` | The strategy document — long, argued, load-bearing | Has its own section map at the top. **Use it.** Don't read end to end for a narrow question. |
+| `docs/PLANNING.md` | The strategy document — long, argued, load-bearing | Has its own section map at the top. **Use it.** Don't read end to end for a narrow question. |
 | `DECISIONS.md` | Settled architectural calls, with reasoning | Before proposing an approach, and after settling one |
 | `docs/capture-protocol.md` | Field procedure for collecting labels | Corpus work |
 | `data/README.md` | Corpus layout and fixture format | Anything touching `data/` |
@@ -40,9 +40,16 @@ that is cheap to honor now and effectively impossible to retrofit.
 **1. Privacy is a boundary, not a setting (§5, §8.5).** No learner ever sees another
 learner's notes, photos, or interest profile. The back office has **no read path** to
 the private layer — not permission-gated, *absent*. No query, no join, no export, no
-debug view. Enforce it with separate database credentials, not with application code.
+debug view. Separate database credentials are the preferred way to enforce it, because
+they hold when application code is wrong — but the mechanism is a means, not the
+constraint. Propose a different one if it meets the goal as well or better.
 When a debugging need seems to require crossing this line, that's the exact disguise
 the leak always arrives in.
+
+This constraint governs the **private layer** — learner notes, photos, interest
+profiles. It does not govern the corpus (raw frames, manifests, fixtures), which is a
+separate data class with its own consent and its own storage; `docs/field-beta.md` §1
+says why. Don't borrow this constraint's authority for a decision it doesn't cover.
 
 > **Don't overstate this.** Three separate rules get confused easily, and I already
 > confused them once (D28): learners never see each other's material; personal material
@@ -141,7 +148,7 @@ Intel Mac. This is a real constraint, not a footnote.
 | macOS | 26.7 Tahoe (Darwin 25.6) — the last macOS that supports Intel |
 | Xcode | 26.6 — **capped at 26.x**; Xcode 27 will be Apple Silicon only |
 | iOS simulators | 26.5, 18.3 |
-| Node | 20.20.2 · npm 10.8.2 (x64 build; no pnpm, no bun) |
+| Node | **22.23.2** default (`nvm alias default lts/jod`) · npm 10.9.8 (x64; no pnpm, no bun). Was 20.20.2 until 2026-09-22; moved up because `railway config` needs ≥22.6 (D34) and RN 0.86.3 accepts `^22.13.0`. 20.20.2 is still installed |
 | Python | 3.14.3 — **ahead of many ML wheels**; pin services to 3.12/3.13 |
 | CocoaPods | 1.17.0, on Homebrew Ruby 4.0.6 — **install with `gem`, never `brew`**, see below |
 | Postgres | not installed (Homebrew available) |
@@ -157,6 +164,9 @@ question that silently kills an Intel Mac:
   Expo Go path is fully supported.
 - **`apps/learner`** — bundles and renders in the iOS 26.5 simulator and on the phone.
   `expo-camera` and `expo-location` both link and report permission correctly.
+  Re-verified end to end under Node 22.23.2 on 2026-09-22: `tsc --noEmit` clean,
+  `expo export --platform ios` bundles from a cold cache, and `expo run:ios` builds,
+  installs and launches on the iOS 26.5 simulator (786 modules).
 - **React Native 0.86.3 prebuilt artifacts** — both `react-native-artifacts-0.86.3-reactnative-core-debug`
   and `-reactnative-dependencies-debug` contain an `ios-arm64_x86_64-simulator`
   slice. **Development builds are therefore viable on Intel**, which matters because
@@ -174,6 +184,29 @@ question that silently kills an Intel Mac:
 - **Vision OCR on the phone** — the local module compiles and runs the shared
   pipeline on-device: 13 lines in ~650 ms on the bundled 38.447.4 label (D30). This
   build is the only host for it; Expo Go reports the module as not linked.
+
+### When the iOS build fails on a header, regenerate `ios/` before debugging it
+
+On 2026-09-22 `npx expo run:ios` failed in `[CP-User] Build ExpoModulesJSI xcframework`
+with `'hermes/hermes.h' file not found`, xcodebuild exit 65. The cause was a stale
+`ios/` tree generated on 09-19: `Pods/Headers/Public` held **4** entries instead of 88,
+so the React and Hermes headers every native target expects were simply not mirrored
+there. `npx expo prebuild --clean --platform ios` repopulated it and the build went
+green with no other change.
+
+Two things make this worth writing down. First, the failure reads like a dependency bug
+and is not one — it survived a Node downgrade, and the same missing-header shape appears
+in `expo-modules-jsi` for reasons that look upstream until you count the entries in
+`Headers/Public`. Check that count first: it should be in the dozens.
+
+Second, `ios/` is gitignored and fully regenerable, and D29's manual setup survives the
+regeneration — `appleTeamId` is read from `app.json`, and the script-sandboxing item is
+about declining an Xcode prompt rather than a saved build setting. So a clean prebuild
+is cheap, which is not the instinct on a machine where native builds are slow.
+
+Expect this class of problem to stay invisible: D33 ships field-beta iterations as JS
+updates, so nothing exercises the native path between rebuilds. The Met's camera-focus
+fix is native, and would have met this while packing for a museum.
 
 ### Homebrew has almost no Intel bottles on macOS 26 — check before installing
 

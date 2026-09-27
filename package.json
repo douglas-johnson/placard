@@ -1,0 +1,16 @@
+{
+  "name": "placard-infra",
+  "private": true,
+  "license": "GPL-3.0-only",
+  "description": "Root package exists only to resolve `railway/iac` for .railway/railway.ts (D34). This is not a Node project; apps/learner is.",
+  "engines": {
+    "node": ">=22.6"
+  },
+  "scripts": {
+    "plan": "railway config plan",
+    "apply": "railway config apply"
+  },
+  "devDependencies": {
+    "railway": "^3.11.0"
+  }
+}

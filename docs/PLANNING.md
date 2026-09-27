@@ -1,7 +1,8 @@
 # Placard — Planning Document
 
-**Status:** v0.10, draft for discussion
+**Status:** v0.11, draft for discussion
 **Date:** September 2026
+**Changed in v0.11:** Moved to `docs/`. §12.3 and §13 lost their positioning and commercial passages to private notes, and §12.5's outreach tactics were struck entirely (D32). Every section and heading stays, so existing `§` citations still resolve.
 **Changed in v0.10:** Project renamed from *Wall Text* to *Placard* after a second name collision (D31). Repository made public; §12 now argues from the category of existing aggregators rather than from one site, and the site-specific analysis moved to private notes ahead of outreach (D32).
 **Changed in v0.9:** Project renamed from *Art Book* to *Wall Text*. §11 phasing reordered — B0 split, its label-corpus half promoted to A0, Track A now leads. §12.5 and §13 updated for a name collision.
 
@@ -740,9 +741,9 @@ The public calendar was carrying two jobs in this plan: a public good, and the A
 
 - **Don't rebuild an NYC exhibition calendar.** That's now the redundant part.
 - **The differentiators are the four things they don't do:** structured `Event` markup, entity resolution, admission and eligibility, and verification with corroboration.
-- **The AEO position is probably better on the graph than on the calendar anyway.** *"What's on at the Whitney"* is commodity data that several sites hold. *"Who influenced Artemisia Gentileschi, and where can I see their work in New York this month, free"* is a question no calendar can answer, and it requires precisely the canon plus display state plus eligibility stack in §7 through §9.
+- **Don't architect around a partnership that doesn't exist.** They may not be interested, may not reply, may have plans of their own. Everything in this document should stand alone; collaboration is upside, not a dependency.
 
-That reframes the whole project. The calendar was never the moat; the graph is.
+Where the AEO advantage actually sits, and what that implies for positioning, is in the private strategy notes rather than here (D32).
 
 ### 12.4 Using them for B0
 
@@ -756,19 +757,22 @@ For the research phase, use an aggregator as a human. Open it, find a free show,
 
 ### 12.5 On approaching them
 
-Some notes for when the time comes — which is earlier than "when the product is finished." This project was, for a while, named the same thing as one of these sites (D31). Even with that resolved, they should hear about Placard from us rather than discover it, and the right moment is once there's a working artifact to show.
+*Struck 2026-09-22.* This section carried outreach tactics — how to open the
+conversation, what to lead with, how to frame it. It has been removed from this document
+and from the private notes alike; it was speculative advice about a conversation that
+has not happened, and it aged badly against D31's rename. What survives of it is the
+constraint now in §12.3: nothing here may depend on a partnership existing.
 
-**Go with something, not with an ask.** The strongest opening is evidence of work already done: a list of duplicate records with the specific DOM patterns that caused them, or a sample of their listings marked up as `ExhibitionEvent` JSON-LD they could drop in. A working artifact changes the conversation from "will you collaborate" to "this already exists, want it."
-
-**Frame it as contribution, not audit.** *"I built a dedup pass for my own project and ran it over public listings; these fell out, you may find them useful"* lands differently from a bug report.
-
-**Know the ask before writing.** Data access, co-branding, a venue registry, or just a conversation? An unclear ask is the usual reason these go nowhere.
-
-**Don't architect around a partnership that doesn't exist.** They may not be interested, may not reply, may have plans of their own. Everything in this document should stand alone; collaboration is upside, not a dependency.
+The reasoning that referenced this section (D31, and the prior-art rule in D32) is
+unaffected — both record what it said at the time, which is what a decision entry is
+for.
 
 ---
 
 ## 13. Open questions
+
+Commercial and positioning questions — licensing of the published layer, and whether the
+public site acknowledges the app — are held in the private strategy notes instead (D32).
 
 - **How much does the learner see of their own graph?** A visible map is motivating and also risks becoming the coverage metric §6.5 warns against.
 - **What happens with art encountered outside museums?** Street art, architecture, objects in books. Probably in scope eventually, but it breaks the location-prior in §4.
@@ -784,7 +788,5 @@ Some notes for when the time comes — which is earlier than "when the product i
 - **How much does a correction reveal?** Corrections are sightings with extra detail attached, and a prolific corrector is a user whose movements become legible. The rate limits and timestamp coarsening need real numbers.
 - **How is eligibility collected without it feeling like a form?** Not a dignity problem so much as a friction one — nobody wants to fill in nine checkboxes before seeing a calendar. Probably: ask nothing up front, infer what's inferable, let unlocks be discovered and added one at a time, and say plainly that the answers stay on the device.
 - **How does a disputed claim behave in the curriculum?** §8.4 says contested is a legitimate state, but the recommender still has to decide whether to traverse a disputed edge. Probably yes, with the dispute surfaced — but that's a design decision, not a default.
-- **Does the public calendar know about the app at all?** A calendar that's transparently a funnel is less citable than one that stands on its own. There's a real argument for the public site barely mentioning Placard.
-- **What's the licensing on the published layer?** If the goal is to be cited and reused by answer engines, the terms should say so explicitly. CC-BY on the event data would be consistent with the AEO goal and would also make institutions more willing to cooperate.
 - **What's the decay half-life on display claims?** Needs a real number, and it probably differs by venue type — a permanent collection hang and a rotating works-on-paper gallery decay at very different rates.
 - **How are cancellations and date changes detected?** `eventStatus` handles the markup; noticing that something changed at the source is unsolved and is the main way a calendar rots. Rung 2 ingestion helps a lot here.

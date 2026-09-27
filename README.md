@@ -13,7 +13,7 @@ Solo project, in progress.
 
 | | |
 |---|---|
-| [`PLANNING.md`](PLANNING.md) | The strategy document. Long and argued; it has a section map at the top. |
+| [`docs/PLANNING.md`](docs/PLANNING.md) | The strategy document. Long and argued; it has a section map at the top. |
 | [`DECISIONS.md`](DECISIONS.md) | Settled architectural calls, with the reasoning that settled them. |
 | [`CLAUDE.md`](CLAUDE.md) | Working context and the constraints that override convenience. |
 | [`docs/capture-protocol.md`](docs/capture-protocol.md) | Field procedure for collecting wall labels. |
