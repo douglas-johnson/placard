@@ -1,36 +1,48 @@
 /**
  * The manifest half of removing a frame (take.ts redactFrame), kept free of Expo
  * imports so `npm run redaction-test` can check it under Node. Pure: text in, text
- * out.
+ * out. What the app read from the frame goes; what the tester said stays.
  *
- *   frame record  →  file: null, redacted: <why and when>
- *   ocr records   →  lines: [], candidates: [], warnings: [REDACTED …]
+ *   frame record       →  file: null, redacted: <why and when>
+ *   ocr records        →  lines: [], candidates: [], warnings: [REDACTED …]
+ *   accession records  →  reading: null, candidates: []  — only when the frame is a
+ *                          label or accession crop, whose OCR the locator read them
+ *                          from (LabelFlow). The group's status and value stay: they
+ *                          are the tester's answer, like the group's note, which the
+ *                          Mac-side redaction of the Met kept too.
  *
- * Every other line keeps its exact bytes, torn ones included: a redaction removes
- * one frame's image and text and nothing else.
+ * Every other line keeps its exact bytes, torn ones included. The accession
+ * candidates are the union across the group's label frames, so wiping them can take
+ * a sibling frame's reading too; over-wiping is the safe direction.
  */
 export function redactManifest(text: string, frame: string, why: string, day: string): { text: string; file: string | null; found: boolean } {
-  let file: string | null = null;
-  let found = false;
-  const out = text.split('\n').map((line) => {
-    let r: any;
+  const parse = (line: string): any => {
     try {
-      r = JSON.parse(line);
+      return JSON.parse(line);
     } catch {
-      return line; // blank or torn: not ours to touch
+      return null; // blank or torn: not ours to touch
     }
+  };
+  const lines = text.split('\n');
+  const target = lines.map(parse).find((r) => r?.type === 'frame' && r.frame === frame);
+  if (!target) return { text, file: null, found: false };
+  const readForAccession = (target.kind === 'label' || target.kind === 'accession_crop') && target.group;
+
+  const out = lines.map((line) => {
+    const r = parse(line);
     if (r?.type === 'frame' && r.frame === frame) {
-      found = true;
-      file = r.file ?? null;
       if (r.redacted && r.file == null) return line; // already done, here or on the Mac
       return JSON.stringify({ ...r, file: null, redacted: r.redacted ?? `${why} — removed on the phone ${day}` });
     }
     if (r?.type === 'ocr' && r.frame === frame && (r.lines?.length ?? 0) + (r.candidates?.length ?? 0) > 0) {
       return JSON.stringify({ ...r, lines: [], candidates: [], warnings: [`REDACTED ${day}: ${why}. Lines removed on the phone with the frame.`] });
     }
+    if (readForAccession && r?.type === 'accession' && r.group === target.group && (r.reading != null || (r.candidates?.length ?? 0) > 0)) {
+      return JSON.stringify({ ...r, reading: null, candidates: [] });
+    }
     return line;
   });
-  return { text: out.join('\n'), file, found };
+  return { text: out.join('\n'), file: target.file ?? null, found: true };
 }
 
 /**

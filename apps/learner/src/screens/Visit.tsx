@@ -90,8 +90,8 @@ export function Visit({ take, onBack }: { take: Take; onBack: () => void }) {
                 <Text style={[type.body, { color: p.text }]}>Remove this photo for good?</Text>
                 <P muted>
                   It's the one change a visit can take, and it's for one case: a photo that identifies a child — a
-                  student's name on a label, say. The photo is deleted here and any text read from it is wiped. The
-                  record that a photo was taken stays, so the visit still adds up.
+                  student's name on a label, say. The photo is deleted here and any text the app read from it is
+                  wiped. The record that a photo was taken stays, so the visit still adds up.
                 </P>
                 <P muted>The copy in your camera roll is separate. Delete that one in Photos.</P>
                 <Button label="Remove it" onPress={() => remove(f.frame)} />

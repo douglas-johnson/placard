@@ -1605,8 +1605,14 @@ removing a photo, as a redaction. It does on the phone exactly what was done by 
 the Mac. The image file is deleted. The frame record keeps its place with `file: null`
 and a `redacted` note. Every `ocr` record for that frame keeps its place with `lines`
 and `candidates` emptied and a `REDACTED` warning, so replay and sequence numbers hold
-and the visit still records that a photo was taken there. Every other line keeps its
-exact bytes.
+and the visit still records that a photo was taken there. When the photo is a label or
+an accession crop, the group's `accession` record loses its `reading` and `candidates`
+as well, because the locator read them from that OCR; the review of PR #7 caught that
+the first version left them. What the tester said stays: the accession `status` and
+`value`, and the group's note, are their answer rather than the app's reading, and the
+Mac-side redaction of the Met kept the note too. A tester's own words can still repeat
+a label; the Mac-side redaction tool that follows (D42) takes extra records by sequence
+number for that. Every other line keeps its exact bytes.
 
 **Why not a general edit.** A take is evidence (data/README.md), and the one sanctioned
 change to it is this one. A general delete would quietly make the corpus tidier than

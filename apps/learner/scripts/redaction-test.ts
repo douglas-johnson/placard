@@ -12,7 +12,7 @@ const lines = [
   rec({ seq: 90, type: 'group_opened', group: 'g0014' }),
   rec({ seq: 91, type: 'frame', frame: 'f0035', file: 'f0035-label.jpg', kind: 'label', group: 'g0014', camera_roll: true }),
   rec({ seq: 92, type: 'ocr', frame: 'f0035', group: 'g0014', lines: [{ text: 'A CHILD, GRADE 4' }], warnings: [], candidates: ['2026.1'] }),
-  rec({ seq: 93, type: 'accession', group: 'g0014', status: 'none', reading: null, value: null, candidates: [] }),
+  rec({ seq: 93, type: 'accession', group: 'g0014', status: 'corrected', reading: '2026.1', value: '2026.7', candidates: ['2026.1'] }),
   rec({ seq: 94, type: 'frame', frame: 'f0036', file: 'f0036-work.jpg', kind: 'work', group: 'g0014' }),
   rec({ seq: 95, type: 'ocr', frame: 'f0036', group: 'g0014', lines: [{ text: 'keep me' }], warnings: [], candidates: [] }),
   '{"v":1,"seq":96,"type":"gro', // torn by a crash
@@ -36,8 +36,21 @@ assert.deepEqual(ocr.lines, []);
 assert.deepEqual(ocr.candidates, []);
 assert.match(ocr.warnings[0], /^REDACTED 2026-09-27/);
 assert.ok(!r.text.includes('A CHILD'), 'the text read from the frame is gone');
+assert.ok(!r.text.includes('2026.1'), 'and so is every reading derived from it');
 
-for (const i of [0, 3, 4, 5, 6, 7]) assert.equal(out[i], lines[i], `line ${i} keeps its exact bytes`);
+// The locator's reading came from the label's OCR, so it goes; the tester's answer stays.
+const accession = JSON.parse(out[3]);
+assert.equal(accession.reading, null);
+assert.deepEqual(accession.candidates, []);
+assert.equal(accession.status, 'corrected');
+assert.equal(accession.value, '2026.7');
+
+for (const i of [0, 4, 5, 6, 7]) assert.equal(out[i], lines[i], `line ${i} keeps its exact bytes`);
+
+// Removing a work frame leaves the group's accession alone: nothing was read from it.
+const work = redactManifest(text, 'f0036', 'identifies a minor', '2026-09-27').text.split('\n');
+assert.equal(work[3], lines[3]);
+assert.equal(work[2], lines[2]);
 
 // Running it again changes nothing and keeps the first note.
 const again = redactManifest(r.text, 'f0035', 'identifies a minor', '2026-09-28');
