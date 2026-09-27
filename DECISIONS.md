@@ -1616,10 +1616,18 @@ confirmation names the case instead of offering one.
 **Two limits, stated rather than hidden.** The camera-roll copy is a separate asset
 whose ID the app never recorded, so the screen tells the tester to delete it in
 Photos. And the manifest is rewritten in full, which the file API cannot do
-atomically, so the rewrite goes to a side file that is then moved into place. Replay
-finishes a move a crash interrupted, or discards a side file that may be torn, in
-which case the redaction shows as unfinished and can be run again. The image goes
-first, because it is what identifies someone.
+atomically. So the removal writes an intent (the frame, the reason, the day) before
+it touches anything, deletes the image first because it is what identifies someone,
+writes the new manifest to a side file, marks the side file ready once it is
+complete, and moves it into place. Before anything reads or appends to the manifest,
+replay moves a ready side file into place and discards one that isn't ready. If an
+intent is still present, it then runs the redaction again. A crash at any point
+therefore ends either before anything was removed or with the redaction complete,
+never with the image gone and the text still there. The first version got this
+wrong, and the review of PR #7 caught it: it treated "side file and manifest both
+present" as "side file torn", which is also true in the instant after the side file
+is finished. `npm run redaction-test` now crashes the sequence at every step, and at
+every step of the recovery after it.
 
 **What would reverse this:** nothing short of D4 changing. Once uploads exist, a frame
 already in the bucket also needs `tools/redact/` (D36), and the phone-side removal

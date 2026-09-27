@@ -4,7 +4,7 @@
  * script. The file operations around it are in take.ts redactFrame.
  */
 import assert from 'node:assert/strict';
-import { redactManifest } from '../src/redaction';
+import { redact, type RedactionFs, redactManifest, settle } from '../src/redaction';
 
 const take = '2026-09-20-the-metropolitan-museum-of-art';
 const rec = (o: object) => JSON.stringify({ v: 1, ts: '2026-09-20T19:30:20.000Z', take, ...o });
@@ -49,4 +49,85 @@ const mac = '{"v": 1, "seq": 91, "type": "frame", "frame": "f0035", "file": null
 assert.equal(redactManifest(mac, 'f0035', 'identifies a minor', '2026-09-27').text, mac);
 
 assert.equal(redactManifest(text, 'f9999', 'x', '2026-09-27').found, false);
+
+// ---------------------------------------------------------------------------
+// Crashes. A file system that dies at operation N, leaving a half-written file when
+// N is a write, the way a torn write looks after a crash. For every N in the
+// redaction, and then for every M in the recovery that follows, one clean settle()
+// must end in one of exactly two states: untouched (the crash came before anything
+// was removed, and the photo still offers "Remove…"), or fully redacted. Never the
+// image gone with the text left — the state the review of PR #7 found.
+
+class Crash extends Error {}
+
+function memoryFs(files: Map<string, string>, dieAt = Infinity): RedactionFs & { ops: number } {
+  const fs = {
+    ops: 0,
+    tick() {
+      fs.ops += 1;
+      if (fs.ops === dieAt) throw new Crash();
+    },
+    exists: (n: string) => files.has(n),
+    read: (n: string) => {
+      if (!files.has(n)) throw new Error(`read of missing ${n}`);
+      return files.get(n)!;
+    },
+    write(n: string, t: string) {
+      if (fs.ops + 1 === dieAt) {
+        files.set(n, t.slice(0, Math.floor(t.length / 2)));
+      }
+      fs.tick();
+      files.set(n, t);
+    },
+    remove(n: string) {
+      fs.tick();
+      files.delete(n);
+    },
+    move(from: string, to: string) {
+      // expo's moveSync with overwrite: delete the destination, then rename — two steps.
+      fs.tick();
+      files.delete(to);
+      fs.tick();
+      files.set(to, files.get(from)!);
+      files.delete(from);
+    },
+  };
+  return fs;
+}
+
+const start = () => new Map([['manifest.ndjson', text], ['f0035-label.jpg', '<jpeg>'], ['f0036-work.jpg', '<jpeg>']]);
+
+const clean = start();
+const total = memoryFs(clean);
+redact(total, 'f0035', 'identifies a minor', '2026-09-27');
+const want = [...clean.entries()].sort();
+const untouched = [...start().entries()].sort();
+assert.ok(!clean.has('f0035-label.jpg') && clean.has('f0036-work.jpg'));
+assert.equal(clean.get('manifest.ndjson'), r.text);
+
+let cases = 0;
+for (let n = 1; n <= total.ops; n += 1) {
+  const files = start();
+  assert.throws(() => redact(memoryFs(files, n), 'f0035', 'identifies a minor', '2026-09-27'), Crash);
+  const afterFirst = new Map(files);
+  // …and a second crash anywhere in the recovery.
+  for (let m = 1; ; m += 1) {
+    const again = new Map(afterFirst);
+    let recovered = true;
+    try {
+      settle(memoryFs(again, m));
+    } catch (e) {
+      if (!(e instanceof Crash)) throw e;
+      recovered = false;
+    }
+    settle(memoryFs(again));
+    const got = JSON.stringify([...again.entries()].sort());
+    const outcome = got === JSON.stringify(want) ? 'redacted' : got === JSON.stringify(untouched) ? 'untouched' : null;
+    assert.ok(outcome, `crash at redaction step ${n}, recovery step ${m}: ${got.slice(0, 300)}`);
+    if (outcome === 'untouched') assert.ok(n <= 1, `only a crash before the intent is written may leave it untouched (step ${n})`);
+    cases += 1;
+    if (recovered) break;
+  }
+}
+console.log(`redaction: ${total.ops} steps, ${cases} crash combinations, every one recovers`);
 console.log('redaction: all checks passed');

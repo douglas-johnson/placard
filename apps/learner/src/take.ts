@@ -16,7 +16,7 @@ import * as Updates from 'expo-updates';
 import { Platform } from 'react-native';
 import type { Observation } from '../modules/vision-ocr';
 import type { Gps } from './location';
-import { redactManifest } from './redaction';
+import { redact, type RedactionFs, settle as settleRedaction } from './redaction';
 import { slugify } from './registry';
 
 // ---------------------------------------------------------------------------
@@ -182,21 +182,33 @@ export type Take = {
 
 const takesDir = () => new Directory(Paths.document, 'takes');
 const manifestOf = (dir: Directory) => new File(dir, 'manifest.ndjson');
-const redactingOf = (dir: Directory) => new File(dir, 'manifest.ndjson.redacting');
+
+/** The take's directory, as redaction.ts sees it. */
+function redactionFs(dir: Directory): RedactionFs {
+  const f = (name: string) => new File(dir, name);
+  return {
+    exists: (name) => f(name).exists,
+    read: (name) => f(name).textSync(),
+    write: (name, text) => {
+      const file = f(name);
+      if (file.exists) file.delete();
+      file.create();
+      file.write(text);
+    },
+    remove: (name) => {
+      if (f(name).exists) f(name).delete();
+    },
+    move: (from, to) => f(from).moveSync(f(to), { overwrite: true }),
+  };
+}
 
 /**
- * Finish or abandon a redaction a crash interrupted (redactFrame). The rewritten
- * manifest is written in full to a side file and then moved over the original. If
- * only the side file exists, the crash came mid-move after the write had finished,
- * so it is complete: move it into place. If both exist, the crash came before the
- * move and the side file may be torn: drop it, keep the original, and the redaction
- * shows as unfinished and can be run again.
+ * Finish a redaction a crash interrupted, before anything reads or appends
+ * (redaction.ts has the sequence). Runs even with no manifest present: a crash inside
+ * the final move leaves exactly that, with the finished side file waiting.
  */
 function settle(dir: Directory): void {
-  const next = redactingOf(dir);
-  if (!next.exists) return;
-  if (manifestOf(dir).exists) next.delete();
-  else next.moveSync(manifestOf(dir));
+  settleRedaction(redactionFs(dir));
 }
 
 function emptyCounts(): Counts {
@@ -497,25 +509,14 @@ export function recordsOf(take: Take): ManifestRecord[] {
  *   frame record  →  file: null, redacted: <why and when>
  *   ocr records   →  lines: [], candidates: [], warnings: [REDACTED …]
  *
- * The image goes first, because it is what identifies someone. Safe to run again: a
- * frame whose file is already gone still gets its records rewritten. The camera-roll
+ * The image goes first, because it is what identifies someone, and a crash at any
+ * point is finished on the next read (redaction.ts). Safe to run again. The camera-roll
  * copy is a separate asset the app never recorded an ID for, so it can't be reached
  * from here, and the screen says so.
  */
 export function redactFrame(take: Take, frame: string, why: string): void {
-  settle(take.dir);
   const day = new Date().toISOString().slice(0, 10);
-  const result = redactManifest(manifestOf(take.dir).textSync(), frame, why, day);
-  if (!result.found) throw new Error(`no frame ${frame} in ${take.id}`);
-  if (result.file) {
-    const image = new File(take.dir, result.file);
-    if (image.exists) image.delete();
-  }
-  const next = redactingOf(take.dir);
-  if (next.exists) next.delete();
-  next.create();
-  next.write(result.text);
-  next.moveSync(manifestOf(take.dir), { overwrite: true });
+  if (!redact(redactionFs(take.dir), frame, why, day).found) throw new Error(`no frame ${frame} in ${take.id}`);
 }
 
 /** The manifest file, for the share sheet. */
