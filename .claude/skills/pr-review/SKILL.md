@@ -39,6 +39,29 @@ as an illustration, not as a patch.
    contradicts a settled decision without amending it is a finding; a change that
    amends it in `DECISIONS.md` is what's supposed to happen.
 
+## Re-reviews: read what changed, not the whole PR again
+
+Every push to a PR runs you again, and a PR that has been through a few rounds carries
+its earlier reviews, their replies, and the decisions they touched. Re-reading all of
+it each time is what runs a review past its turn budget. So when step 4 shows a
+summary comment from a previous run of yours:
+
+1. **Find the commit it reviewed.** Every summary names it (see *How to post*). Take
+   the PR's current head from `gh pr view <number> --json headRefOid,commits`.
+2. **Review the new commits only**: `git log <reviewed>..<head>` for their messages,
+   and `git diff <reviewed>..<head>` for the change. Read surrounding code and the
+   D-entries those commits touch; skip what they don't.
+3. **Check the fixes, don't re-audit.** A thread replied to with "Fixed in `<sha>`" is
+   verified against that commit's diff. If the fix holds, say so in one line in the
+   summary. If it doesn't, reply on that thread rather than opening a new one.
+4. **Don't re-read the whole diff to look for new things.** Earlier rounds covered it.
+   Look past the new commits only where they change something that earlier code
+   depends on.
+
+If the previous summary names no commit, or the branch was rebased so that the old
+commit is gone (`git log` can't find it), fall back to a full review and say so in
+the summary.
+
 ## What to look for, in order
 
 **The hard constraints in CLAUDE.md.** These are the findings that justify the reviewer
@@ -106,7 +129,8 @@ Doug settles it, the settlement goes here so it isn't raised again.
   `mcp__github_inline_comment__create_inline_comment`. Lead with what's wrong and
   what it would cause; then the constraint or decision it runs against, cited by
   section or D-number so the reader can find the reasoning. Two to four sentences.
-- **One summary comment** via `gh pr comment <number> --body "..."`, posted last. It
+- **One summary comment** via `gh pr comment <number> --body "..."`, posted last. Its
+  first line is `Reviewed at <head sha>.`, which is where the next run starts. It then
   says, in a short paragraph, what the PR does as you understood it, then lists the
   findings by severity with a one-line each — the inline comments carry the detail. If
   there are no findings, the summary is one or two sentences saying you read it and
@@ -120,3 +144,5 @@ Doug settles it, the settlement goes here so it isn't raised again.
   inline comment.
 - If the diff is too large to read honestly within your turn budget, say so in the
   summary and name what you did and didn't read, rather than skimming and pretending.
+  The budget is 60 turns (`--max-turns` in the workflow). Keep enough of it to post:
+  a review that runs out before its summary has said nothing at all.
