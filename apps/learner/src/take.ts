@@ -16,6 +16,7 @@ import * as Updates from 'expo-updates';
 import { Platform } from 'react-native';
 import type { Observation } from '../modules/vision-ocr';
 import type { Gps } from './location';
+import { redactManifest } from './redaction';
 import { slugify } from './registry';
 
 // ---------------------------------------------------------------------------
@@ -181,6 +182,22 @@ export type Take = {
 
 const takesDir = () => new Directory(Paths.document, 'takes');
 const manifestOf = (dir: Directory) => new File(dir, 'manifest.ndjson');
+const redactingOf = (dir: Directory) => new File(dir, 'manifest.ndjson.redacting');
+
+/**
+ * Finish or abandon a redaction a crash interrupted (redactFrame). The rewritten
+ * manifest is written in full to a side file and then moved over the original. If
+ * only the side file exists, the crash came mid-move after the write had finished,
+ * so it is complete: move it into place. If both exist, the crash came before the
+ * move and the side file may be torn: drop it, keep the original, and the redaction
+ * shows as unfinished and can be run again.
+ */
+function settle(dir: Directory): void {
+  const next = redactingOf(dir);
+  if (!next.exists) return;
+  if (manifestOf(dir).exists) next.delete();
+  else next.moveSync(manifestOf(dir));
+}
 
 function emptyCounts(): Counts {
   return { labels: 0, works: 0, venue_signs: 0, wall_texts: 0, frames: 0 };
@@ -233,6 +250,7 @@ function replay(id: string, dir: Directory, lines: ManifestRecord[]): Take | nul
 }
 
 function readManifest(dir: Directory): ManifestRecord[] {
+  settle(dir);
   const f = manifestOf(dir);
   if (!f.exists) return [];
   return f
@@ -282,6 +300,7 @@ function append(take: Take, record: RecordInput): ManifestRecord {
     seq: take.seq,
     ...record,
   } as ManifestRecord;
+  settle(take.dir);
   const f = manifestOf(take.dir);
   if (!f.exists) f.create({ intermediates: true });
   f.write(JSON.stringify(full) + '\n', { append: true });
@@ -462,6 +481,41 @@ export function recordAccession(
   },
 ): void {
   append(take, { type: 'accession', ...detail });
+}
+
+/** Every record of a take, in the order written. */
+export function recordsOf(take: Take): ManifestRecord[] {
+  return readManifest(take.dir);
+}
+
+/**
+ * Remove a frame for good: the one edit ever made to a raw take (D4 amendment, D36),
+ * done here on the phone the same way it was done by hand on the Mac for the Met.
+ * The file is deleted and the text read from it is wiped, and both records stay, so
+ * replay and sequence numbers hold and the visit still says a frame was taken here.
+ *
+ *   frame record  →  file: null, redacted: <why and when>
+ *   ocr records   →  lines: [], candidates: [], warnings: [REDACTED …]
+ *
+ * The image goes first, because it is what identifies someone. Safe to run again: a
+ * frame whose file is already gone still gets its records rewritten. The camera-roll
+ * copy is a separate asset the app never recorded an ID for, so it can't be reached
+ * from here, and the screen says so.
+ */
+export function redactFrame(take: Take, frame: string, why: string): void {
+  settle(take.dir);
+  const day = new Date().toISOString().slice(0, 10);
+  const result = redactManifest(manifestOf(take.dir).textSync(), frame, why, day);
+  if (!result.found) throw new Error(`no frame ${frame} in ${take.id}`);
+  if (result.file) {
+    const image = new File(take.dir, result.file);
+    if (image.exists) image.delete();
+  }
+  const next = redactingOf(take.dir);
+  if (next.exists) next.delete();
+  next.create();
+  next.write(result.text);
+  next.moveSync(manifestOf(take.dir), { overwrite: true });
 }
 
 /** The manifest file, for the share sheet. */

@@ -9,8 +9,9 @@ import { Home, type Input } from './src/screens/Home';
 import { LabelFlow } from './src/screens/LabelFlow';
 import { Preflight } from './src/screens/Preflight';
 import { VenueFlow } from './src/screens/VenueFlow';
+import { Visit } from './src/screens/Visit';
 import { WallTextFlow } from './src/screens/WallTextFlow';
-import { endTake, resumeTake, type Take } from './src/take';
+import { endTake, listTakes, resumeTake, type Take } from './src/take';
 
 /**
  * F0 — one collector, no server (docs/field-beta.md §7). Everything here runs with
@@ -26,6 +27,7 @@ type Route =
   | { name: 'home' }
   | { name: 'done' }
   | { name: 'preflight' }
+  | { name: 'visit'; id: string; from: 'arrive' | 'home' }
   | { name: 'flow'; input: Input; devPreset?: 'readback' | 'flags' };
 
 export default function App() {
@@ -68,14 +70,19 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const visit = route.name === 'visit' ? listTakes().find((t) => t.id === route.id) : undefined;
+
   let screen;
-  if (!take || route.name === 'arrive') {
+  if (route.name === 'visit' && visit) {
+    screen = <Visit take={visit} onBack={() => (route.from === 'home' && take ? home() : setRoute({ name: 'arrive' }))} />;
+  } else if (!take || route.name === 'arrive' || route.name === 'visit') {
     screen = (
       <Arrive
         onStarted={(t) => {
           setTake(t);
           setRoute({ name: 'flow', input: 'venue' });
         }}
+        onOpenVisit={(t) => setRoute({ name: 'visit', id: t.id, from: 'arrive' })}
       />
     );
   } else if (route.name === 'done') {
@@ -117,7 +124,14 @@ export default function App() {
         break;
     }
   } else {
-    screen = <Home take={take} onInput={(input) => setRoute({ name: 'flow', input })} onPreflight={() => setRoute({ name: 'preflight' })} />;
+    screen = (
+      <Home
+        take={take}
+        onInput={(input) => setRoute({ name: 'flow', input })}
+        onPreflight={() => setRoute({ name: 'preflight' })}
+        onOpenVisit={(t) => setRoute({ name: 'visit', id: t.id, from: 'home' })}
+      />
+    );
   }
 
   return (

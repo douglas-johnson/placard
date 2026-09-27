@@ -1586,3 +1586,41 @@ outside git did depend on the path:
 
 **What would repeat this:** any future rename of the directory. The list above is the
 checklist.
+
+---
+
+## D41 — On the phone, a visit's one edit is removing a photo, as a redaction
+
+**Date:** 2026-09-27 · **Status:** accepted · **Decided by:** Doug asked for it; its
+shape is Claude's call · **Implements:** the D4 amendment and D36 on the device
+
+The Met redaction was carried out on the Mac. The phone's own copy of that visit still
+holds the P.S. Art label frame (`f0035`, group `g0014`) and the OCR record with the
+child's name, grade, school and teacher. That copy has to go before anything uploads
+from the phone. More generally, the protocol says a frame like this is deleted the day
+it's found, and a tester in the field has no Mac.
+
+**Decision:** an earlier visit opens to its photos, and the one change it offers is
+removing a photo, as a redaction. It does on the phone exactly what was done by hand on
+the Mac. The image file is deleted. The frame record keeps its place with `file: null`
+and a `redacted` note. Every `ocr` record for that frame keeps its place with `lines`
+and `candidates` emptied and a `REDACTED` warning, so replay and sequence numbers hold
+and the visit still records that a photo was taken there. Every other line keeps its
+exact bytes.
+
+**Why not a general edit.** A take is evidence (data/README.md), and the one sanctioned
+change to it is this one. A general delete would quietly make the corpus tidier than
+the gallery was, which is the failure the raw/ rules exist to prevent, so the
+confirmation names the case instead of offering one.
+
+**Two limits, stated rather than hidden.** The camera-roll copy is a separate asset
+whose ID the app never recorded, so the screen tells the tester to delete it in
+Photos. And the manifest is rewritten in full, which the file API cannot do
+atomically, so the rewrite goes to a side file that is then moved into place. Replay
+finishes a move a crash interrupted, or discards a side file that may be torn, in
+which case the redaction shows as unfinished and can be run again. The image goes
+first, because it is what identifies someone.
+
+**What would reverse this:** nothing short of D4 changing. Once uploads exist, a frame
+already in the bucket also needs `tools/redact/` (D36), and the phone-side removal
+does not reach the bucket.

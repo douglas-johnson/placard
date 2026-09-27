@@ -17,10 +17,12 @@ export function Home({
   take,
   onInput,
   onPreflight,
+  onOpenVisit,
 }: {
   take: Take;
   onInput: (input: Input) => void;
   onPreflight: () => void;
+  onOpenVisit: (take: Take) => void;
 }) {
   const p = usePalette();
   const insets = useInsets();
@@ -55,7 +57,7 @@ export function Home({
         <Button label="Leaving — shoot the exterior" tone="secondary" onPress={() => onInput('exterior')} />
 
         <Rule />
-        <PastTakes except={take.id} />
+        <PastTakes except={take.id} onOpen={onOpenVisit} />
         <Pressable onPress={onPreflight} hitSlop={8} style={{ marginTop: 20 }}>
           <Text style={[type.small, { color: p.muted }]}>Check this build</Text>
         </Pressable>
