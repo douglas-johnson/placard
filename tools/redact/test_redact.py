@@ -68,6 +68,10 @@ def ocr(seq, frame):
     return json.dumps({"v": 1, "take": TAKE, "seq": seq, "type": "ocr", "frame": frame, "lines": [{"text": "a child's name"}]}).encode()
 
 
+def rec(seq, type_, **kw):
+    return json.dumps({"v": 1, "take": TAKE, "seq": seq, "type": type_, **kw}, separators=(",", ":")).encode()
+
+
 def args(*extra):
     return redact.parse(["--contributor", C, "--take", TAKE, "--frame", "f0035", "--reason", "minor",
                          "--group", "g0014", "--kept", "work,exhibition_wall_text", "--fixture", "met-ps-art-2026-redacted", *extra])
@@ -96,7 +100,15 @@ class RedactTest(unittest.TestCase):
         b2.put(P + "records/000040-ocr.json", ocr(40, "f0035"))
         b2.put(P + "records/000041-ocr.json", ocr(41, "f0036"))
         b2.put(P + "records/000045-group_closed.json", b'{"note":"named the child"}')
+        b2.put(P + "records/000039-frame.json", rec(39, "frame", frame="f0035", file="f0035-label.jpg", kind="label", group="g0014"))
+        b2.put(P + "records/000038-frame.json", rec(38, "frame", frame="f0034", file="f0034-work.jpg", kind="work", group="g0014"))
+        b2.put(P + "records/000042-accession.json",
+               rec(42, "accession", group="g0014", status="corrected", reading="A CHILD 4", value="2026.7", candidates=["A CHILD 4"]))
         return b2
+
+    def body(self, b2, name):
+        [v] = [f for f in b2.files if f["fileName"] == P + name]
+        return json.loads(v["data"])
 
     def test_destroys_every_version_and_the_ocr_that_read_it(self):
         b2 = self.bucket_with_take()
@@ -116,15 +128,48 @@ class RedactTest(unittest.TestCase):
         self.assertIn(P + "f0034-work.jpg", names)
         self.assertIn(P + "records/000041-ocr.json", names)  # read a different frame
         marker = json.loads(next(f["data"] for f in b2.files if f["fileName"] == P + "records/redacted-f0035.json"))
-        self.assertEqual(marker["removed"], ["frame", "ocr", "record"])
+        self.assertEqual(marker["removed"], ["frame", "ocr", "accession_reading", "record"])
         self.assertFalse((mirror / "f0035-label.jpg").exists())
         self.assertFalse(derived.exists())
         [line] = self.audit()
-        self.assertEqual(line["versions_destroyed"], 5)
+        self.assertEqual(line["versions_destroyed"], 6)
         self.assertEqual(line["kept"], ["work", "exhibition_wall_text"])
         self.assertNotIn("child", json.dumps(line))  # nothing redacted reaches the audit line
         self.assertEqual(b2.keys, {})  # revoked
         self.assertIn("deleteFiles", b2.minted_caps)
+
+    def test_a_label_takes_the_groups_accession_readings_with_it(self):
+        b2 = self.bucket_with_take()
+        self.assertEqual(redact.run(redact.parse(["--contributor", C, "--take", TAKE, "--frame", "f0035", "--reason", "minor"]),
+                                    b2, lambda *_: b2, self.root), 0)
+        acc = self.body(b2, "records/000042-accession.json")  # exactly one version: the scrubbed one
+        self.assertEqual((acc["reading"], acc["candidates"]), (None, []))
+        self.assertEqual((acc["status"], acc["value"]), ("corrected", "2026.7"))  # the tester's answer stays
+        self.assertNotIn(b"A CHILD", b"".join(f["data"] for f in b2.files))
+        self.assertEqual(self.audit()[0]["group"], "g0014")  # from the bucket, --group not given
+
+    def test_a_work_frame_leaves_the_accession_alone(self):
+        b2 = self.bucket_with_take()
+        before = [f for f in b2.files if "accession" in f["fileName"]]
+        redact.run(redact.parse(["--contributor", C, "--take", TAKE, "--frame", "f0034", "--reason", "minor"]), b2, lambda *_: b2, self.root)
+        self.assertEqual([f for f in b2.files if "accession" in f["fileName"]], before)
+
+    def test_an_accession_record_asked_for_by_seq_is_not_written_back(self):
+        b2 = self.bucket_with_take()
+        redact.run(args("--record", "42"), b2, lambda *_: b2, self.root)
+        self.assertFalse(any(f["fileName"].endswith("000042-accession.json") for f in b2.files))
+
+    def test_refuses_before_touching_anything_if_the_derived_bucket_is_in_use(self):
+        b2 = self.bucket_with_take()
+        before = list(b2.files)
+        redact.DERIVED_BUCKET_IN_USE = True
+        try:
+            self.assertEqual(redact.run(args(), b2, lambda *_: b2, self.root), 1)
+        finally:
+            redact.DERIVED_BUCKET_IN_USE = False
+        self.assertEqual(b2.files, before)
+        self.assertIsNone(b2.minted_caps)  # no key was minted
+        self.assertEqual(self.audit(), [])
 
     def test_a_take_not_in_the_bucket_is_nothing_to_do_but_still_audited(self):
         # The Met case: the frame was deleted on the Mac before any upload existed.

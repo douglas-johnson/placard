@@ -1659,6 +1659,13 @@ The tool is D36 as amended by D38. The details below are Claude's calls:
   that cannot be parsed stops the run rather than being guessed about.
 - **`--record <seq>` destroys further records by sequence number,** for the case the
   Met nearly was: a tester's free-text note that repeats what the label said.
+- **For a label or accession crop, the group's `accession` record loses its reading
+  and candidates,** as it does on the phone (D41). The review of PR #8 caught that the
+  first version of this tool did not, the same gap the review of PR #7 found on the
+  phone. A bucket object can't be edited, so every version is destroyed, and the
+  record is written back once, after the destruction is verified, without the
+  locator's reading. The tester's status and value stay. The frame's kind and group
+  come from its own record in the bucket, not from `--group`.
 - **The marker is `records/redacted-<frame>.json`,** not a sequence-numbered record.
   The sequence belongs to the device, and a marker written months later on the Mac
   must not be able to collide with it. It is written only if the take is in the
@@ -1669,8 +1676,9 @@ The tool is D36 as amended by D38. The details below are Claude's calls:
 - **Revocation is checked, not assumed:** after deleting the key the tool lists keys
   and fails if it is still there, printing how to revoke it by hand.
 - **Railway's `derived` bucket is guarded by a constant.** Nothing writes to it yet.
-  The first worker that does must flip `DERIVED_BUCKET_IN_USE` and add its purge,
-  and until then the tool fails rather than claim a completeness it has not checked.
+  The first worker that does must flip `DERIVED_BUCKET_IN_USE` and add its purge.
+  The check is a precondition, run before a key is minted: failing after the
+  deletions would leave a redaction with no audit line (review of PR #8).
 - **Standard library against B2's native API.** Minting keys and listing versions are
   native-API operations, and a tool that runs interpreted needs nothing from Homebrew
   (CLAUDE.md).

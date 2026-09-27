@@ -16,8 +16,12 @@ What it does, in order:
  1. Asks for an account key that can create keys (hidden prompt, never a file) and
     mints one with deleteFiles restricted to this one take's prefix, for an hour.
  2. Finds every version of the frame's key, and every version of every `ocr` record
-    that read it (D38: the OCR text is its own object), plus any --record given.
- 3. Deletes each version by ID, re-lists, and fails if anything survives.
+    that read it (D38: the OCR text is its own object), plus any --record given. For a
+    label or accession crop, also the group's `accession` record, whose reading and
+    candidates the locator took from that OCR (D41).
+ 3. Deletes each version by ID, re-lists, and fails if anything survives. The
+    accession record is then written back once, without reading and candidates; the
+    tester's status and value stay, as they do on the phone.
  4. Appends records/redacted-<frame>.json (D38, D42), if the take is in the bucket.
  5. Removes the frame and those records from the local mirror of the bucket
     (data/labels/raw/<contributor>/<take>/) and the take's derived/ output, which is
@@ -44,8 +48,9 @@ from b2native import B2, B2Error  # noqa: E402
 
 # Railway's derived bucket (D34). Nothing writes to it yet: every derived output so far
 # is on the Mac, under data/labels/derived/, and step 5 handles those. The first worker
-# that writes derived/ must flip this and add its purge here. Until then, a redaction
-# that ignored it would be claiming a completeness it had not checked.
+# that writes derived/ must flip this and add its purge here. Until then run() refuses
+# before minting a key: a redaction that ignored the bucket would claim a completeness
+# it had not checked, and one that failed after deleting would leave no audit line.
 DERIVED_BUCKET_IN_USE = False
 
 FRAME = re.compile(r"^f\d{4,6}$")
@@ -78,9 +83,26 @@ def parse(argv: list[str]) -> argparse.Namespace:
     return a
 
 
-def targets(k: B2, bucket_id: str, prefix: str, frames: list[str], seqs: list[int]) -> tuple[dict[str, list[dict]], list[str]]:
-    """Every version to destroy, grouped by name, and what kinds were found."""
+def _latest(k: B2, bucket_id: str, name: str) -> dict | None:
+    """The newest upload version of a record, parsed; None if it has none."""
+    for v in k.versions(bucket_id, name):
+        if v["fileName"] == name and v.get("action") == "upload":
+            try:
+                return json.loads(k.download_by_id(v["fileId"]))
+            except ValueError:
+                raise Failed(f"cannot parse {name} ({v['fileId']}); refusing to guess what it holds") from None
+    return None
+
+
+def _record_names(k: B2, bucket_id: str, prefix: str, suffix: str) -> list[str]:
+    return sorted({v["fileName"] for v in k.versions(bucket_id, f"{prefix}records/") if v["fileName"].endswith(suffix)})
+
+
+def targets(k: B2, bucket_id: str, prefix: str, frames: list[str], seqs: list[int]):
+    """Every version to destroy, grouped by name; the records to write back scrubbed
+    once they are destroyed; what kinds were removed; and the frames' groups."""
     found: dict[str, list[dict]] = {}
+    rewrites: dict[str, bytes] = {}
     removed: list[str] = []
 
     def add(name: str) -> None:
@@ -94,31 +116,58 @@ def targets(k: B2, bucket_id: str, prefix: str, frames: list[str], seqs: list[in
 
     # An ocr record names the frame it read. Check every version of every ocr record,
     # hidden ones included, because a hidden version still holds the text.
-    ocr_names = {v["fileName"] for v in k.versions(bucket_id, f"{prefix}records/") if v["fileName"].endswith("-ocr.json")}
-    for name in sorted(ocr_names):
+    for name in _record_names(k, bucket_id, prefix, "-ocr.json"):
         for v in k.versions(bucket_id, name):
             if v["fileName"] != name or v.get("action") != "upload":
                 continue
             try:
                 rec = json.loads(k.download_by_id(v["fileId"]))
             except ValueError:
-                raise Failed(f"cannot parse {name} ({v['fileId']}); refusing to guess whether it names the frame")
+                raise Failed(f"cannot parse {name} ({v['fileId']}); refusing to guess whether it names the frame") from None
             if rec.get("frame") in frames:
                 add(name)
                 if "ocr" not in removed:
                     removed.append("ocr")
                 break
 
+    # The group's accession record carries the locator's reading and candidates, read
+    # from a label's (or accession crop's) OCR — text from the photo, as D41 found on the
+    # phone. A bucket object can't be edited, so every version is destroyed and the
+    # record is written back without them. The tester's status and value stay, as on
+    # the phone. The frame's own record says its kind and group.
+    groups: dict[str, str] = {}
+    for name in _record_names(k, bucket_id, prefix, "-frame.json"):
+        rec = _latest(k, bucket_id, name)
+        if rec and rec.get("frame") in frames and rec.get("kind") in ("label", "accession_crop") and rec.get("group"):
+            groups[rec["frame"]] = rec["group"]
+    if groups:
+        for name in _record_names(k, bucket_id, prefix, "-accession.json"):
+            rec = _latest(k, bucket_id, name)
+            if not rec or rec.get("group") not in groups.values():
+                continue
+            if rec.get("reading") is None and not rec.get("candidates"):
+                continue  # nothing read from the photo in it
+            add(name)
+            rewrites[name] = json.dumps({**rec, "reading": None, "candidates": []}, separators=(",", ":"), ensure_ascii=False).encode()
+        if rewrites:
+            removed.append("accession_reading")
+
     before = len(found)
     for seq in seqs:
         for v in k.versions(bucket_id, f"{prefix}records/{seq:06d}-"):
             add(v["fileName"])
+            rewrites.pop(v["fileName"], None)  # asked for in full: nothing comes back
     if len(found) > before:
         removed.append("record")
-    return found, removed
+    return found, rewrites, removed, sorted(set(groups.values()))
 
 
 def run(a: argparse.Namespace, admin: B2, mint_client=B2, root: Path = ROOT) -> int:
+    if DERIVED_BUCKET_IN_USE:
+        # A precondition, not a late check: failing after the deletions would leave a
+        # redaction with no audit line, the one thing D36's record must never lack.
+        say("FAILED: the derived bucket is in use and this tool does not purge it yet; nothing was touched")
+        return 1
     prefix = f"raw/{a.contributor}/{a.take}/"
     bucket_id = admin.bucket_id()
     caps = ["listFiles", "readFiles"] + ([] if a.dry_run else ["writeFiles", "deleteFiles"])
@@ -152,15 +201,19 @@ def run(a: argparse.Namespace, admin: B2, mint_client=B2, root: Path = ROOT) -> 
 
 
 def _redact(a: argparse.Namespace, k: B2, bucket_id: str, prefix: str, root: Path) -> int:
-    found, removed = targets(k, bucket_id, prefix, a.frame, a.record)
+    found, rewrites, removed, groups = targets(k, bucket_id, prefix, a.frame, a.record)
     n = sum(len(vs) for vs in found.values())
     in_bucket = bool(k.versions(bucket_id, prefix))
     for name, vs in sorted(found.items()):
         say(f"  {name}: {len(vs)} version(s)")
     if not found:
         say(f"nothing for {', '.join(a.frame)} under {prefix}" + ("" if in_bucket else " (the take is not in the bucket)"))
+    for name in sorted(rewrites):
+        say(f"  {name}: written back without the locator's reading and candidates")
+    if a.group and groups and a.group not in groups:
+        say(f"  note: --group {a.group}, but the bucket puts {', '.join(a.frame)} in {', '.join(groups)}")
     if a.dry_run:
-        say(f"dry run: {n} version(s) would be destroyed")
+        say(f"dry run: {n} version(s) would be destroyed, {len(rewrites)} record(s) written back scrubbed")
         return 0
 
     for name, vs in found.items():
@@ -171,6 +224,15 @@ def _redact(a: argparse.Namespace, k: B2, bucket_id: str, prefix: str, root: Pat
         raise Failed(f"versions survived deletion: {survivors}")
     if found:
         say(f"destroyed {n} version(s); re-listed, none remain")
+
+    # Only now, with every version gone, does the scrubbed record go back: a key that
+    # no longer exists, written once, under the redaction (D35's one exception).
+    for name, body in sorted(rewrites.items()):
+        k.upload(bucket_id, name, body, "application/json")
+        back = [v for v in k.versions(bucket_id, name) if v["fileName"] == name]
+        if len(back) != 1:
+            raise Failed(f"{name}: expected exactly one version after writing it back, found {len(back)}")
+        say(f"  wrote back {name}")
 
     ts = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     if in_bucket:
@@ -201,15 +263,13 @@ def _redact(a: argparse.Namespace, k: B2, bucket_id: str, prefix: str, root: Pat
             raise Failed(f"local copy of {name} still present")
     if not mirror.exists():
         say(f"  no local mirror at {mirror.relative_to(root)}")
-    if DERIVED_BUCKET_IN_USE:
-        raise Failed("the derived bucket is in use and this tool does not purge it yet")
 
     line = {
         "v": 1,
         "ts": ts,
         "contributor": a.contributor,
         "take": a.take,
-        "group": a.group,
+        "group": a.group or (groups[0] if len(groups) == 1 else None),
         "frames": a.frame,
         "reason": a.reason,
         "removed": removed,
