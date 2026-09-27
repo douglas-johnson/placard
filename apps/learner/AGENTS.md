@@ -48,7 +48,7 @@ test.** What it does, and where:
 | `src/screens/VenueFlow.tsx` | Arrival signage in the protocol's order; the exterior on leaving, which ends the take |
 | `src/screens/WallTextFlow.tsx` | The interpretive panel, optionally linked to the last label group |
 | `src/location.ts` | One position watcher per session; the fix is written into each JPEG's EXIF via `additionalExif` |
-| `src/screens/Visit.tsx` | An earlier visit, photo by photo: the manifest, and removing a photo as a redaction — the one edit a take allows (D41) |
+| `src/screens/Visit.tsx` | An earlier visit, photo by photo: the manifest, and removing a photo as a redaction — the one edit a take allows (D41). A thumbnail opens the photo full screen, pinch-zoomable with the ScrollView's own zoom, so a label can be read before choosing |
 | `src/redaction.ts` | The manifest half of that removal, pure so `npm run redaction-test` checks it under Node |
 | `src/upload.ts` | The upload queue (D43): opt-in, drains on its own to `services/ingest/`, records before frames, a per-take `uploads.ndjson` ledger beside the manifest. Only visits started while sending was on. Never deletes anything local |
 | `src/screens/UploadPanel.tsx` | The opt-in and a quiet status line on Arrive, Home and Done — what's left to send only counts down |

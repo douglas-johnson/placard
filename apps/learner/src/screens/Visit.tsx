@@ -1,14 +1,16 @@
 import { File } from 'expo-file-system';
+import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Modal, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useInsets } from '../insets';
 import { shareManifest } from '../share';
 import { type FrameKind, type ManifestRecord, recordsOf, redactFrame, type Take } from '../take';
-import { type, usePalette } from '../theme';
+import { dark, type, usePalette } from '../theme';
 import { Button, H1, P, Rule, Screen } from '../ui';
 import { sentToCorpus } from '../upload';
 
 type FrameRecord = Extract<ManifestRecord, { type: 'frame' }>;
+type FrameView = FrameRecord & { uri: string; exists: boolean };
 
 const KIND: Record<FrameKind, string> = {
   venue_sign: 'Venue sign',
@@ -25,12 +27,17 @@ const KIND: Record<FrameKind, string> = {
  * edited (data/README.md). The case is a label that identifies a child — the Met's
  * P.S. Art label is the first — and the confirmation says so rather than offering a
  * general delete that would quietly make the corpus tidier than the gallery was.
+ *
+ * A thumbnail opens the photo full screen, because the one you're looking for is
+ * usually a label and a label can't be read at thumbnail size — the first removal
+ * was made blind, picking by kind and time.
  */
 export function Visit({ take, onBack }: { take: Take; onBack: () => void }) {
   const p = usePalette();
   const insets = useInsets();
   const [frames, setFrames] = useState(() => framesOf(take));
   const [confirming, setConfirming] = useState<string | null>(null);
+  const [viewing, setViewing] = useState<FrameView | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const remove = (frame: string) => {
@@ -62,7 +69,9 @@ export function Visit({ take, onBack }: { take: Take; onBack: () => void }) {
           <View key={f.frame} style={[styles.row, { borderColor: p.rule }]}>
             <View style={styles.line}>
               {f.file && f.exists ? (
-                <Image source={{ uri: f.uri }} style={[styles.thumb, { backgroundColor: p.card }]} resizeMode="cover" />
+                <Pressable onPress={() => setViewing(f)} accessibilityLabel={`View ${KIND[f.kind].toLowerCase()} ${f.frame}`}>
+                  <Image source={{ uri: f.uri }} style={[styles.thumb, { backgroundColor: p.card }]} resizeMode="cover" />
+                </Pressable>
               ) : (
                 <View style={[styles.thumb, { backgroundColor: p.card }]} />
               )}
@@ -109,11 +118,70 @@ export function Visit({ take, onBack }: { take: Take; onBack: () => void }) {
         ))}
         <Text style={[type.small, { color: p.pending, marginTop: 24 }]}>{take.id}</Text>
       </ScrollView>
+      {viewing ? (
+        <Viewer
+          frame={viewing}
+          onClose={() => setViewing(null)}
+          onRemove={
+            viewing.redacted
+              ? undefined
+              : () => {
+                  setConfirming(viewing.frame);
+                  setViewing(null);
+                }
+          }
+        />
+      ) : null}
     </Screen>
   );
 }
 
-function framesOf(take: Take): (FrameRecord & { uri: string; exists: boolean })[] {
+/**
+ * One photo, full screen and pinch-zoomable — iOS's own ScrollView zoom, so no gesture
+ * library and nothing native (D33). Dark like the camera screens. "Remove…" here only
+ * closes the viewer and opens the same confirmation the row has, so there's still one
+ * place a removal is decided.
+ */
+function Viewer({ frame, onClose, onRemove }: { frame: FrameView; onClose: () => void; onRemove?: () => void }) {
+  const { width, height } = useWindowDimensions();
+  const insets = useInsets();
+  return (
+    <Modal visible animationType="fade" presentationStyle="fullScreen" onRequestClose={onClose}>
+      <StatusBar style="light" />
+      <View style={[styles.viewer, { backgroundColor: '#000' }]}>
+        <ScrollView
+          maximumZoomScale={8}
+          minimumZoomScale={1}
+          centerContent
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ width, height }}
+        >
+          <Image source={{ uri: frame.uri }} style={{ width, height }} resizeMode="contain" />
+        </ScrollView>
+        <View style={[styles.bar, { top: 0, paddingTop: insets.top + 12 }]} pointerEvents="box-none">
+          <Pressable onPress={onClose} hitSlop={12}>
+            <Text style={[type.body, { color: dark.text }]}>Done</Text>
+          </Pressable>
+          <Text style={[type.small, { color: dark.muted }]}>
+            {KIND[frame.kind]}
+            {frame.group ? ` · ${frame.group}` : ''} · {frame.frame}
+          </Text>
+        </View>
+        <View style={[styles.bar, { bottom: 0, paddingBottom: insets.bottom + 12 }]} pointerEvents="box-none">
+          <Text style={[type.small, { color: dark.muted }]}>Pinch to zoom in</Text>
+          {onRemove ? (
+            <Pressable onPress={onRemove} hitSlop={12}>
+              <Text style={[type.body, { color: dark.text }]}>Remove…</Text>
+            </Pressable>
+          ) : null}
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
+function framesOf(take: Take): FrameView[] {
   return recordsOf(take)
     .filter((r): r is FrameRecord => r.type === 'frame')
     .map((r) => {
@@ -126,6 +194,18 @@ const styles = StyleSheet.create({
   sheet: { paddingHorizontal: 28 },
   row: { paddingVertical: 10, borderBottomWidth: StyleSheet.hairlineWidth },
   line: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  thumb: { width: 44, height: 64, borderRadius: 4 },
+  thumb: { width: 72, height: 96, borderRadius: 4 },
   confirm: { marginTop: 10, padding: 14, borderRadius: 10 },
+  viewer: { flex: 1 },
+  bar: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    backgroundColor: 'rgba(0,0,0,0.55)',
+  },
 });
