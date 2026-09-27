@@ -27,7 +27,7 @@ const PHOTOGRAPHY: { value: FieldLog['photography']; label: string }[] = [
   { value: 'unknown', label: "Didn't see a sign" },
 ];
 
-export function Arrive({ onStarted }: { onStarted: (take: Take) => void }) {
+export function Arrive({ onStarted, onOpenVisit }: { onStarted: (take: Take) => void; onOpenVisit: (take: Take) => void }) {
   const p = usePalette();
   const insets = useInsets();
   const [stage, setStage] = useState<Stage>('locating');
@@ -117,7 +117,7 @@ export function Arrive({ onStarted }: { onStarted: (take: Take) => void }) {
           </View>
           <Button label="Somewhere else" tone="secondary" onPress={() => setStage('add')} style={{ marginTop: 20 }} />
           <Rule />
-          <PastTakes />
+          <PastTakes onOpen={onOpenVisit} />
         </ScrollView>
       </Screen>
     );
@@ -139,7 +139,7 @@ export function Arrive({ onStarted }: { onStarted: (take: Take) => void }) {
           <Button label="This is it" onPress={addVenue} disabled={name.trim().length < 2} style={{ marginTop: 24 }} />
           {candidates.length > 0 ? <Button label="Back to the list" tone="quiet" onPress={() => setStage('choose')} /> : null}
           <Rule />
-          <PastTakes />
+          <PastTakes onOpen={onOpenVisit} />
         </Sheet>
       </Screen>
     );

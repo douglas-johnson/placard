@@ -48,6 +48,8 @@ test.** What it does, and where:
 | `src/screens/VenueFlow.tsx` | Arrival signage in the protocol's order; the exterior on leaving, which ends the take |
 | `src/screens/WallTextFlow.tsx` | The interpretive panel, optionally linked to the last label group |
 | `src/location.ts` | One position watcher per session; the fix is written into each JPEG's EXIF via `additionalExif` |
+| `src/screens/Visit.tsx` | An earlier visit, photo by photo: the manifest, and removing a photo as a redaction — the one edit a take allows (D41) |
+| `src/redaction.ts` | The manifest half of that removal, pure so `npm run redaction-test` checks it under Node |
 | `src/registry.ts` | `data/venues/` bundled via `metro.config.js` `watchFolders` — add a venue there **and** to the import list |
 
 Frames also go to the camera roll, so the USB path in the protocol still works. The
@@ -117,6 +119,9 @@ Expo Go still loads the bundle but can't link the Vision module, so a label grou
 reads nothing there. In the simulator the shutter produces a blank 200px frame; every
 camera screen has a **Fixture (dev)** action that hands the flow the bundled 38.447.4
 label instead, which exercises the read-back path. It's compiled out of release builds.
+
+`npm run redaction-test` checks the manifest rewrite behind removing a photo: the
+frame and its OCR are wiped, and every other line keeps its exact bytes.
 
 `npm run locator-eval` runs the accession locator over every reading the corpus holds
 (`scripts/locator-eval.ts`) and prints one line per label with the expected number

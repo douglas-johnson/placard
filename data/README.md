@@ -125,6 +125,11 @@ exhibition wall text, and `expected.artist` is `null` with a note saying why. Th
 the one edit that is ever made to a raw take, and the capture protocol says not to shoot
 the label in the first place.
 
+The app can make the same edit on the phone: an earlier visit's photo can be removed,
+producing the same `file: null` / `redacted` frame record and emptied `ocr` record
+(D41). The phone's copy of the Met take needs it, because the Mac-side redaction never
+reached the phone.
+
 ## labels/derived/ — regenerable
 
 OCR output and intermediate parses. Gitignored on purpose: anything here must be

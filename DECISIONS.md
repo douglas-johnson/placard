@@ -1586,3 +1586,55 @@ outside git did depend on the path:
 
 **What would repeat this:** any future rename of the directory. The list above is the
 checklist.
+
+---
+
+## D41 — On the phone, a visit's one edit is removing a photo, as a redaction
+
+**Date:** 2026-09-27 · **Status:** accepted · **Decided by:** Doug asked for it; its
+shape is Claude's call · **Implements:** the D4 amendment and D36 on the device
+
+The Met redaction was carried out on the Mac. The phone's own copy of that visit still
+holds the P.S. Art label frame (`f0035`, group `g0014`) and the OCR record with the
+child's name, grade, school and teacher. That copy has to go before anything uploads
+from the phone. More generally, the protocol says a frame like this is deleted the day
+it's found, and a tester in the field has no Mac.
+
+**Decision:** an earlier visit opens to its photos, and the one change it offers is
+removing a photo, as a redaction. It does on the phone exactly what was done by hand on
+the Mac. The image file is deleted. The frame record keeps its place with `file: null`
+and a `redacted` note. Every `ocr` record for that frame keeps its place with `lines`
+and `candidates` emptied and a `REDACTED` warning, so replay and sequence numbers hold
+and the visit still records that a photo was taken there. When the photo is a label or
+an accession crop, the group's `accession` record loses its `reading` and `candidates`
+as well, because the locator read them from that OCR; the review of PR #7 caught that
+the first version left them. What the tester said stays: the accession `status` and
+`value`, and the group's note, are their answer rather than the app's reading, and the
+Mac-side redaction of the Met kept the note too. A tester's own words can still repeat
+a label; the Mac-side redaction tool that follows (D42) takes extra records by sequence
+number for that. Every other line keeps its exact bytes.
+
+**Why not a general edit.** A take is evidence (data/README.md), and the one sanctioned
+change to it is this one. A general delete would quietly make the corpus tidier than
+the gallery was, which is the failure the raw/ rules exist to prevent, so the
+confirmation names the case instead of offering one.
+
+**Two limits, stated rather than hidden.** The camera-roll copy is a separate asset
+whose ID the app never recorded, so the screen tells the tester to delete it in
+Photos. And the manifest is rewritten in full, which the file API cannot do
+atomically. So the removal writes an intent (the frame, the reason, the day) before
+it touches anything, deletes the image first because it is what identifies someone,
+writes the new manifest to a side file, marks the side file ready once it is
+complete, and moves it into place. Before anything reads or appends to the manifest,
+replay moves a ready side file into place and discards one that isn't ready. If an
+intent is still present, it then runs the redaction again. A crash at any point
+therefore ends either before anything was removed or with the redaction complete,
+never with the image gone and the text still there. The first version got this
+wrong, and the review of PR #7 caught it: it treated "side file and manifest both
+present" as "side file torn", which is also true in the instant after the side file
+is finished. `npm run redaction-test` now crashes the sequence at every step, and at
+every step of the recovery after it.
+
+**What would reverse this:** nothing short of D4 changing. Once uploads exist, a frame
+already in the bucket also needs `tools/redact/` (D36), and the phone-side removal
+does not reach the bucket.
