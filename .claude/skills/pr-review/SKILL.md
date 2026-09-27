@@ -87,7 +87,8 @@ Doug settles it, the settlement goes here so it isn't raised again.
 - Prose in `PLANNING.md`, `DECISIONS.md`, and `docs/` is deliberately long and argued.
   Do not suggest bullets, summaries, or cutting. Do flag a factual contradiction with
   another document.
-- The directory is called `walltext/` and the project is Placard. Not a finding.
+- `WallText` in identifiers like `WallTextFlow` is the museum term, not the old project
+  name, and `walltext-archive` is a real repository. Neither is a finding.
 - A `DECISIONS.md` entry marked *proposed by Claude, awaiting Doug* is the intended way
   to raise a decision. Don't ask for it to be resolved before merge.
 - Missing tests on Expo screens. There is no test harness for the app yet and the
