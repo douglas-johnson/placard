@@ -8,7 +8,8 @@ data/
 ├── labels/
 │   ├── raw/         Photographs, straight off the phone. GITIGNORED.
 │   ├── fixtures/    Verified extractions. COMMITTED. The actual asset.
-│   └── derived/     OCR output, intermediate JSON. GITIGNORED, regenerable.
+│   ├── derived/     OCR output, intermediate JSON. GITIGNORED, regenerable.
+│   └── redactions.ndjson   One line per redaction. COMMITTED.
 └── venues/          Venue registry — one JSON per institution. COMMITTED.
 ```
 
@@ -153,6 +154,21 @@ regenerated, it belongs in `fixtures/`.
 ./tools/ocr/bin/placard-ocr data/labels/raw/2026-09-16-moma \
   > data/labels/derived/2026-09-16-moma.ndjson
 ```
+
+## labels/redactions.ndjson — the audit record
+
+One line per redaction, appended by `tools/redact/` (D36, D42) and committed. Raw is
+never edited except by a redaction, and a redaction is the one thing that can't keep
+its superseded version queryable (constraint 2), so this file stands in for it: the
+fact, scope and reason of each removal stay on record even though the content doesn't.
+A line carries nothing identifying: contributor ID, take, group, frames, the reason,
+what was removed and what the group keeps, the fixture that records it, and how many
+versions were destroyed.
+
+It pairs with the bucket. Every `records/redacted-<frame>.json` marker in `placard-raw`
+should have a line here, and every line a marker, except a line for a take that was
+never in the bucket, like the first one, the Met (2026-09-20). A rerun that destroys
+nothing adds no line.
 
 ## venues/ — the registry
 
