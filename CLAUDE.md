@@ -115,8 +115,9 @@ real upload. It waits on a museum visit: turn on "Send your visits" on the phone
 starting the visit, shoot as usual with the stock camera alongside, then run
 `corpus-pull`. Don't test with throwaway photos, since `placard-raw` keeps everything.
 
-**Next:** that first upload; then F1 (field-beta §7), meaning the consent screen, face
-blur, the app camera's focus and crop fixes (a native build), and external testers.
+**Next:** that first upload, which is also the first field test of the camera's focus
+and crop fixes (JS, 126489b, shipped 2026-09-20 and not yet tried in a gallery); then
+F1 (field-beta §7), meaning the consent screen, face blur, and external testers.
 
 ## Repository layout
 
@@ -231,8 +232,9 @@ about declining an Xcode prompt rather than a saved build setting. So a clean pr
 is cheap, which is not the instinct on a machine where native builds are slow.
 
 Expect this class of problem to stay invisible: D33 ships field-beta iterations as JS
-updates, so nothing exercises the native path between rebuilds. The Met's camera-focus
-fix is native, and would have met this while packing for a museum.
+updates, so nothing exercises the native path between rebuilds. The first native change
+F1 needs — face blur in the Vision module — will meet it, so budget a clean prebuild
+before assuming a new module is at fault.
 
 ### Homebrew has almost no Intel bottles on macOS 26 — check before installing
 

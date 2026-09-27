@@ -320,7 +320,10 @@ stock camera's frames of the same surfaces, seconds later, read clean. The on-de
 pass only *looked* adequate because it ran on the less-blurred cards and because the
 tester corrected what it offered. This is F1's first job, ahead of everything in §7:
 tap-to-focus or a close-focus mode in `expo-camera`, and it is a native-surface
-question, so it rides the first rebuild.
+question, so it rides the first rebuild. *(Wrong, as it turned out: read against
+expo-camera's iOS source, `autofocus="on"` is focus-once-and-lock, and removing the prop
+gives continuous autofocus. That shipped as a JS update the same evening, 126489b, with
+the 3:4 preview below; neither has been tried in a gallery yet.)*
 
 **The capture is cropped to the screen.** App frames are 1860 × 4032 — the phone's
 screen aspect, not the sensor's 3024 × 4032 — so forty percent of the width never
@@ -394,7 +397,8 @@ stock camera comes too.
 *Status, 2026-09-20 evening:* field-tested at the Met; see §6.1. The data path held
 end to end. The camera did not — four retakes in fifteen — and the manifest was
 unreachable after the take ended. Both are on the list for the next iteration;
-focus is a native change, the rest ship as an update.
+focus is a native change, the rest ship as an update. *(Focus turned out to be JS too;
+see the note in §6.1.)*
 
 **F1 — many collectors.** The consent screen; the contributor ID; face blur in the
 native module; the ingest service and bucket; the upload queue; `eas.json` and
