@@ -21,8 +21,9 @@ PLANNING.md §13 is open questions. When one gets answered, write it into `DECIS
 
 - **Placard** — this project. It was **Wall Text** until 2026-09-19 and **Art Book**
   before that (D31); a reference to either older name means this. The domain is
-  `placard.pics`. The working directory on disk is still `walltext/`, and nothing
-  derives from that.
+  `placard.pics`. The working directory on disk was `walltext/` until 2026-09-27 and
+  is now `placard/` (D40); build caches that baked in the old absolute path
+  regenerate on the next native build.
 - **"wall text"** (lowercase) — the museum term for the interpretive panel, as
   distinct from the **tombstone label**. §4 is mostly about the *label*. Keep the
   terms separate; they're different extraction problems. The term stays in the
@@ -109,7 +110,7 @@ the capture screen itself.
 ## Repository layout
 
 ```
-walltext/                (directory name predates the rename; see Naming)
+placard/
 ├── apps/
 │   ├── learner/        Expo + React Native, iOS first — A1, current
 │   ├── backoffice/     Next.js — B1, not started
