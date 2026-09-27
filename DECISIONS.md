@@ -1124,6 +1124,9 @@ and nothing derives from it.
 **What did not change.** The repository's working directory name, git history's
 references to the old name in the archive (D32), and the museum term.
 
+*D40 reversed the first of these: the directory became `placard/` on 2026-09-27, and
+some things outside git did derive from its path.*
+
 ---
 
 ## D32 — The repository is public, and the prior-art analysis is not in it
