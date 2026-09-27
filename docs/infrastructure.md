@@ -404,7 +404,18 @@ Housekeeping: the `placard-scratch` bucket and key are gone (2026-09-22).
    tool reports nothing to do, writes the audit line, and revokes its key.
 6. Rebind all 23 fixtures to `{key, sha256}`; push the MCNY and Met takes to B2 as the
    first prefixes.
-7. `services/ingest/` per `services/README.md`, then F1's upload queue.
+7. ~~`services/ingest/`, then F1's upload queue~~ — written 2026-09-27 (D43), along
+   with `tools/corpus-pull/`. The HTTP path ran end to end locally against moto. Before
+   the first real upload:
+   - **Does B2 enforce a signed `Content-MD5` on a presigned PUT?** moto accepted a
+     mismatched body, so this has not been shown. Test it against `placard-raw` with a
+     deliberately wrong body. If B2 accepts it, `ingest`'s length check on `complete`
+     is the only guard, and D43 says what changes.
+   - **Does B2 return an MD5 ETag for a simple PUT?** `ingest` compares one when it
+     looks like one, and falls back to length when it doesn't.
+   - The plain-`DeleteObject` marker check from step 2, still open.
+   - The app's native half — `File.info({md5})` and `UploadTask` — against the
+     deployed service, from the simulator or the phone.
 
 One housekeeping note: the Vercel plugin hooks in Claude Code sessions will keep
 steering toward Vercel now that the proposal has moved off it. Remove the plugin from

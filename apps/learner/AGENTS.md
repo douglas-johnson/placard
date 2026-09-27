@@ -50,10 +50,16 @@ test.** What it does, and where:
 | `src/location.ts` | One position watcher per session; the fix is written into each JPEG's EXIF via `additionalExif` |
 | `src/screens/Visit.tsx` | An earlier visit, photo by photo: the manifest, and removing a photo as a redaction — the one edit a take allows (D41) |
 | `src/redaction.ts` | The manifest half of that removal, pure so `npm run redaction-test` checks it under Node |
+| `src/upload.ts` | The upload queue (D43): opt-in, drains on its own to `services/ingest/`, records before frames, a per-take `uploads.ndjson` ledger beside the manifest. Only visits started while sending was on. Never deletes anything local |
+| `src/screens/UploadPanel.tsx` | The opt-in and a quiet status line on Arrive, Home and Done — what's left to send only counts down |
 | `src/registry.ts` | `data/venues/` bundled via `metro.config.js` `watchFolders` — add a venue there **and** to the import list |
 
 Frames also go to the camera roll, so the USB path in the protocol still works. The
-manifest leaves through the share sheet (AirDrop works in airplane mode).
+manifest leaves through the share sheet (AirDrop works in airplane mode) — or, once the
+tester opts in, frames and records both leave through the upload queue. A build knows
+where to send them from `EXPO_PUBLIC_INGEST_URL` and `EXPO_PUBLIC_UPLOAD_TOKEN`, which are
+EAS environment variables and never in the repository (it is public, D32). Without
+them the panel says the build has nowhere to send to.
 
 ## Constraints specific to this app
 

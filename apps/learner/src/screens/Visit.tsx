@@ -6,6 +6,7 @@ import { shareManifest } from '../share';
 import { type FrameKind, type ManifestRecord, recordsOf, redactFrame, type Take } from '../take';
 import { type, usePalette } from '../theme';
 import { Button, H1, P, Rule, Screen } from '../ui';
+import { sentToCorpus } from '../upload';
 
 type FrameRecord = Extract<ManifestRecord, { type: 'frame' }>;
 
@@ -94,6 +95,12 @@ export function Visit({ take, onBack }: { take: Take; onBack: () => void }) {
                   wiped. The record that a photo was taken stays, so the visit still adds up.
                 </P>
                 <P muted>The copy in your camera roll is separate. Delete that one in Photos.</P>
+                {sentToCorpus(take, f.frame) ? (
+                  <Text style={[type.small, { color: p.warn, marginTop: 8 }]}>
+                    Some of this has already reached the corpus, and removing it here doesn't reach there. Tell Doug —
+                    it needs the redaction tool too, today.
+                  </Text>
+                ) : null}
                 <Button label="Remove it" onPress={() => remove(f.frame)} />
                 <Button label="Keep it" tone="quiet" onPress={() => setConfirming(null)} />
               </View>

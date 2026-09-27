@@ -1583,6 +1583,9 @@ outside git did depend on the path:
 - **Claude Code's per-project state**, memory included, is keyed by path. The memories
   were copied to the new location. Session transcripts from before the rename stay
   under the old key and don't appear when resuming from `placard/`.
+- **The Railway CLI's project link** (`~/.railway/config.json`) is keyed by path too.
+  Found the same day, when `railway config plan` reported no linked project; `railway
+  link --project placard --environment testflight` from the new path restored it.
 
 **What would repeat this:** any future rename of the directory. The list above is the
 checklist.
@@ -1691,3 +1694,74 @@ Tested against a fake B2 that keeps versions and hide markers the way B2 does. N
 run against the live account.
 
 **What would reverse this:** nothing short of D36 changing.
+
+---
+
+## D43 — The first upload path: the app drains its own queue
+
+**Date:** 2026-09-27 · **Status:** accepted · **Decided by:** Doug (the first four
+points); Claude's calls are marked · **Builds on:** D33, D34, D35, D38, D41, D42 · **Detail:**
+`docs/infrastructure.md` §5 and §9
+
+The collector's build stops depending on USB and Image Capture. Frames and records leave
+the phone through `services/ingest/`, land in `placard-raw` as D38 lays out, and come
+back to the Mac through `tools/corpus-pull/`. It lands after D41 (removing a photo on the
+phone) and D42 (the redaction tool), in that order, so nothing can leave a phone
+before both exist. Four scope calls were Doug's:
+
+**The upload is automatic, on any network.** The queue drains whenever there is signal,
+during a visit or after it. A take is roughly forty frames of a few megabytes each, which
+is not worth a Wi-Fi gate, and a manual "send this take" button would make the tester's
+memory part of the pipeline. That is the failure the Met showed, when the manifest was on
+the phone and nobody could reach it (field-beta §6.1).
+
+**Redaction comes first.** The upload path was written as one branch and then split, so
+that phone-side removal (D41) and the redaction tool (D42) are each reviewed and merged
+before this.
+
+**Postgres is provisioned now.** `ingest` inserts a row under a primary key on
+(contributor, take, frame) before it signs a URL, which is the create-only allocation
+D35 asks for in place of the conditional write B2 lacks.
+
+**The pull-back tool is in scope.** Without it, frames reach the bucket and USB is still
+the way they reach the Mac, so nothing the tester feels would have changed.
+
+The rest are Claude's calls, recorded as such:
+
+- **Integrity is Content-MD5 on the device, SHA-256 on the Mac.** The phone cannot
+  compute SHA-256 over a four-megabyte file without a native module or a slow JS loop
+  on the capture thread, and adding a native module would break D33's JS-only path.
+  `expo-file-system` already hashes MD5 natively. `ingest` signs the PUT with the
+  declared `Content-MD5`, so the store is asked to reject a body that doesn't match.
+  `corpus-pull` then computes the SHA-256 that D37's fixture references carry, and
+  checks each download against B2's own SHA-1. *Whether B2 enforces a signed
+  Content-MD5 on a presigned PUT is not yet verified against the live bucket, and it
+  goes on §8's list.*
+- **Uploading is opt-in per phone and off by default** until F1's consent screen
+  exists. This OTA update reaches every TestFlight phone, and field-beta §1 says no
+  contributor's frames leave the phone before they have been told where they go. One
+  switch for now. The three per-kind properties that §1 describes are F1's work.
+- **Consent is not retroactive.** Only visits started while sending was on are sent;
+  visits already on the phone stay there. It is the right rule on its own terms, and
+  the Met showed a specific reason besides: the redaction there was carried out on the
+  Mac, and the phone's own copy of that take still held the P.S. Art label and its OCR
+  until D41 made it removable on the phone. Sending everything on the phone at opt-in
+  would have put it in the bucket.
+- **A photo removed on the phone after it was sent says so.** Records go before frames,
+  so a label's OCR text usually reaches the bucket before its photo does. D41's removal
+  doesn't reach the bucket, so the confirmation warns when anything of that frame has
+  already been sent and `tools/redact/` is needed too.
+- **The contributor ID is random and made on the device** (field-beta §3, still a
+  proposal there). Doug's phone gets one like anyone else's, and the app shows it so
+  he can recognise his own prefix.
+- **`corpus-pull` uses the Python standard library against B2's native API**, like
+  `tools/redact/` (D42), and not rclone. rclone would come from Homebrew, which is this
+  machine's most expensive trap (CLAUDE.md). Downloading only what is missing, and
+  never overwriting what is present, is short enough to write.
+- **Postgres gets a `corpus` schema**, separate from the three in `db/README.md`. The
+  corpus index is its own data class (field-beta §8.1), and putting it in `canon` would
+  imply that frames are claims.
+
+**What would reverse this:** a failed live check of the signed Content-MD5, which would
+move integrity checking to the verify step (`ingest` comparing the stored object after
+upload) rather than dropping it.
