@@ -1673,6 +1673,10 @@ The tool is D36 as amended by D38. The details below are Claude's calls:
 - **A take that is not in the bucket is "nothing to do" and still gets its audit
   line.** That is the Met case, and `infrastructure.md` §9 names it as the first live
   test.
+- **One audit line per redaction.** A rerun that destroys nothing, on a frame that
+  already has a line, appends nothing. The realistic rerun is after a failed revoke,
+  which exits non-zero even though the redaction itself succeeded (review of PR #8).
+  A rerun that does destroy something is a new event and gets its own line.
 - **Revocation is checked, not assumed:** after deleting the key the tool lists keys
   and fails if it is still there, printing how to revoke it by hand.
 - **Railway's `derived` bucket is guarded by a constant.** Nothing writes to it yet.

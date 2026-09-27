@@ -277,7 +277,16 @@ def _redact(a: argparse.Namespace, k: B2, bucket_id: str, prefix: str, root: Pat
         "fixture": a.fixture,
         "versions_destroyed": n,
     }
+    # One line per redaction (D36): a marked record should have a line, and a line a
+    # marked record. A rerun that destroys nothing — after a failed revoke, say, which
+    # exits non-zero and invites one — must not audit the same event twice. A rerun
+    # that does destroy something is a new event and gets its own line.
     audit = root / "data/labels/redactions.ndjson"
+    done = [json.loads(l) for l in audit.read_text().splitlines() if l.strip()] if audit.exists() else []
+    audited = {f for d in done if (d.get("contributor"), d.get("take")) == (a.contributor, a.take) for f in d.get("frames", [])}
+    if n == 0 and not rewrites and set(a.frame) <= audited:
+        say(f"already audited in {audit.relative_to(root)}; nothing new to record")
+        return 0
     with audit.open("a") as f:
         f.write(json.dumps(line) + "\n")
     say(f"appended to {audit.relative_to(root)}; commit it")

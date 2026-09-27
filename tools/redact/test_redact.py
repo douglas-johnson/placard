@@ -206,6 +206,35 @@ class RedactTest(unittest.TestCase):
         redact.run(args(), b2, lambda *_: b2, self.root)
         self.assertEqual(sum(f["fileName"].endswith("redacted-f0035.json") for f in b2.files), 1)
 
+    def test_a_rerun_that_destroys_nothing_does_not_audit_again(self):
+        b2 = self.bucket_with_take()
+        self.assertEqual(redact.run(args(), b2, lambda *_: b2, self.root), 0)
+        self.assertEqual(redact.run(args(), b2, lambda *_: b2, self.root), 0)
+        self.assertEqual(len(self.audit()), 1)
+
+    def test_a_rerun_after_a_failed_revoke_does_not_audit_again(self):
+        b2 = self.bucket_with_take()
+        b2.broken_revoke = True
+        self.assertEqual(redact.run(args(), b2, lambda *_: b2, self.root), 1)  # redacted, but exits 1
+        b2.broken_revoke = False
+        b2.keys.clear()  # revoked by hand, as the tool told the operator to
+        self.assertEqual(redact.run(args(), b2, lambda *_: b2, self.root), 0)
+        self.assertEqual(len(self.audit()), 1)
+
+    def test_the_met_case_is_audited_once(self):
+        b2 = FakeB2()
+        redact.run(args(), b2, lambda *_: b2, self.root)
+        redact.run(args(), b2, lambda *_: b2, self.root)
+        self.assertEqual(len(self.audit()), 1)
+
+    def test_a_rerun_that_finds_something_new_is_a_new_line(self):
+        b2 = self.bucket_with_take()
+        redact.run(args(), b2, lambda *_: b2, self.root)
+        b2.put(P + "f0035-label.jpg", b"reappeared")  # e.g. a late retry from a phone
+        redact.run(args(), b2, lambda *_: b2, self.root)
+        lines = self.audit()
+        self.assertEqual([l["versions_destroyed"] for l in lines], [5, 1])
+
     def test_refuses_names_outside_the_convention(self):
         with self.assertRaises(SystemExit):
             redact.parse(["--contributor", C, "--take", "../etc", "--frame", "f0035", "--reason", "minor"])
