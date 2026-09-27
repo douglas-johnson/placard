@@ -1094,7 +1094,7 @@ over the corpus, not a quiet edit here.
 
 ## D31 — The project is named Placard
 
-**Date:** 2026-09-19 · **Status:** accepted · **Closes:** the §13 question "Is Wall Text the name?"
+**Date:** 2026-09-19 · **Status:** accepted, amended by D40 · **Closes:** the §13 question "Is Wall Text the name?"
 
 The project is **Placard**. The domain is `placard.pics`. The learner app's bundle
 identifier is `pics.placard.learner`, the npm package is `placard-learner`, and the
@@ -1550,3 +1550,36 @@ file exists to prevent, on the repository's most safety-critical constraint.
 **What would reverse this:** a proposed alternative mechanism that turns out to depend
 on application code being correct. That is not a different mechanism, it is the absence
 of one, and the preference for credentials exists precisely to rule it out.
+
+---
+
+## D40 — The working directory is `placard/`
+
+**Date:** 2026-09-27 · **Status:** accepted · **Decided by:** Doug · **Amends:** D31's
+"What did not change"
+
+Doug renamed the working directory on disk from `walltext/` to `placard/`, so that
+the folder matches the project name. D31 listed the directory name among the things
+that did not change and said nothing derives from it. The first half is now reversed.
+The second half turned out to be true of the repository and false of the tools around
+it, and that difference is what's worth writing down.
+
+Nothing tracked in git held the absolute path, so the repository needed only
+documentation changes (`CLAUDE.md`, the pr-review skill) and a regenerated root
+lockfile, whose package name had defaulted to the old folder name. Three things
+outside git did depend on the path:
+
+- **`expo-modules-jsi`'s generated modulemap** in `apps/learner/node_modules` held
+  `/Users/doug/dev/walltext/…` header paths. Its build script regenerates the modulemap
+  from the current `PODS_ROOT` on every build, and the modulemap is part of the cache
+  hash, so the next native build rebuilds the xcframework slices with no manual step.
+  That first build is slower. A clean prebuild (`CLAUDE.md`, "When the iOS build fails
+  on a header") also clears it.
+- **Xcode DerivedData** is keyed by project path. Xcode starts a fresh folder for the
+  new path, and the old ones take up disk space and nothing else.
+- **Claude Code's per-project state**, memory included, is keyed by path. The memories
+  were copied to the new location. Session transcripts from before the rename stay
+  under the old key and don't appear when resuming from `placard/`.
+
+**What would repeat this:** any future rename of the directory. The list above is the
+checklist.
