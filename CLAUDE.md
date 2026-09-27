@@ -137,6 +137,10 @@ was already decided about it. Read that README before creating anything in it.
 
 # Non-Latin script (Asia Society, Japan Society — §4 hard cases)
 ./tools/ocr/bin/placard-ocr <path> --lang en-US,ja-JP,zh-Hans
+
+# Remove a frame from B2 for good (D36, D42); prompts for a key-creating account key
+python3 tools/redact/redact.py --contributor <id> --take <take> --frame f0035 --reason minor --dry-run
+python3 -m unittest tools/redact/test_redact.py
 ```
 
 ## Machine

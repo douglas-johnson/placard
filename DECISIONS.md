@@ -1638,3 +1638,44 @@ every step of the recovery after it.
 **What would reverse this:** nothing short of D4 changing. Once uploads exist, a frame
 already in the bucket also needs `tools/redact/` (D36), and the phone-side removal
 does not reach the bucket.
+
+---
+
+## D42 — The redaction tool lands before the first upload
+
+**Date:** 2026-09-27 · **Status:** accepted · **Decided by:** Doug (the order); the
+details are Claude's calls, marked · **Implements:** D36 · **Builds on:** D35, D38
+
+`infrastructure.md` §9 put `tools/redact/` ahead of any upload, and the order holds.
+The upload path was first written as one branch and then split so that this lands, and
+is reviewed, before anything can reach `placard-raw` from a phone. Once a frame is in
+B2, the only reliable way to remove it is a version-by-version tool, and needing that
+tool is exactly when there is no time to write it.
+
+The tool is D36 as amended by D38. The details below are Claude's calls:
+
+- **Every version of every `ocr` record is read, hidden ones included,** to find the
+  records that read the frame. A hidden version still holds the text, and a record
+  that cannot be parsed stops the run rather than being guessed about.
+- **`--record <seq>` destroys further records by sequence number,** for the case the
+  Met nearly was: a tester's free-text note that repeats what the label said.
+- **The marker is `records/redacted-<frame>.json`,** not a sequence-numbered record.
+  The sequence belongs to the device, and a marker written months later on the Mac
+  must not be able to collide with it. It is written only if the take is in the
+  bucket at all.
+- **A take that is not in the bucket is "nothing to do" and still gets its audit
+  line.** That is the Met case, and `infrastructure.md` §9 names it as the first live
+  test.
+- **Revocation is checked, not assumed:** after deleting the key the tool lists keys
+  and fails if it is still there, printing how to revoke it by hand.
+- **Railway's `derived` bucket is guarded by a constant.** Nothing writes to it yet.
+  The first worker that does must flip `DERIVED_BUCKET_IN_USE` and add its purge,
+  and until then the tool fails rather than claim a completeness it has not checked.
+- **Standard library against B2's native API.** Minting keys and listing versions are
+  native-API operations, and a tool that runs interpreted needs nothing from Homebrew
+  (CLAUDE.md).
+
+Tested against a fake B2 that keeps versions and hide markers the way B2 does. Not yet
+run against the live account.
+
+**What would reverse this:** nothing short of D36 changing.

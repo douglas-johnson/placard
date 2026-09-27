@@ -397,9 +397,11 @@ Housekeeping: the `placard-scratch` bucket and key are gone (2026-09-22).
 4. ~~Create the B2 bucket and the three standing keys~~ — done 2026-09-22;
    `railway setup agent` and `railway config init` likewise. The `placard-scratch`
    bucket and its key still need deleting.
-5. Build `tools/redact/` **before** the first upload, and re-run the Met redaction
-   through it as its test case — the frame is already gone locally, so the test is that
-   the tool correctly reports nothing to do and writes the audit line.
+5. ~~Build `tools/redact/` **before** the first upload~~ — written 2026-09-27 (D42),
+   tested against a fake B2 that keeps versions and hide markers. Still to do: re-run
+   the Met redaction through it against the live account as its test case. The frame
+   is already gone locally and the take is not in the bucket, so the test is that the
+   tool reports nothing to do, writes the audit line, and revokes its key.
 6. Rebind all 23 fixtures to `{key, sha256}`; push the MCNY and Met takes to B2 as the
    first prefixes.
 7. `services/ingest/` per `services/README.md`, then F1's upload queue.
