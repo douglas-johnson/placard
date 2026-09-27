@@ -66,5 +66,19 @@ openssl rand -hex 32 | railway variable set UPLOAD_TOKENS --stdin --service inge
 railway domain --service ingest              # generates and prints the public URL
 ```
 
+The app sends to **`https://ingest.placard.pics`** (D44), a custom domain on the service
+that CNAMEs to Railway. Railway's configuration can't register a custom domain, so it
+was added by hand and isn't in `railway.ts`; `railway config plan` leaves it alone. It
+is re-created like this, and the command prints the CNAME and `_railway-verify` TXT
+records to add at the domain registrar:
+
+```sh
+railway domain ingest.placard.pics --service ingest --environment testflight
+railway domain status ingest.placard.pics --service ingest --environment testflight
+```
+
+`ingest-testflight.up.railway.app` stays up too, for any phone whose update predates
+the switch.
+
 `B2_KEY` is **ingest's** key from infrastructure §3.2: `listFiles`, `readFiles` and
 `writeFiles` on `raw/`, never `deleteFiles`.
