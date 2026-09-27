@@ -94,18 +94,22 @@ loses the "about," which propagates into unwarranted confidence downstream.
 **Phase A0 — collecting the ground-truth label corpus.** See `DECISIONS.md` D1 for why
 this leads rather than B0.
 
-Nothing is running yet. There is no database, no API, no app. What exists:
+The collector's build (F0, `docs/field-beta.md`) is on TestFlight and iterates by OTA
+update (D33). What exists:
 
+- `apps/learner/` — the capture app: labels, works, wall text, venue signage, accession
+  read-back, an append-only manifest per take; removing a photo as a redaction (D41);
+  an opt-in upload queue (D43)
+- `services/ingest/` — phone → `placard-raw` (B2): signed frame PUTs, one object per
+  manifest record (D38); Postgres index for create-only allocation (D35)
+- `tools/redact/` — the version-by-version redaction tool (D36, D42)
+- `tools/corpus-pull/` — B2 → `data/labels/raw/<contributor>/<take>/`, replacing USB
+- `tools/ocr/`, `tools/exif/`, `tools/manifest/` — the Mac-side corpus pipeline
+- `data/` — 23 fixtures (MCNY label-only, the Met verified against its API); venue registry
 - `docs/capture-protocol.md` — the field procedure
-- `tools/ocr/` — Apple Vision OCR CLI, working, builds with `swiftc`
-- `tools/exif/` — one-file EXIF/GPS checker, run interpreted; first step after every import
-- `data/` — nine label-only fixtures from one MCNY visit, bound to raw frames; venue registry with first-hand access rules
 
-**Next:** A1, the Expo capture app. Its first milestone is concrete — *beat the stock
-camera at collecting the corpus*: enforce paired work+label shots, capture venue
-automatically, read the accession number on-device and show it back for confirmation.
-The toolchain for all of that is now proven on the phone (D29, D30); what's left is
-the capture screen itself.
+**Next:** F1 (field-beta §7) — the consent screen, face blur, external testers. The
+upload path's live checks are listed in `docs/infrastructure.md` §9.
 
 ## Repository layout
 
@@ -115,9 +119,12 @@ placard/
 │   ├── learner/        Expo + React Native, iOS first — A1, current
 │   ├── backoffice/     Next.js — B1, not started
 │   └── public-site/    Next.js, server-rendered — B3, not started
-├── services/canon/     FastAPI — B1, not started
-├── db/                 Postgres schemas — B1, not started
-├── tools/ocr/          Swift Vision OCR CLI — working
+├── services/
+│   ├── ingest/         FastAPI — phone → B2 upload path (D43)
+│   └── canon/          FastAPI — B1, not started
+├── db/                 Postgres schemas — B1, not started (ingest's `corpus` schema lives with it)
+├── tools/              ocr, exif, manifest, redact, corpus-pull
+├── .railway/           Railway IaC (D34)
 ├── data/               Label corpus, fixtures, venue registry
 └── docs/
 ```
@@ -141,6 +148,13 @@ was already decided about it. Read that README before creating anything in it.
 # Remove a frame from B2 for good (D36, D42); prompts for a key-creating account key
 python3 tools/redact/redact.py --contributor <id> --take <take> --frame f0035 --reason minor --dry-run
 python3 -m unittest tools/redact/test_redact.py
+
+# Pull uploaded takes from B2 (Mac read-only key in the keychain as placard-b2-mac)
+python3 tools/corpus-pull/corpus-pull.py
+python3 -m unittest tools/corpus-pull/test_corpus_pull.py
+
+# The upload service
+(cd services/ingest && .venv/bin/pytest -q)
 ```
 
 ## Machine

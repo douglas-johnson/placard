@@ -401,6 +401,13 @@ native module; the ingest service and bucket; the upload queue; `eas.json` and
 external TestFlight; a one-page tester guide distilled from the protocol for people
 who will not read the protocol; the registry seeded for each tester's city.
 
+*Status, 2026-09-27:* the upload path is written, in three parts reviewed in order:
+removing a photo on the phone (D41), `tools/redact/` (D42), and then `services/ingest/`,
+the app's queue behind a per-phone opt-in, and `tools/corpus-pull/` (D43). The app side
+is all JS, so it ships as an update to the current build. Deploying it, and the live
+checks in `infrastructure.md` §9, come next. The consent screen, face blur and the
+per-kind consent properties are still F1's, and they gate external testers.
+
 **F2 — closing the loop.** `tools/corpus-pull`; fixture drafting from manifests;
 verification against the Met's and other public APIs; the tester's hard-case tags and
 free text feeding the protocol's table; a "what was hard" prompt at the end of a

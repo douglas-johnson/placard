@@ -153,7 +153,14 @@ export type ManifestRecord =
       hard_cases: HardCase[];
       note: string | null;
     })
-  | (Base & { type: 'take_ended' });
+  | (Base & {
+      type: 'take_ended';
+      /**
+       * The commit marker (D38): what this take claims should exist. The service
+       * compares it with what arrived. Absent on takes ended before uploads existed.
+       */
+      counts?: Counts;
+    });
 
 // ---------------------------------------------------------------------------
 // State, replayed from the manifest.
@@ -274,7 +281,7 @@ function readManifest(dir: Directory): ManifestRecord[] {
         return [JSON.parse(l) as ManifestRecord];
       } catch {
         // A torn last line from a crash mid-write. Everything before it is intact;
-        // the next append starts a fresh line.
+        // resumeTake closes the line so the next append starts a fresh one.
         return [];
       }
     });
@@ -294,7 +301,46 @@ export function listTakes(): Take[] {
 
 /** The take still in progress, if the app was closed mid-visit. */
 export function resumeTake(): Take | null {
-  return listTakes().find((t) => t.ended == null) ?? null;
+  const take = listTakes().find((t) => t.ended == null) ?? null;
+  if (take) {
+    // A crash can leave the last line torn. Without a newline the next record would
+    // be glued onto it and both would be unreadable, here and in the bucket.
+    const f = manifestOf(take.dir);
+    const text = f.exists ? f.textSync() : '';
+    if (text.length > 0 && !text.endsWith('\n')) f.write('\n', { append: true });
+  }
+  return take;
+}
+
+/**
+ * The manifest's lines exactly as written, for the upload queue: each becomes its own
+ * object in the bucket (D38), and it should be the device's bytes, not a
+ * re-serialisation of them. A torn line is left out, as in replay.
+ */
+export function manifestLines(take: Take): { seq: number; line: string; record: ManifestRecord }[] {
+  settle(take.dir);
+  const f = manifestOf(take.dir);
+  if (!f.exists) return [];
+  return f
+    .textSync()
+    .split('\n')
+    .flatMap((line) => {
+      if (!line.trim()) return [];
+      try {
+        const record = JSON.parse(line) as ManifestRecord;
+        return [{ seq: record.seq, line, record }];
+      } catch {
+        return [];
+      }
+    });
+}
+
+const appendListeners = new Set<() => void>();
+
+/** Told after every manifest write — the upload queue's cue that there is something new. */
+export function onAppend(listener: () => void): () => void {
+  appendListeners.add(listener);
+  return () => appendListeners.delete(listener);
 }
 
 // ---------------------------------------------------------------------------
@@ -316,6 +362,7 @@ function append(take: Take, record: RecordInput): ManifestRecord {
   const f = manifestOf(take.dir);
   if (!f.exists) f.create({ intermediates: true });
   f.write(JSON.stringify(full) + '\n', { append: true });
+  appendListeners.forEach((l) => l());
   return full;
 }
 
@@ -380,7 +427,7 @@ export function startTake(input: {
 }
 
 export function endTake(take: Take): void {
-  append(take, { type: 'take_ended' });
+  append(take, { type: 'take_ended', counts: { ...take.counts } });
   take.ended = new Date().toISOString();
 }
 

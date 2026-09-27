@@ -2,6 +2,7 @@
 
 | Directory | What | Phase | Stack | Status |
 |---|---|---|---|---|
+| `ingest/` | Phone → `placard-raw`: signs frame PUTs, writes manifest records (D38, D43) | F1 | FastAPI + Python 3.13 | written; deploys on Railway |
 | `canon/` | Graph, extraction, ingestion, API | B1 | FastAPI + Python | not started |
 
 Python, so that ML, graph work, and the API stay in one language — §10 notes that a

@@ -1,7 +1,8 @@
 """Backblaze B2's native API, standard library only.
 
-The native API rather than S3 because tools/redact needs what only it offers:
-minting and revoking keys (D36) and listing every version of a name. Standard library so the tools run interpreted with the system python3,
+The native API rather than S3 because the two Mac-side tools need what only it
+offers: minting and revoking keys (tools/redact, D36) and listing every version of a
+name (both). Standard library so the tools run interpreted with the system python3,
 like tools/manifest, and nothing is installed from Homebrew (CLAUDE.md).
 """
 from __future__ import annotations
@@ -9,6 +10,7 @@ from __future__ import annotations
 import base64
 import hashlib
 import json
+import subprocess
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -78,10 +80,33 @@ class B2:
             if not start_name:
                 return out
 
+    def names(self, bucket_id: str, prefix: str) -> list[dict]:
+        """The current (visible) version of each name under prefix."""
+        out, start = [], None
+        while True:
+            payload = {"bucketId": bucket_id, "prefix": prefix, "maxFileCount": 1000}
+            if start:
+                payload["startFileName"] = start
+            r = self.call("b2_list_file_names", payload)
+            out.extend(r["files"])
+            start = r.get("nextFileName")
+            if not start:
+                return out
+
     def download_by_id(self, file_id: str) -> bytes:
         q = urllib.parse.urlencode({"fileId": file_id})
         req = urllib.request.Request(f"{self.download_url}/b2api/v2/b2_download_file_by_id?{q}", headers={"Authorization": self.token})
         return _request(req)
+
+    def download_to(self, file_id: str, dest) -> None:
+        q = urllib.parse.urlencode({"fileId": file_id})
+        req = urllib.request.Request(f"{self.download_url}/b2api/v2/b2_download_file_by_id?{q}", headers={"Authorization": self.token})
+        try:
+            with urllib.request.urlopen(req, timeout=600) as r, open(dest, "wb") as f:
+                while chunk := r.read(1 << 20):
+                    f.write(chunk)
+        except urllib.error.HTTPError as e:
+            raise B2Error(e.code, "download_failed", str(e)) from None
 
     def upload(self, bucket_id: str, name: str, data: bytes, content_type: str) -> dict:
         target = self.call("b2_get_upload_url", {"bucketId": bucket_id})
@@ -98,3 +123,17 @@ class B2:
         )
         return json.loads(_request(req))
 
+
+def keychain_secret(service: str) -> str:
+    """A secret from the login keychain, stored once with
+    `security add-generic-password -s <service> -a placard -w` (which prompts, hidden).
+    Never an environment variable or a file: a key staged in a file leaks through
+    whatever editor has it open."""
+    r = subprocess.run(["security", "find-generic-password", "-s", service, "-w"], capture_output=True, text=True)
+    if r.returncode != 0:
+        raise SystemExit(
+            f"no keychain item '{service}'. Store it once with:\n"
+            f"  security add-generic-password -s {service} -a placard -w\n"
+            "and type keyId:applicationKey at the prompt."
+        )
+    return r.stdout.strip()

@@ -22,12 +22,17 @@ evaluation optimistic.
 Gitignored — a few hundred HEICs is several gigabytes, and binary blobs in git are
 a mistake that's painful to undo. Back them up outside the repo.
 
-**Takes from the bucket** are mirrored under the bucket's own layout, one level deeper:
-`raw/<contributor>/<take>/`, with the manifest as one file per record under `records/`
-(D38). The contributor level is what keeps two phones' takes of the same venue on the
-same day apart. `tools/redact/` assumes this layout when it clears a local copy. Takes
-imported by USB before the bucket existed stay at `raw/<take>/` until the fixture
-rebinding (infrastructure.md §9) moves them.
+**Takes from the bucket** arrive through `tools/corpus-pull/` and are mirrored under
+the bucket's own layout, one level deeper: `raw/<contributor>/<take>/`, with the
+manifest as one file per record under `records/` (D38). The contributor level is what
+keeps two phones' takes of the same venue on the same day apart, and `tools/redact/`
+assumes this layout when it clears a local copy. The frames already carry their roles
+in their names (`f0007-label.jpg`), so `bind-frames.py` isn't needed for them. The
+pull also writes `manifest.ndjson` and `frames.json` to `derived/<contributor>/<take>/`;
+the latter is `{key, sha256, bytes}` per frame, where `key` is the full bucket key,
+`raw/` included, and so also the file's path from `data/labels/` (D37). Takes imported
+by USB before the bucket existed stay at `raw/<take>/` until the fixture rebinding
+(infrastructure.md §9) moves them.
 
 ## labels/fixtures/ — the asset
 

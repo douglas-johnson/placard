@@ -5,6 +5,7 @@ import type { Take } from '../take';
 import { type, usePalette } from '../theme';
 import { Button, H1, P, Rule, Screen } from '../ui';
 import { PastTakes } from './PastTakes';
+import { UploadPanel } from './UploadPanel';
 
 export type Input = 'venue' | 'label' | 'wall_text' | 'exterior';
 
@@ -56,6 +57,8 @@ export function Home({
         <Button label="Share the manifest" tone="secondary" onPress={() => shareManifest(take)} />
         <Button label="Leaving — shoot the exterior" tone="secondary" onPress={() => onInput('exterior')} />
 
+        <Rule />
+        <UploadPanel />
         <Rule />
         <PastTakes except={take.id} onOpen={onOpenVisit} />
         <Pressable onPress={onPreflight} hitSlop={8} style={{ marginTop: 20 }}>

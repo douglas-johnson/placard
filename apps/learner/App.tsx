@@ -12,12 +12,14 @@ import { VenueFlow } from './src/screens/VenueFlow';
 import { Visit } from './src/screens/Visit';
 import { WallTextFlow } from './src/screens/WallTextFlow';
 import { endTake, listTakes, resumeTake, type Take } from './src/take';
+import { startUploads } from './src/upload';
 
 /**
- * F0 — one collector, no server (docs/field-beta.md §7). Everything here runs with
- * the phone in airplane mode: frames and the manifest are written to the app's own
- * directory the instant they're taken, the camera roll gets a copy, and the manifest
- * leaves through the share sheet.
+ * The collector's build (docs/field-beta.md §7). Everything here runs with the phone
+ * in airplane mode: frames and the manifest are written to the app's own directory
+ * the instant they're taken, and the camera roll gets a copy. They leave the phone
+ * through the upload queue when the tester has opted in and there is signal (D43),
+ * and the manifest can always go through the share sheet too.
  *
  * No navigation library: four screens and a flow at a time is a state machine, and
  * a library would have meant a native rebuild for a JS-only milestone.
@@ -40,6 +42,8 @@ export default function App() {
     setTick((t) => t + 1);
     setRoute({ name: 'home' });
   }, []);
+
+  useEffect(() => startUploads(), []);
 
   useEffect(() => {
     if (take && !take.ended) startWatching();
