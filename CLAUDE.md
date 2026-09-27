@@ -108,8 +108,8 @@ update (D33). What exists:
 - `data/` — 23 fixtures (MCNY label-only, the Met verified against its API); venue registry
 - `docs/capture-protocol.md` — the field procedure
 
-**Deployed 2026-09-27:** `ingest` and its Postgres on Railway
-(`ingest-testflight.up.railway.app`), the EAS variables, and the OTA update carrying the
+**Deployed 2026-09-27:** `ingest` and its Postgres on Railway, at
+`ingest.placard.pics` (D44; `ingest-testflight.up.railway.app` also answers), the EAS variables, and the OTA update carrying the
 upload queue. The B2 live checks passed (infrastructure §8). **Not yet done:** the first
 real upload. It waits on a museum visit: turn on "Send your visits" on the phone before
 starting the visit, shoot as usual with the stock camera alongside, then run

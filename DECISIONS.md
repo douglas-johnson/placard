@@ -1775,3 +1775,40 @@ The rest are Claude's calls, recorded as such:
 **What would reverse this:** B2 ceasing to enforce a signed Content-MD5, which was
 verified on 2026-09-27. That would move integrity checking to the verify step,
 `ingest` comparing the stored object after upload, rather than dropping it.
+
+## D44 — The app sends to `ingest.placard.pics`, a domain we own
+
+**Date:** 2026-09-27 · **Status:** accepted · **Decided by:** Doug (the name); Claude's
+calls are marked · **Builds on:** D31, D34, D43
+
+`ingest` answers at **`ingest.placard.pics`**, a custom domain on the Railway service,
+and `EXPO_PUBLIC_INGEST_URL` points there rather than at
+`ingest-testflight.up.railway.app`. The reason is the one thing about the upload URL
+that is hard to change later: every phone carries it inside its installed update. A
+Railway hostname ties every tester's copy of the app to Railway. A hostname under
+`placard.pics` can be pointed at whatever runs `ingest` next by editing one DNS record,
+and no phone has to update first. It is within the Hobby plan's limit of two custom
+domains per service.
+
+**A subdomain, not the bare domain** (Claude's call). The domain registrar, which holds
+the DNS, has no CNAME flattening or dynamic ALIAS at the root, and Railway needs one of
+those for a bare domain. Railway's documentation and its forum both give the workaround as moving
+the nameservers to Cloudflare. A subdomain is an ordinary CNAME and needs neither. The
+root is kept for the public site (B3) anyway, and that is when the Cloudflare question
+gets decided.
+
+**Added by hand, not in `.railway/railway.ts`.** Railway's configuration rejects a
+custom domain outright ("Custom-domain registration is not supported by Railway
+configuration"), so it was added with `railway domain` and two records at the registrar,
+a CNAME and a `_railway-verify` TXT. It is the one piece of the Railway setup that the file
+doesn't describe. `services/ingest/README.md` has the commands to re-create it.
+Checked 2026-09-27: `railway config plan` reports no change with it in place, so an
+apply doesn't remove it.
+
+**The Railway hostname stays live** (Claude's call). Phones whose update predates the
+switch keep sending there until they pick it up. Nothing about it needs removing.
+
+**What would reverse this:** Railway's configuration learning to declare custom
+domains, in which case the domain moves into `railway.ts` and the README's hand steps
+go away. Moving DNS to Cloudflare for the public site would change where the records
+live, but not this hostname.
