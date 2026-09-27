@@ -356,6 +356,20 @@ prefix, none holding `deleteFiles`. Protocol checks ran against a throwaway
 | Presigned PUT with a write-scoped key | HTTP 200 | the upload path works |
 | Delete all versions, then re-list | 4 deleted, 0 left | §4's redaction loop is sound |
 
+**2026-09-27, before the first upload**, in a throwaway bucket and through `ingest`'s
+own `Bucket` class, so the code checked is the code that runs:
+
+| Check | Result | Consequence |
+|---|---|---|
+| Presigned PUT, body differs from the signed `Content-MD5` | **HTTP 400 `BadDigest`** | the store refuses bytes that don't match the claim (D43) |
+| Presigned PUT, matching body | HTTP 200 | — |
+| ETag after a simple PUT | the body's MD5 | `ingest`'s ETag comparison is real, not the length fallback |
+| `put_record` with `Expect: 100-continue` removed | stored | the §4 workaround holds for `ingest`'s own writes |
+| Plain `DeleteObject` | version kept, one delete marker | a plain delete is soft, as D35 assumed |
+
+The same run found that the Mac tools' native-API client had to move from v2 to v4: a
+multi-bucket application key only authorizes at v4.
+
 Two findings changed the document: conditional writes do not exist on B2, which is
 written into §3.1 and D35; and botocore's `Expect: 100-continue` breaks against B2
 under Python's `http.client`, which is written into §4.
@@ -396,8 +410,8 @@ Housekeeping: the `placard-scratch` bucket and key are gone (2026-09-22).
 
 1. ~~Confirm §7 and write the decisions~~ — done 2026-09-22, D34–D38.
 2. ~~Run the §8 checks~~ — done 2026-09-22; the B2 answers are folded in, the two
-   Railway ones remain. One late addition: confirm a plain `DeleteObject` leaves a
-   marker rather than destroying, which D35 now rests on and which was not tested.
+   Railway ones remain. One late addition, confirming that a plain `DeleteObject`
+   leaves a marker rather than destroying, was checked on 2026-09-27: it does.
 3. Rewrite `field-beta.md` §4 to point here, including that the manifest arrives as
    per-record objects and that `take_ended` is the commit marker.
 4. ~~Create the B2 bucket and the three standing keys~~ — done 2026-09-22;
@@ -413,15 +427,12 @@ Housekeeping: the `placard-scratch` bucket and key are gone (2026-09-22).
 7. ~~`services/ingest/`, then F1's upload queue~~ — written 2026-09-27 (D43), along
    with `tools/corpus-pull/`. The HTTP path ran end to end locally against moto. Before
    the first real upload:
-   - **Does B2 enforce a signed `Content-MD5` on a presigned PUT?** moto accepted a
-     mismatched body, so this has not been shown. Test it against `placard-raw` with a
-     deliberately wrong body. If B2 accepts it, `ingest`'s length check on `complete`
-     is the only guard, and D43 says what changes.
-   - **Does B2 return an MD5 ETag for a simple PUT?** `ingest` compares one when it
-     looks like one, and falls back to length when it doesn't.
-   - The plain-`DeleteObject` marker check from step 2, still open.
+   - ~~Does B2 enforce a signed `Content-MD5` on a presigned PUT?~~ Yes: `400
+     BadDigest` (§8, 2026-09-27).
+   - ~~Does B2 return an MD5 ETag for a simple PUT?~~ Yes (§8).
+   - ~~The plain-`DeleteObject` marker check from step 2~~ — soft (§8).
    - The app's native half — `File.info({md5})` and `UploadTask` — against the
-     deployed service, from the simulator or the phone.
+     deployed service, from the phone. Still open; it is the first real upload.
 
 One housekeeping note: the Vercel plugin hooks in Claude Code sessions will keep
 steering toward Vercel now that the proposal has moved off it. Remove the plugin from

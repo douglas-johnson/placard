@@ -176,7 +176,7 @@ def run(a: argparse.Namespace, admin: B2, mint_client=B2, root: Path = ROOT) -> 
         "capabilities": caps,
         "keyName": re.sub(r"[^A-Za-z0-9-]", "-", f"redact-{a.take}")[:100],
         "validDurationInSeconds": 3600,
-        "bucketId": bucket_id,
+        "bucketIds": [bucket_id],  # v4: a list, even for one bucket
         "namePrefix": prefix,
     })
     say(f"minted {key['applicationKeyId']} ({', '.join(caps)}) on {prefix} for one hour")

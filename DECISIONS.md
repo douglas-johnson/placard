@@ -1319,6 +1319,8 @@ last version" would remove the property and buy nothing.
 retained; version-by-version deletion destroys. *Not yet checked:* that a plain
 `DeleteObject` leaves a marker rather than destroying. Expected — the API lists
 `DeleteMarkers` as a category — but it is load-bearing now and should be tested.
+*Checked 2026-09-27:* a plain `DeleteObject` left the version and added one delete
+marker. Soft, as this entry assumed (infrastructure.md §8).
 
 **Object Lock is ruled out permanently, not deferred.** The first draft deferred it
 until a contributor's frames carried legal weight; one already had, four days earlier.
@@ -1734,9 +1736,11 @@ The rest are Claude's calls, recorded as such:
   `expo-file-system` already hashes MD5 natively. `ingest` signs the PUT with the
   declared `Content-MD5`, so the store is asked to reject a body that doesn't match.
   `corpus-pull` then computes the SHA-256 that D37's fixture references carry, and
-  checks each download against B2's own SHA-1. *Whether B2 enforces a signed
-  Content-MD5 on a presigned PUT is not yet verified against the live bucket, and it
-  goes on §8's list.*
+  checks each download against B2's own SHA-1. *Verified 2026-09-27 against the live
+  account (infrastructure.md §8): a presigned PUT whose body doesn't match the signed
+  Content-MD5 is refused with `400 BadDigest`, and B2's ETag for a simple PUT is the
+  MD5, so `ingest`'s comparison on `complete` is a real check and not the length-only
+  fallback.*
 - **Uploading is opt-in per phone and off by default** until F1's consent screen
   exists. This OTA update reaches every TestFlight phone, and field-beta §1 says no
   contributor's frames leave the phone before they have been told where they go. One
@@ -1768,6 +1772,6 @@ The rest are Claude's calls, recorded as such:
   corpus index is its own data class (field-beta §8.1), and putting it in `canon` would
   imply that frames are claims.
 
-**What would reverse this:** a failed live check of the signed Content-MD5, which would
-move integrity checking to the verify step (`ingest` comparing the stored object after
-upload) rather than dropping it.
+**What would reverse this:** B2 ceasing to enforce a signed Content-MD5, which was
+verified on 2026-09-27. That would move integrity checking to the verify step,
+`ingest` comparing the stored object after upload, rather than dropping it.

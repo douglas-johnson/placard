@@ -15,7 +15,12 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-AUTH_URL = "https://api.backblazeb2.com/b2api/v2/b2_authorize_account"
+# v4, the current version. v2 is still supported, but a multi-bucket application key
+# can only authorize at v4, and B2 answers anything older with "not currently
+# supported on API version number 2" — which is what the first live run hit
+# (2026-09-27). Keys made in the console may be of that kind, so v4 throughout.
+API = "v4"
+AUTH_URL = f"https://api.backblazeb2.com/b2api/{API}/b2_authorize_account"
 RAW_BUCKET = "placard-raw"
 
 
@@ -43,13 +48,15 @@ class B2:
         auth = json.loads(_request(urllib.request.Request(AUTH_URL, headers={"Authorization": f"Basic {basic}"})))
         self.account_id: str = auth["accountId"]
         self.token: str = auth["authorizationToken"]
-        self.api_url: str = auth["apiUrl"]
-        self.download_url: str = auth["downloadUrl"]
-        self.allowed: dict = auth.get("allowed", {})
+        storage = auth["apiInfo"]["storageApi"]
+        self.api_url: str = storage["apiUrl"]
+        self.download_url: str = storage["downloadUrl"]
+        # {"buckets": [{"id", "name"}], "capabilities": [...], "namePrefix": ...}
+        self.allowed: dict = storage.get("allowed") or {}
 
     def call(self, name: str, payload: dict) -> dict:
         req = urllib.request.Request(
-            f"{self.api_url}/b2api/v2/{name}",
+            f"{self.api_url}/b2api/{API}/{name}",
             data=json.dumps(payload).encode(),
             headers={"Authorization": self.token, "Content-Type": "application/json"},
             method="POST",
@@ -57,9 +64,9 @@ class B2:
         return json.loads(_request(req))
 
     def bucket_id(self, name: str = RAW_BUCKET) -> str:
-        allowed = self.allowed.get("bucketId")
-        if allowed and self.allowed.get("bucketName") == name:
-            return allowed
+        for b in self.allowed.get("buckets") or []:
+            if b.get("name") == name:
+                return b["id"]
         buckets = self.call("b2_list_buckets", {"accountId": self.account_id, "bucketName": name})["buckets"]
         if not buckets:
             raise B2Error(404, "no_bucket", name)
@@ -95,12 +102,12 @@ class B2:
 
     def download_by_id(self, file_id: str) -> bytes:
         q = urllib.parse.urlencode({"fileId": file_id})
-        req = urllib.request.Request(f"{self.download_url}/b2api/v2/b2_download_file_by_id?{q}", headers={"Authorization": self.token})
+        req = urllib.request.Request(f"{self.download_url}/b2api/{API}/b2_download_file_by_id?{q}", headers={"Authorization": self.token})
         return _request(req)
 
     def download_to(self, file_id: str, dest) -> None:
         q = urllib.parse.urlencode({"fileId": file_id})
-        req = urllib.request.Request(f"{self.download_url}/b2api/v2/b2_download_file_by_id?{q}", headers={"Authorization": self.token})
+        req = urllib.request.Request(f"{self.download_url}/b2api/{API}/b2_download_file_by_id?{q}", headers={"Authorization": self.token})
         try:
             with urllib.request.urlopen(req, timeout=600) as r, open(dest, "wb") as f:
                 while chunk := r.read(1 << 20):
