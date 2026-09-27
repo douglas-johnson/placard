@@ -244,9 +244,15 @@ carries a content hash (D37):
 
 ```json
 "frames": {
-  "label": { "key": "doug/2026-09-20-met/f0007-label.jpg", "sha256": "…" }
+  "label": { "key": "raw/doug/2026-09-20-met/f0007-label.jpg", "sha256": "…" }
 }
 ```
+
+The key is the object's full key in `placard-raw`, `raw/` included, and so is exactly
+the file's path under `data/labels/` in `corpus-pull`'s mirror — the same form today's
+path references already take. An earlier draft of this example dropped the `raw/`,
+which would have made the fixture's key something other than an address (review of
+PR #10).
 
 This covers all 23 fixtures and should be done while the frames are still on the Mac.
 `tools/manifest/bind-frames.py` already computes the manifest-to-camera-roll binding;

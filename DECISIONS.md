@@ -1758,6 +1758,12 @@ The rest are Claude's calls, recorded as such:
   `tools/redact/` (D42), and not rclone. rclone would come from Homebrew, which is this
   machine's most expensive trap (CLAUDE.md). Downloading only what is missing, and
   never overwriting what is present, is short enough to write.
+- **A frame's key in `frames.json`, and so in a rebound fixture, is the full object key,
+  `raw/` included.** D37 says the key is the address. The same string is the file's
+  path under `data/labels/` in the mirror, which is the form today's fixture paths
+  already take. `infrastructure.md` §5.3's example had dropped the `raw/`, and
+  `corpus-pull` followed it until the review of PR #10 caught the contradiction with
+  §5.1 and `ingest`.
 - **Postgres gets a `corpus` schema**, separate from the three in `db/README.md`. The
   corpus index is its own data class (field-beta §8.1), and putting it in `canon` would
   imply that frames are claims.

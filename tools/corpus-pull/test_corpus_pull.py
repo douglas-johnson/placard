@@ -69,7 +69,10 @@ class PullTest(unittest.TestCase):
         seqs = [json.loads(l)["seq"] for l in (out / "manifest.ndjson").read_text().splitlines()]
         self.assertEqual(seqs, [1, 2, 3, 4])
         frames = json.loads((out / "frames.json").read_text())
-        self.assertEqual(frames[0], {"key": f"{C}/{TAKE}/f0001-label.jpg", "sha256": hashlib.sha256(b"label-bytes").hexdigest(), "bytes": 11})
+        self.assertEqual(frames[0], {"key": f"raw/{C}/{TAKE}/f0001-label.jpg", "sha256": hashlib.sha256(b"label-bytes").hexdigest(), "bytes": 11})
+        # The key is the bucket's own address and, from data/labels/, the mirror's path.
+        self.assertEqual(frames[0]["key"], P + "f0001-label.jpg")
+        self.assertTrue((self.root / "data/labels" / frames[0]["key"]).exists())
 
     def test_second_run_fetches_nothing(self):
         b2 = FakeB2(self.objects())

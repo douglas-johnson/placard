@@ -98,7 +98,9 @@ def derive(c: str, take: str, root: Path) -> list[str]:
 
     frames = sorted(p for p in src.glob("*.jpg") if FRAME_FILE.match(p.name))
     (out / "frames.json").write_text(json.dumps([
-        {"key": f"{c}/{take}/{p.name}", "sha256": digest(p, "sha256"), "bytes": p.stat().st_size} for p in frames
+        # The full object key, raw/ included: the key is the address (D37), and the same
+        # string is the file's path under data/labels/ in this mirror.
+        {"key": f"raw/{c}/{take}/{p.name}", "sha256": digest(p, "sha256"), "bytes": p.stat().st_size} for p in frames
     ], indent=1) + "\n")
 
     # Completeness: take_ended is a claim about what should exist (D38); compare.
