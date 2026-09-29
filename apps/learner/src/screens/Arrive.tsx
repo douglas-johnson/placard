@@ -28,7 +28,13 @@ const PHOTOGRAPHY: { value: FieldLog['photography']; label: string }[] = [
   { value: 'unknown', label: "Didn't see a sign" },
 ];
 
-export function Arrive({ onStarted, onOpenVisit }: { onStarted: (take: Take) => void; onOpenVisit: (take: Take) => void }) {
+export function Arrive({
+  onStarted,
+  onOpenVisit,
+}: {
+  onStarted: (take: Take) => void;
+  onOpenVisit: (take: Take) => void;
+}) {
   const p = usePalette();
   const insets = useInsets();
   const [stage, setStage] = useState<Stage>('locating');
@@ -59,7 +65,12 @@ export function Arrive({ onStarted, onOpenVisit }: { onStarted: (take: Take) => 
   }, []);
 
   const choose = (c: { venue: Venue; distance: number }) => {
-    setVenue({ slug: c.venue.slug, name: c.venue.name, source: 'registry', distance_m: Math.round(c.distance) });
+    setVenue({
+      slug: c.venue.slug,
+      name: c.venue.name,
+      source: 'registry',
+      distance_m: Math.round(c.distance),
+    });
     setAdded(null);
     setStage('log');
   };
@@ -110,13 +121,27 @@ export function Arrive({ onStarted, onOpenVisit }: { onStarted: (take: Take) => 
           <P muted>Looks like you're near:</P>
           <View style={{ marginTop: 12 }}>
             {candidates.map((c) => (
-              <Pressable key={c.venue.slug} onPress={() => choose(c)} style={({ pressed }) => [styles.row, { borderColor: p.rule, opacity: pressed ? 0.6 : 1 }]}>
-                <Text style={[type.body, { color: p.text, fontWeight: '600' }]}>{c.venue.name}</Text>
+              <Pressable
+                key={c.venue.slug}
+                onPress={() => choose(c)}
+                style={({ pressed }) => [
+                  styles.row,
+                  { borderColor: p.rule, opacity: pressed ? 0.6 : 1 },
+                ]}
+              >
+                <Text style={[type.body, { color: p.text, fontWeight: '600' }]}>
+                  {c.venue.name}
+                </Text>
                 <Text style={[type.small, { color: p.muted }]}>{Math.round(c.distance)} m</Text>
               </Pressable>
             ))}
           </View>
-          <Button label="Somewhere else" tone="secondary" onPress={() => setStage('add')} style={{ marginTop: 20 }} />
+          <Button
+            label="Somewhere else"
+            tone="secondary"
+            onPress={() => setStage('add')}
+            style={{ marginTop: 20 }}
+          />
           <Rule />
           <UploadPanel />
           <Rule />
@@ -137,10 +162,30 @@ export function Arrive({ onStarted, onOpenVisit }: { onStarted: (take: Take) => 
               ? 'Nothing in the registry is near this spot yet, which is how the registry grows.'
               : 'No position fix, so nothing to match against. Name the venue and carry on — the frames still get everything else.'}
           </P>
-          <Field label="Venue name, as displayed" value={name} onChangeText={setName} placeholder="Museum of the City of New York" autoFocus />
-          <Field label="Website, if you know it" value={website} onChangeText={setWebsite} placeholder="optional" autoCapitalize="none" keyboardType="url" />
-          <Button label="This is it" onPress={addVenue} disabled={name.trim().length < 2} style={{ marginTop: 24 }} />
-          {candidates.length > 0 ? <Button label="Back to the list" tone="quiet" onPress={() => setStage('choose')} /> : null}
+          <Field
+            label="Venue name, as displayed"
+            value={name}
+            onChangeText={setName}
+            placeholder="Museum of the City of New York"
+            autoFocus
+          />
+          <Field
+            label="Website, if you know it"
+            value={website}
+            onChangeText={setWebsite}
+            placeholder="optional"
+            autoCapitalize="none"
+            keyboardType="url"
+          />
+          <Button
+            label="This is it"
+            onPress={addVenue}
+            disabled={name.trim().length < 2}
+            style={{ marginTop: 24 }}
+          />
+          {candidates.length > 0 ? (
+            <Button label="Back to the list" tone="quiet" onPress={() => setStage('choose')} />
+          ) : null}
           <Rule />
           <UploadPanel />
           <Rule />
@@ -162,16 +207,33 @@ export function Arrive({ onStarted, onOpenVisit }: { onStarted: (take: Take) => 
             <Chip key={f} label={f} on={freeVia === f} onPress={() => setFreeVia(f)} />
           ))}
         </ChipRow>
-        {freeVia === 'Other' ? <Field label="How?" value={freeViaOther} onChangeText={setFreeViaOther} /> : null}
+        {freeVia === 'Other' ? (
+          <Field label="How?" value={freeViaOther} onChangeText={setFreeViaOther} />
+        ) : null}
         <Text style={[type.small, { color: p.muted, marginTop: 16 }]}>Photography</Text>
         <ChipRow>
           {PHOTOGRAPHY.map((o) => (
-            <Chip key={o.value} label={o.label} on={photography === o.value} onPress={() => setPhotography(o.value)} />
+            <Chip
+              key={o.value}
+              label={o.label}
+              on={photography === o.value}
+              onPress={() => setPhotography(o.value)}
+            />
           ))}
         </ChipRow>
-        <Field label="Notes" value={notes} onChangeText={setNotes} placeholder="Bilingual labels; vinyl in the lobby; checklist at the desk…" multiline />
+        <Field
+          label="Notes"
+          value={notes}
+          onChangeText={setNotes}
+          placeholder="Bilingual labels; vinyl in the lobby; checklist at the desk…"
+          multiline
+        />
         <Button label="Start" onPress={start} style={{ marginTop: 24 }} />
-        <Button label="Different venue" tone="quiet" onPress={() => setStage(candidates.length > 0 ? 'choose' : 'add')} />
+        <Button
+          label="Different venue"
+          tone="quiet"
+          onPress={() => setStage(candidates.length > 0 ? 'choose' : 'add')}
+        />
       </Sheet>
     </Screen>
   );

@@ -14,17 +14,24 @@ export function UploadPanel() {
   const p = usePalette();
   const s = useUploadStatus();
   if (s.state === 'unavailable') {
-    return <Text style={[type.small, { color: p.muted }]}>This build has nowhere to send photos — share the manifest instead.</Text>;
+    return (
+      <Text style={[type.small, { color: p.muted }]}>
+        This build has nowhere to send photos — share the manifest instead.
+      </Text>
+    );
   }
   const id = contributor().id;
   if (s.state === 'off') {
     return (
       <View>
-        <Text style={[type.body, { color: p.text, fontWeight: '600' }]}>Send your visits to the corpus?</Text>
+        <Text style={[type.body, { color: p.text, fontWeight: '600' }]}>
+          Send your visits to the corpus?
+        </Text>
         <P muted>
-          From your next visit on, the labels, works and signs you shoot would go to a private research store the
-          project works from, and the transcriptions made from them become public. Nothing about you goes with them —
-          only a random ID this phone made up. Visits already on the phone stay here.
+          From your next visit on, the labels, works and signs you shoot would go to a private
+          research store the project works from, and the transcriptions made from them become
+          public. Nothing about you goes with them — only a random ID this phone made up. Visits
+          already on the phone stay here.
         </P>
         <Button label="Send them" tone="secondary" onPress={() => setUploading(true)} />
       </View>
@@ -35,7 +42,8 @@ export function UploadPanel() {
       <Text style={[type.body, { color: s.state === 'refused' ? p.warn : p.text }]}>{line(s)}</Text>
       {s.conflicts > 0 ? (
         <Text style={[type.small, { color: p.warn, marginTop: 4 }]}>
-          {s.conflicts === 1 ? 'One thing' : `${s.conflicts} things`} the corpus wouldn't take. Worth mentioning to Doug.
+          {s.conflicts === 1 ? 'One thing' : `${s.conflicts} things`} the corpus wouldn't take.
+          Worth mentioning to Doug.
         </Text>
       ) : null}
       <View style={styles.row}>
@@ -54,11 +62,15 @@ function line(s: UploadStatus): string {
     case 'refused':
       return "The corpus didn't recognise this build. A newer one will sort it out — everything is safe on the phone meanwhile.";
     case 'waiting':
-      return s.frames > 0 ? `${cap(photos)} waiting for signal. They'll go on their own.` : "Waiting for signal to send the visit's notes.";
+      return s.frames > 0
+        ? `${cap(photos)} waiting for signal. They'll go on their own.`
+        : "Waiting for signal to send the visit's notes.";
     case 'sending':
       return s.frames > 0 ? `Sending — ${photos} to go.` : "Sending the visit's notes.";
     default:
-      return s.frames + s.records === 0 ? 'Everything from this phone has reached the corpus.' : `${cap(photos)} still to send.`;
+      return s.frames + s.records === 0
+        ? 'Everything from this phone has reached the corpus.'
+        : `${cap(photos)} still to send.`;
   }
 }
 

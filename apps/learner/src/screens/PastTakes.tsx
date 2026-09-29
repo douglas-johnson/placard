@@ -17,20 +17,28 @@ export function PastTakes({ except, onOpen }: { except?: string; onOpen: (take: 
   return (
     <>
       <Pressable onPress={() => setOpen((o) => !o)} hitSlop={8}>
-        <Text style={[type.small, { color: p.muted }]}>{open ? 'Hide earlier visits' : 'Earlier visits'}</Text>
+        <Text style={[type.small, { color: p.muted }]}>
+          {open ? 'Hide earlier visits' : 'Earlier visits'}
+        </Text>
       </Pressable>
-      {open
-        ? past.length === 0
-          ? <P muted>{except ? 'This is the first.' : 'None on this phone yet.'}</P>
-          : past.map((t: Take) => (
-              <Pressable key={t.id} onPress={() => onOpen(t)} style={[styles.row, { borderColor: p.rule }]}>
-                <Text style={[type.body, { color: p.text }]}>{t.venue.name}</Text>
-                <Text style={[type.small, { color: p.muted }]}>
-                  {t.id} · {t.counts.labels} labels · {t.counts.frames} frames · tap to open
-                </Text>
-              </Pressable>
-            ))
-        : null}
+      {open ? (
+        past.length === 0 ? (
+          <P muted>{except ? 'This is the first.' : 'None on this phone yet.'}</P>
+        ) : (
+          past.map((t: Take) => (
+            <Pressable
+              key={t.id}
+              onPress={() => onOpen(t)}
+              style={[styles.row, { borderColor: p.rule }]}
+            >
+              <Text style={[type.body, { color: p.text }]}>{t.venue.name}</Text>
+              <Text style={[type.small, { color: p.muted }]}>
+                {t.id} · {t.counts.labels} labels · {t.counts.frames} frames · tap to open
+              </Text>
+            </Pressable>
+          ))
+        )
+      ) : null}
     </>
   );
 }

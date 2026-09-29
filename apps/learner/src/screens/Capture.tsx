@@ -3,13 +3,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { File, Paths } from 'expo-file-system';
 import { StatusBar } from 'expo-status-bar';
 import { ReactNode, useCallback, useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useInsets } from '../insets';
 import { exifFor, latestFix, type Gps } from '../location';
 import { dark, type } from '../theme';
@@ -145,7 +139,9 @@ export function Capture({
           <Text style={[type.small, { color: dark.text }]}>‹ {backLabel}</Text>
         </Pressable>
         <Text style={[type.h2, { color: dark.text }]}>{title}</Text>
-        {hint ? <Text style={[type.small, { color: dark.muted, marginTop: 2 }]}>{hint}</Text> : null}
+        {hint ? (
+          <Text style={[type.small, { color: dark.muted, marginTop: 2 }]}>{hint}</Text>
+        ) : null}
       </View>
 
       {children}
@@ -154,12 +150,13 @@ export function Capture({
         <Pressable
           onPress={shoot}
           disabled={blocked}
-          style={({ pressed }) => [
-            styles.shutter,
-            { opacity: blocked ? 0.35 : pressed ? 0.7 : 1 },
-          ]}
+          style={({ pressed }) => [styles.shutter, { opacity: blocked ? 0.35 : pressed ? 0.7 : 1 }]}
         >
-          {busy || taking ? <ActivityIndicator color="#141311" /> : <View style={styles.shutterInner} />}
+          {busy || taking ? (
+            <ActivityIndicator color="#141311" />
+          ) : (
+            <View style={styles.shutterInner} />
+          )}
         </Pressable>
         {allActions && allActions.length > 0 ? (
           <View style={styles.actions}>
@@ -184,7 +181,14 @@ export function Capture({
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#000' },
-  viewport: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center' },
+  viewport: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+  },
   sensorFrame: { width: '100%', aspectRatio: 3 / 4 },
   strip: {
     paddingHorizontal: 20,

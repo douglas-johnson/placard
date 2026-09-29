@@ -35,10 +35,7 @@ export type VenueSignKind = 'name' | 'hours_admission' | 'accessible_entrance' |
 
 /** Why a label group closed without a work frame. The reason is data (D23, D12). */
 export type NoWorkReason =
-  | 'photography_prohibited'
-  | 'case_many_objects'
-  | 'building_or_site'
-  | 'other';
+  'photography_prohibited' | 'case_many_objects' | 'building_or_site' | 'other';
 
 /** Group-level flags, each from a protocol case. */
 export type GroupFlag =
@@ -89,7 +86,14 @@ export type ManifestRecord =
       venue: VenueRef;
       fix: Gps | null;
       field_log: FieldLog;
-      device: { os: string; os_version: string; app_version: string | null; build: string | null; update: string | null; channel: string | null };
+      device: {
+        os: string;
+        os_version: string;
+        app_version: string | null;
+        build: string | null;
+        update: string | null;
+        channel: string | null;
+      };
     })
   | (Base & {
       type: 'venue_added';
@@ -484,7 +488,9 @@ export async function saveFrame(
   let cameraRoll = false;
   try {
     const perm = await MediaLibrary.getPermissionsAsync(true);
-    const ok = perm.granted || (perm.canAskAgain && (await MediaLibrary.requestPermissionsAsync(true)).granted);
+    const ok =
+      perm.granted ||
+      (perm.canAskAgain && (await MediaLibrary.requestPermissionsAsync(true)).granted);
     if (ok) {
       await MediaLibrary.Asset.create(dest.uri);
       cameraRoll = true;
@@ -563,7 +569,8 @@ export function recordsOf(take: Take): ManifestRecord[] {
  */
 export function redactFrame(take: Take, frame: string, why: string): void {
   const day = new Date().toISOString().slice(0, 10);
-  if (!redact(redactionFs(take.dir), frame, why, day).found) throw new Error(`no frame ${frame} in ${take.id}`);
+  if (!redact(redactionFs(take.dir), frame, why, day).found)
+    throw new Error(`no frame ${frame} in ${take.id}`);
 }
 
 /** The manifest file, for the share sheet. */

@@ -1,5 +1,15 @@
 import { ReactNode, createContext, useCallback, useContext, useRef } from 'react';
-import { Pressable, ScrollView, type ScrollViewProps, StyleSheet, Text, TextInput, TextInputProps, View, ViewStyle } from 'react-native';
+import {
+  Pressable,
+  ScrollView,
+  type ScrollViewProps,
+  StyleSheet,
+  Text,
+  TextInput,
+  TextInputProps,
+  View,
+  ViewStyle,
+} from 'react-native';
 import { type, usePalette } from './theme';
 
 /** Primary or secondary action. `tone="quiet"` is for the choices the app must offer but shouldn't nudge toward. */
@@ -17,8 +27,7 @@ export function Button({
   style?: ViewStyle;
 }) {
   const p = usePalette();
-  const bg =
-    tone === 'primary' ? p.accent : tone === 'secondary' ? p.card : 'transparent';
+  const bg = tone === 'primary' ? p.accent : tone === 'secondary' ? p.card : 'transparent';
   const fg = tone === 'primary' ? p.onAccent : tone === 'quiet' ? p.muted : p.text;
   return (
     <Pressable
@@ -36,15 +45,7 @@ export function Button({
 }
 
 /** A toggle chip — the multi-select for flags and hard cases. */
-export function Chip({
-  label,
-  on,
-  onPress,
-}: {
-  label: string;
-  on: boolean;
-  onPress: () => void;
-}) {
+export function Chip({ label, on, onPress }: { label: string; on: boolean; onPress: () => void }) {
   const p = usePalette();
   return (
     <Pressable
@@ -100,9 +101,7 @@ export function Field({
           input.style,
         ]}
       />
-      {hint ? (
-        <Text style={[type.small, { color: p.muted, marginTop: 6 }]}>{hint}</Text>
-      ) : null}
+      {hint ? <Text style={[type.small, { color: p.muted, marginTop: 6 }]}>{hint}</Text> : null}
     </View>
   );
 }
@@ -127,7 +126,11 @@ export function Screen({ children }: { children: ReactNode }) {
  */
 const SheetContext = createContext<{ revealEnd: () => void } | null>(null);
 
-export function Sheet({ children, contentContainerStyle, ...rest }: ScrollViewProps & { children: ReactNode }) {
+export function Sheet({
+  children,
+  contentContainerStyle,
+  ...rest
+}: ScrollViewProps & { children: ReactNode }) {
   const ref = useRef<ScrollView>(null);
   // iOS scrolls a field into view when it takes focus, but not as a multiline field
   // grows: the new lines extend down behind the keyboard (seen in the simulator after
@@ -162,9 +165,7 @@ export function H2({ children }: { children: ReactNode }) {
 export function P({ children, muted }: { children: ReactNode; muted?: boolean }) {
   const p = usePalette();
   return (
-    <Text style={[type.body, { color: muted ? p.muted : p.text, marginTop: 8 }]}>
-      {children}
-    </Text>
+    <Text style={[type.body, { color: muted ? p.muted : p.text, marginTop: 8 }]}>{children}</Text>
   );
 }
 

@@ -27,12 +27,20 @@ export function Home({
 }) {
   const p = usePalette();
   const insets = useInsets();
-  const since = new Date(take.started).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  const since = new Date(take.started).toLocaleTimeString([], {
+    hour: 'numeric',
+    minute: '2-digit',
+  });
   const c = take.counts;
 
   return (
     <Screen>
-      <ScrollView contentContainerStyle={[styles.sheet, { paddingTop: insets.top + 24, paddingBottom: insets.bottom + 24 }]}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.sheet,
+          { paddingTop: insets.top + 24, paddingBottom: insets.bottom + 24 },
+        ]}
+      >
         <H1>{take.venue.name}</H1>
         <P muted>
           Since {since}
@@ -48,14 +56,30 @@ export function Home({
 
         <Rule />
 
-        <Big title="Label" hint="A label, the work it governs, the number read back" onPress={() => onInput('label')} />
-        <Big title="Wall text" hint="The interpretive panel — a different kind of photo" onPress={() => onInput('wall_text')} />
-        <Big title="Venue signage" hint="Name, hours and admission, the accessible entrance" onPress={() => onInput('venue')} />
+        <Big
+          title="Label"
+          hint="A label, the work it governs, the number read back"
+          onPress={() => onInput('label')}
+        />
+        <Big
+          title="Wall text"
+          hint="The interpretive panel — a different kind of photo"
+          onPress={() => onInput('wall_text')}
+        />
+        <Big
+          title="Venue signage"
+          hint="Name, hours and admission, the accessible entrance"
+          onPress={() => onInput('venue')}
+        />
 
         <Rule />
 
         <Button label="Share the manifest" tone="secondary" onPress={() => shareManifest(take)} />
-        <Button label="Leaving — shoot the exterior" tone="secondary" onPress={() => onInput('exterior')} />
+        <Button
+          label="Leaving — shoot the exterior"
+          tone="secondary"
+          onPress={() => onInput('exterior')}
+        />
 
         <Rule />
         <UploadPanel />
@@ -74,7 +98,14 @@ function Count({ n, label }: { n: number; label: string }) {
   const p = usePalette();
   return (
     <View style={styles.count}>
-      <Text style={[type.title, { color: p.text, fontSize: 30, fontVariant: ['lining-nums', 'tabular-nums'] }]}>{n}</Text>
+      <Text
+        style={[
+          type.title,
+          { color: p.text, fontSize: 30, fontVariant: ['lining-nums', 'tabular-nums'] },
+        ]}
+      >
+        {n}
+      </Text>
       <Text style={[type.small, { color: p.muted }]}>{label}</Text>
     </View>
   );
@@ -83,7 +114,13 @@ function Count({ n, label }: { n: number; label: string }) {
 function Big({ title, hint, onPress }: { title: string; hint: string; onPress: () => void }) {
   const p = usePalette();
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [styles.big, { backgroundColor: p.card, opacity: pressed ? 0.65 : 1 }]}>
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.big,
+        { backgroundColor: p.card, opacity: pressed ? 0.65 : 1 },
+      ]}
+    >
       <Text style={[type.h2, { color: p.text }]}>{title}</Text>
       <Text style={[type.small, { color: p.muted, marginTop: 4 }]}>{hint}</Text>
     </Pressable>

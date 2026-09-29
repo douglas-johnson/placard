@@ -62,8 +62,7 @@ export function Preflight({ onBack }: { onBack: () => void }) {
     detail: 'not yet requested',
   });
 
-  const isExpoGo =
-    Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+  const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 
   const [ocrState, setOcrState] = useState<Check>({
     label: 'On-device OCR',
@@ -85,9 +84,7 @@ export function Preflight({ onBack }: { onBack: () => void }) {
     let cancelled = false;
     (async () => {
       try {
-        const asset = Asset.fromModule(
-          require('../../assets/fixtures/mcny-38.447.4.jpg'),
-        );
+        const asset = Asset.fromModule(require('../../assets/fixtures/mcny-38.447.4.jpg'));
         await asset.downloadAsync();
         if (!asset.localUri) throw new Error('fixture asset has no local URI');
         const result = await VisionOcr.recognize(asset.localUri);
@@ -103,7 +100,8 @@ export function Preflight({ onBack }: { onBack: () => void }) {
                   (o.variants.length > 1 ? ` variants=${JSON.stringify(o.variants)}` : ''),
               )
               .join('\n') +
-            '\n  warnings: ' + JSON.stringify(result.warnings),
+            '\n  warnings: ' +
+            JSON.stringify(result.warnings),
         );
         // Three ways the accession can survive, in descending order of comfort.
         // The reference reading is right; or normalization folds a confusable
@@ -183,17 +181,11 @@ export function Preflight({ onBack }: { onBack: () => void }) {
     {
       label: 'Host',
       state: isExpoGo ? 'warn' : 'ok',
-      detail: isExpoGo
-        ? 'Expo Go — no custom native modules'
-        : 'development build',
+      detail: isExpoGo ? 'Expo Go — no custom native modules' : 'development build',
     },
     {
       label: 'Camera',
-      state: !cameraPermission
-        ? 'pending'
-        : cameraPermission.granted
-          ? 'ok'
-          : 'warn',
+      state: !cameraPermission ? 'pending' : cameraPermission.granted ? 'ok' : 'warn',
       detail: !cameraPermission
         ? 'reading…'
         : `module linked · permission ${cameraPermission.status}`,
@@ -207,8 +199,7 @@ export function Preflight({ onBack }: { onBack: () => void }) {
   // survives that — it's also what makes the check scriptable later.
   useEffect(() => {
     console.log(
-      '[preflight]\n' +
-        checks.map((c) => `  ${GLYPH[c.state]} ${c.label}: ${c.detail}`).join('\n'),
+      '[preflight]\n' + checks.map((c) => `  ${GLYPH[c.state]} ${c.label}: ${c.detail}`).join('\n'),
     );
   }, [
     cameraPermission?.status,
@@ -237,9 +228,7 @@ export function Preflight({ onBack }: { onBack: () => void }) {
 
         {checks.map((check) => (
           <View key={check.label} style={styles.row}>
-            <Text style={[styles.glyph, t[check.state]]}>
-              {GLYPH[check.state]}
-            </Text>
+            <Text style={[styles.glyph, t[check.state]]}>{GLYPH[check.state]}</Text>
             <View style={styles.rowText}>
               <Text style={[styles.rowLabel, t.text]}>{check.label}</Text>
               <Text style={[styles.rowDetail, t.muted]}>{check.detail}</Text>
@@ -251,20 +240,14 @@ export function Preflight({ onBack }: { onBack: () => void }) {
 
         <Pressable
           onPress={requestBoth}
-          style={({ pressed }) => [
-            styles.button,
-            t.button,
-            pressed && styles.buttonPressed,
-          ]}
+          style={({ pressed }) => [styles.button, t.button, pressed && styles.buttonPressed]}
         >
-          <Text style={[styles.buttonLabel, t.buttonLabel]}>
-            Request permissions
-          </Text>
+          <Text style={[styles.buttonLabel, t.buttonLabel]}>Request permissions</Text>
         </Pressable>
 
         <Text style={[styles.footnote, t.muted]}>
-          The simulator has no camera. Granting permission here proves the module
-          is linked and the prompt works — nothing more.
+          The simulator has no camera. Granting permission here proves the module is linked and the
+          prompt works — nothing more.
         </Text>
       </ScrollView>
     </View>
