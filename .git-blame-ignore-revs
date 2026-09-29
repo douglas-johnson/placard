@@ -4,3 +4,6 @@
 
 # Reformat Python with Ruff (D45)
 a92fe4a8a0d11d492d0dcf594b2f27e4dc2260eb
+
+# Reformat the capture app with Prettier (D46)
+08c45e5f23031b84c2de022013523011fe6e7803
