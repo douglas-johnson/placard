@@ -62,7 +62,13 @@ export function contributor(): Contributor {
       // collision, so nothing already sent is at risk.
     }
   }
-  const c: Contributor = { v: 1, id: randomId(), created: new Date().toISOString(), upload: false, upload_periods: [] };
+  const c: Contributor = {
+    v: 1,
+    id: randomId(),
+    created: new Date().toISOString(),
+    upload: false,
+    upload_periods: [],
+  };
   if (!f.exists) f.create({ intermediates: true });
   f.write(JSON.stringify(c));
   return c;
@@ -86,10 +92,7 @@ export function setUploading(on: boolean): void {
 // The ledger: what the server has acknowledged, per take. Append-only, like the
 // manifest, and replayed the same way.
 
-type LedgerEntry =
-  | { records: number[] }
-  | { frame: string }
-  | { conflict: string; reason: string };
+type LedgerEntry = { records: number[] } | { frame: string } | { conflict: string; reason: string };
 
 type Ledger = { records: Set<number>; frames: Set<string>; conflicts: Map<string, string> };
 
@@ -130,7 +133,9 @@ export function sentToCorpus(take: Take, frame: string): boolean {
   if (ledger.frames.has(frame)) return true;
   return manifestLines(take).some(
     ({ seq, record }) =>
-      ledger.records.has(seq) && ((record.type === 'frame' && record.frame === frame) || (record.type === 'ocr' && record.frame === frame)),
+      ledger.records.has(seq) &&
+      ((record.type === 'frame' && record.frame === frame) ||
+        (record.type === 'ocr' && record.frame === frame)),
   );
 }
 
@@ -148,7 +153,12 @@ export type UploadStatus = {
   conflicts: number;
 };
 
-let status: UploadStatus = { state: uploadAvailable ? 'off' : 'unavailable', frames: 0, records: 0, conflicts: 0 };
+let status: UploadStatus = {
+  state: uploadAvailable ? 'off' : 'unavailable',
+  frames: 0,
+  records: 0,
+  conflicts: 0,
+};
 const listeners = new Set<(s: UploadStatus) => void>();
 
 function publish(patch: Partial<UploadStatus> = {}): void {
@@ -156,7 +166,8 @@ function publish(patch: Partial<UploadStatus> = {}): void {
   if (!uploadAvailable) status.state = 'unavailable';
   else if (!contributor().upload) status.state = 'off';
   else if (refused) status.state = 'refused';
-  else if (status.state === 'off' || status.state === 'unavailable' || status.state === 'refused') status.state = 'idle';
+  else if (status.state === 'off' || status.state === 'unavailable' || status.state === 'refused')
+    status.state = 'idle';
   listeners.forEach((l) => l(status));
 }
 
@@ -164,6 +175,9 @@ export function useUploadStatus(): UploadStatus {
   const [s, set] = useState(status);
   useEffect(() => {
     listeners.add(set);
+    // Catches an update between render and subscribe. useSyncExternalStore is the
+    // proper form, left until after the first real upload (D46).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     set(status);
     return () => {
       listeners.delete(set);
@@ -199,11 +213,18 @@ async function api<T>(path: string, body: unknown): Promise<T> {
   return (await r.json()) as T;
 }
 
-type Pending = { take: Take; ledger: Ledger; lines: { seq: number; line: string }[]; frames: { frame: string; file: string }[] };
+type Pending = {
+  take: Take;
+  ledger: Ledger;
+  lines: { seq: number; line: string }[];
+  frames: { frame: string; file: string }[];
+};
 
 /** Visits started while sending was on — the only ones ever sent. */
 function eligible(take: Take): boolean {
-  return (contributor().upload_periods ?? []).some((p) => take.started >= p.from && (p.to == null || take.started < p.to));
+  return (contributor().upload_periods ?? []).some(
+    (p) => take.started >= p.from && (p.to == null || take.started < p.to),
+  );
 }
 
 function pending(): Pending[] {
@@ -214,7 +235,9 @@ function pending(): Pending[] {
     .map((take) => {
       const ledger = readLedger(take);
       const all = manifestLines(take);
-      const lines = all.filter((l) => !ledger.records.has(l.seq) && !ledger.conflicts.has(`r${l.seq}`));
+      const lines = all.filter(
+        (l) => !ledger.records.has(l.seq) && !ledger.conflicts.has(`r${l.seq}`),
+      );
       const frames = all
         .map((l) => l.record)
         .flatMap((r) => (r.type === 'frame' && r.file ? [{ frame: r.frame, file: r.file }] : []))
@@ -248,13 +271,18 @@ function hexToBase64(hex: string): string {
 async function sendRecords(p: Pending): Promise<void> {
   for (let i = 0; i < p.lines.length; i += 50) {
     const batch = p.lines.slice(i, i + 50);
-    const r = await api<{ stored: number[]; conflicts: number[]; rejected: { index: number; reason: string }[] }>(
-      '/v1/records',
-      { take: p.take.id, lines: batch.map((l) => l.line) },
-    );
+    const r = await api<{
+      stored: number[];
+      conflicts: number[];
+      rejected: { index: number; reason: string }[];
+    }>('/v1/records', { take: p.take.id, lines: batch.map((l) => l.line) });
     if (r.stored.length) note(p.take, { records: r.stored });
-    r.conflicts.forEach((seq) => note(p.take, { conflict: `r${seq}`, reason: 'record differs from the one already stored' }));
-    r.rejected.forEach((x) => note(p.take, { conflict: `r${batch[x.index].seq}`, reason: x.reason }));
+    r.conflicts.forEach((seq) =>
+      note(p.take, { conflict: `r${seq}`, reason: 'record differs from the one already stored' }),
+    );
+    r.rejected.forEach((x) =>
+      note(p.take, { conflict: `r${batch[x.index].seq}`, reason: x.reason }),
+    );
   }
 }
 
@@ -267,19 +295,34 @@ async function sendFrame(take: Take, f: { frame: string; file: string }): Promis
   }
   const info = file.info({ md5: true });
   if (!info.md5 || !info.size) throw new Offline('could not hash the frame');
-  const claim = { take: take.id, frame: f.frame, file: f.file, bytes: info.size, md5: hexToBase64(info.md5) };
-  const r = await api<{ status: 'stored' } | { status: 'upload'; url: string; headers: Record<string, string> }>('/v1/frames', claim);
+  const claim = {
+    take: take.id,
+    frame: f.frame,
+    file: f.file,
+    bytes: info.size,
+    md5: hexToBase64(info.md5),
+  };
+  const r = await api<
+    { status: 'stored' } | { status: 'upload'; url: string; headers: Record<string, string> }
+  >('/v1/frames', claim);
   if (r.status === 'upload') {
     // 'background': the transfer carries on if the screen locks. If the app is killed
     // the promise is lost, and the next drain asks again — ingest recognises a PUT
     // that landed without its confirmation.
-    const task = new UploadTask(file, r.url, { httpMethod: 'PUT', headers: r.headers, sessionType: 'background' });
+    const task = new UploadTask(file, r.url, {
+      httpMethod: 'PUT',
+      headers: r.headers,
+      sessionType: 'background',
+    });
     const put = await task.uploadAsync().catch((e) => {
       throw new Offline(String(e));
     });
     task.release();
     if (put.status < 200 || put.status >= 300) throw new Offline(`PUT ${put.status}`);
-    const done = await api<{ status: 'stored' | 'missing' }>('/v1/frames/complete', { take: take.id, frame: f.frame });
+    const done = await api<{ status: 'stored' | 'missing' }>('/v1/frames/complete', {
+      take: take.id,
+      frame: f.frame,
+    });
     if (done.status !== 'stored') throw new Offline('frame not visible yet');
   }
   note(take, { frame: f.frame });
@@ -303,7 +346,11 @@ async function drain(): Promise<void> {
         try {
           await sendFrame(p.take, f);
         } catch (e) {
-          if (e instanceof Error && 'conflict' in e) note(p.take, { conflict: f.frame, reason: String((e as { conflict: string }).conflict).slice(0, 200) });
+          if (e instanceof Error && 'conflict' in e)
+            note(p.take, {
+              conflict: f.frame,
+              reason: String((e as { conflict: string }).conflict).slice(0, 200),
+            });
           else throw e;
         }
         publish(count(pending()));

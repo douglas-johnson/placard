@@ -10,11 +10,50 @@ const take = '2026-09-20-the-metropolitan-museum-of-art';
 const rec = (o: object) => JSON.stringify({ v: 1, ts: '2026-09-20T19:30:20.000Z', take, ...o });
 const lines = [
   rec({ seq: 90, type: 'group_opened', group: 'g0014' }),
-  rec({ seq: 91, type: 'frame', frame: 'f0035', file: 'f0035-label.jpg', kind: 'label', group: 'g0014', camera_roll: true }),
-  rec({ seq: 92, type: 'ocr', frame: 'f0035', group: 'g0014', lines: [{ text: 'A CHILD, GRADE 4' }], warnings: [], candidates: ['2026.1'] }),
-  rec({ seq: 93, type: 'accession', group: 'g0014', status: 'corrected', reading: '2026.1', value: '2026.7', candidates: ['2026.1'] }),
-  rec({ seq: 94, type: 'frame', frame: 'f0036', file: 'f0036-work.jpg', kind: 'work', group: 'g0014' }),
-  rec({ seq: 95, type: 'ocr', frame: 'f0036', group: 'g0014', lines: [{ text: 'keep me' }], warnings: [], candidates: [] }),
+  rec({
+    seq: 91,
+    type: 'frame',
+    frame: 'f0035',
+    file: 'f0035-label.jpg',
+    kind: 'label',
+    group: 'g0014',
+    camera_roll: true,
+  }),
+  rec({
+    seq: 92,
+    type: 'ocr',
+    frame: 'f0035',
+    group: 'g0014',
+    lines: [{ text: 'A CHILD, GRADE 4' }],
+    warnings: [],
+    candidates: ['2026.1'],
+  }),
+  rec({
+    seq: 93,
+    type: 'accession',
+    group: 'g0014',
+    status: 'corrected',
+    reading: '2026.1',
+    value: '2026.7',
+    candidates: ['2026.1'],
+  }),
+  rec({
+    seq: 94,
+    type: 'frame',
+    frame: 'f0036',
+    file: 'f0036-work.jpg',
+    kind: 'work',
+    group: 'g0014',
+  }),
+  rec({
+    seq: 95,
+    type: 'ocr',
+    frame: 'f0036',
+    group: 'g0014',
+    lines: [{ text: 'keep me' }],
+    warnings: [],
+    candidates: [],
+  }),
   '{"v":1,"seq":96,"type":"gro', // torn by a crash
   '',
 ];
@@ -58,7 +97,8 @@ assert.equal(again.text, r.text);
 assert.equal(again.file, null);
 
 // A Mac-side redaction already in the file is left as it was (the Met's own shape).
-const mac = '{"v": 1, "seq": 91, "type": "frame", "frame": "f0035", "file": null, "redacted": "label of a minor — file deleted from raw/ 2026-09-20"}';
+const mac =
+  '{"v": 1, "seq": 91, "type": "frame", "frame": "f0035", "file": null, "redacted": "label of a minor — file deleted from raw/ 2026-09-20"}';
 assert.equal(redactManifest(mac, 'f0035', 'identifies a minor', '2026-09-27').text, mac);
 
 assert.equal(redactManifest(text, 'f9999', 'x', '2026-09-27').found, false);
@@ -108,7 +148,12 @@ function memoryFs(files: Map<string, string>, dieAt = Infinity): RedactionFs & {
   return fs;
 }
 
-const start = () => new Map([['manifest.ndjson', text], ['f0035-label.jpg', '<jpeg>'], ['f0036-work.jpg', '<jpeg>']]);
+const start = () =>
+  new Map([
+    ['manifest.ndjson', text],
+    ['f0035-label.jpg', '<jpeg>'],
+    ['f0036-work.jpg', '<jpeg>'],
+  ]);
 
 const clean = start();
 const total = memoryFs(clean);
@@ -121,7 +166,10 @@ assert.equal(clean.get('manifest.ndjson'), r.text);
 let cases = 0;
 for (let n = 1; n <= total.ops; n += 1) {
   const files = start();
-  assert.throws(() => redact(memoryFs(files, n), 'f0035', 'identifies a minor', '2026-09-27'), Crash);
+  assert.throws(
+    () => redact(memoryFs(files, n), 'f0035', 'identifies a minor', '2026-09-27'),
+    Crash,
+  );
   const afterFirst = new Map(files);
   // …and a second crash anywhere in the recovery.
   for (let m = 1; ; m += 1) {
@@ -135,9 +183,18 @@ for (let n = 1; n <= total.ops; n += 1) {
     }
     settle(memoryFs(again));
     const got = JSON.stringify([...again.entries()].sort());
-    const outcome = got === JSON.stringify(want) ? 'redacted' : got === JSON.stringify(untouched) ? 'untouched' : null;
+    const outcome =
+      got === JSON.stringify(want)
+        ? 'redacted'
+        : got === JSON.stringify(untouched)
+          ? 'untouched'
+          : null;
     assert.ok(outcome, `crash at redaction step ${n}, recovery step ${m}: ${got.slice(0, 300)}`);
-    if (outcome === 'untouched') assert.ok(n <= 1, `only a crash before the intent is written may leave it untouched (step ${n})`);
+    if (outcome === 'untouched')
+      assert.ok(
+        n <= 1,
+        `only a crash before the intent is written may leave it untouched (step ${n})`,
+      );
     cases += 1;
     if (recovered) break;
   }

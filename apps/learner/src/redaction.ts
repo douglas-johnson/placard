@@ -15,7 +15,12 @@
  * candidates are the union across the group's label frames, so wiping them can take
  * a sibling frame's reading too; over-wiping is the safe direction.
  */
-export function redactManifest(text: string, frame: string, why: string, day: string): { text: string; file: string | null; found: boolean } {
+export function redactManifest(
+  text: string,
+  frame: string,
+  why: string,
+  day: string,
+): { text: string; file: string | null; found: boolean } {
   const parse = (line: string): any => {
     try {
       return JSON.parse(line);
@@ -26,18 +31,37 @@ export function redactManifest(text: string, frame: string, why: string, day: st
   const lines = text.split('\n');
   const target = lines.map(parse).find((r) => r?.type === 'frame' && r.frame === frame);
   if (!target) return { text, file: null, found: false };
-  const readForAccession = (target.kind === 'label' || target.kind === 'accession_crop') && target.group;
+  const readForAccession =
+    (target.kind === 'label' || target.kind === 'accession_crop') && target.group;
 
   const out = lines.map((line) => {
     const r = parse(line);
     if (r?.type === 'frame' && r.frame === frame) {
       if (r.redacted && r.file == null) return line; // already done, here or on the Mac
-      return JSON.stringify({ ...r, file: null, redacted: r.redacted ?? `${why} — removed on the phone ${day}` });
+      return JSON.stringify({
+        ...r,
+        file: null,
+        redacted: r.redacted ?? `${why} — removed on the phone ${day}`,
+      });
     }
-    if (r?.type === 'ocr' && r.frame === frame && (r.lines?.length ?? 0) + (r.candidates?.length ?? 0) > 0) {
-      return JSON.stringify({ ...r, lines: [], candidates: [], warnings: [`REDACTED ${day}: ${why}. Lines removed on the phone with the frame.`] });
+    if (
+      r?.type === 'ocr' &&
+      r.frame === frame &&
+      (r.lines?.length ?? 0) + (r.candidates?.length ?? 0) > 0
+    ) {
+      return JSON.stringify({
+        ...r,
+        lines: [],
+        candidates: [],
+        warnings: [`REDACTED ${day}: ${why}. Lines removed on the phone with the frame.`],
+      });
     }
-    if (readForAccession && r?.type === 'accession' && r.group === target.group && (r.reading != null || (r.candidates?.length ?? 0) > 0)) {
+    if (
+      readForAccession &&
+      r?.type === 'accession' &&
+      r.group === target.group &&
+      (r.reading != null || (r.candidates?.length ?? 0) > 0)
+    ) {
       return JSON.stringify({ ...r, reading: null, candidates: [] });
     }
     return line;
@@ -82,7 +106,12 @@ const READY = 'manifest.ndjson.redacting.ready';
  * finishes the job: a READY side file is moved into place, and one without READY is
  * discarded. Then an intent still present re-runs the redaction, which is idempotent.
  */
-export function redact(fs: RedactionFs, frame: string, why: string, day: string): { found: boolean } {
+export function redact(
+  fs: RedactionFs,
+  frame: string,
+  why: string,
+  day: string,
+): { found: boolean } {
   settle(fs);
   if (!redactManifest(fs.read(MANIFEST), frame, why, day).found) return { found: false };
   fs.write(INTENT, JSON.stringify({ frame, why, day }));

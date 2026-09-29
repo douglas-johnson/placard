@@ -19,10 +19,24 @@ const ARRIVAL: { kind: VenueSignKind; title: string; hint: string }[] = [
     title: 'The accessible entrance sign',
     hint: 'Only if it is separate. Skip if it isn’t.',
   },
-  { kind: 'other', title: 'Anything else by the door', hint: 'Shoot again for more; Done when there’s nothing left.' },
+  {
+    kind: 'other',
+    title: 'Anything else by the door',
+    hint: 'Shoot again for more; Done when there’s nothing left.',
+  },
 ];
 
-export function VenueFlow({ take, mode, onDone, onCancel }: { take: Take; mode: 'arrival' | 'exterior'; onDone: () => void; onCancel: () => void }) {
+export function VenueFlow({
+  take,
+  mode,
+  onDone,
+  onCancel,
+}: {
+  take: Take;
+  mode: 'arrival' | 'exterior';
+  onDone: () => void;
+  onCancel: () => void;
+}) {
   const [index, setIndex] = useState(0);
   const [busy, setBusy] = useState(false);
   const [shots, setShots] = useState(0);
@@ -60,7 +74,13 @@ export function VenueFlow({ take, mode, onDone, onCancel }: { take: Take; mode: 
         busy={busy}
         onPicture={onPicture}
         onBack={onCancel}
-        actions={[{ label: shots > 0 ? 'Done' : 'Skip', onPress: onDone, tone: shots > 0 ? 'secondary' : 'quiet' }]}
+        actions={[
+          {
+            label: shots > 0 ? 'Done' : 'Skip',
+            onPress: onDone,
+            tone: shots > 0 ? 'secondary' : 'quiet',
+          },
+        ]}
       />
     );
   }

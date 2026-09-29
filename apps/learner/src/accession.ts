@@ -29,7 +29,8 @@ export type Candidate = {
 // for the human to judge — optionally letter-prefixed (X2011…, MoAF…) and optionally
 // suffixed with a part designator (14A-B — D24). Two or more groups, so a bare year
 // or a decimal in a dimension line doesn't pass on its own.
-const TOKEN = /(?<![\w.])[A-Za-z]{0,4}\.?\d{1,4}(?:[.-]\d{1,6}){1,5}(?:[A-Za-z]{1,2}(?:-[A-Za-z]{1,2})?)?(?![\w.])/g;
+const TOKEN =
+  /(?<![\w.])[A-Za-z]{0,4}\.?\d{1,4}(?:[.-]\d{1,6}){1,5}(?:[A-Za-z]{1,2}(?:-[A-Za-z]{1,2})?)?(?![\w.])/g;
 
 // The native module normalizes the reference reading of each line but hands the
 // other scale's variants back raw, so a contested line's alternative can still carry
@@ -37,9 +38,22 @@ const TOKEN = /(?<![\w.])[A-Za-z]{0,4}\.?\d{1,4}(?:[.-]\d{1,6}){1,5}(?:[A-Za-z]{
 // `confusableMap` — the half accession tokens depend on. The durable fix is a
 // `normalizedVariants` field on the native side, which waits for the next rebuild (D33).
 const CONFUSABLE: Record<string, string> = {
-  '\u2022': '.', '\u00B7': '.', '\u2027': '.', '\u22C5': '.', '\u30FB': '.', '\uFF0E': '.', '\u2219': '.',
-  '\u2010': '-', '\u2011': '-', '\u2012': '-', '\u2013': '-', '\u2212': '-', '\uFF0D': '-',
-  '\u00A0': ' ', '\u2007': ' ', '\u202F': ' ',
+  '\u2022': '.',
+  '\u00B7': '.',
+  '\u2027': '.',
+  '\u22C5': '.',
+  '\u30FB': '.',
+  '\uFF0E': '.',
+  '\u2219': '.',
+  '\u2010': '-',
+  '\u2011': '-',
+  '\u2012': '-',
+  '\u2013': '-',
+  '\u2212': '-',
+  '\uFF0D': '-',
+  '\u00A0': ' ',
+  '\u2007': ' ',
+  '\u202F': ' ',
 };
 const CONFUSABLE_RE = new RegExp(`[${Object.keys(CONFUSABLE).join('')}]`, 'g');
 export function foldPunctuation(text: string): string {
@@ -66,9 +80,11 @@ const ACCESSION_WORD = /\b(accession|acc\.?\s*no|object\s*(number|no)|inv\.?)\b/
 // Cyrillic в.с. often enough (Met g0007: 'Grock, 480-470 в.с.') that the look-alikes
 // are matched here directly. No trailing \b: "B.C." at the end of a line has no word
 // character after the period, so a boundary there never matches.
-const ERA_LINE = /((?<![A-Za-z])[BВв]\.?\s?[CСс]\.?(?:[EЕе]\.?)?(?![A-Za-z])|(?<![A-Za-z])[AАа]\.?\s?D\.?(?![A-Za-z])|(?<![A-Za-z])[CСс]\.?[EЕе]\.?(?![A-Za-z])|\bcentury\b|\bca\.|\bcirca\b|\bmillennium\b)/i;
+const ERA_LINE =
+  /((?<![A-Za-z])[BВв]\.?\s?[CСс]\.?(?:[EЕе]\.?)?(?![A-Za-z])|(?<![A-Za-z])[AАа]\.?\s?D\.?(?![A-Za-z])|(?<![A-Za-z])[CСс]\.?[EЕе]\.?(?![A-Za-z])|\bcentury\b|\bca\.|\bcirca\b|\bmillennium\b)/i;
 const DASHED_PAIR = /^\d{2,4}-\d{2,4}$/;
-const CREDIT_WORD = /\b(fund|gift|bequest|purchase|purchased|collection|lent|loan|subscription|donors?|exchange)\b/i;
+const CREDIT_WORD =
+  /\b(fund|gift|bequest|purchase|purchased|collection|lent|loan|subscription|donors?|exchange)\b/i;
 const CREDIT_YEAR = /\b(1[6-9]\d{2}|20\d{2})(?:[-–]\d{2,4})?\b/;
 
 /** The year at the end of a credit line agrees with the key's first component: "1949 (49.11.4)", "2013 (2013.3.1.454)". */
@@ -117,7 +133,13 @@ export function findAccessionCandidates(
         score += Math.min(value.length, 12) / 12;
         const prior = found.get(value);
         if (!prior || prior.score < score) {
-          found.set(value, { value, line: index, contested: obs.contested, score, disqualified: dateOnEraLine || onDimensionLine });
+          found.set(value, {
+            value,
+            line: index,
+            contested: obs.contested,
+            score,
+            disqualified: dateOnEraLine || onDimensionLine,
+          });
         }
       }
     }

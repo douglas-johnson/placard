@@ -10,9 +10,19 @@ import { Capture, type Picture } from './Capture';
  * different input. No read-back: there's nothing to confirm. It can be linked to the
  * label group just closed, because a label system can span several surfaces (D18).
  */
-export function WallTextFlow({ take, onDone, onCancel }: { take: Take; onDone: () => void; onCancel: () => void }) {
+export function WallTextFlow({
+  take,
+  onDone,
+  onCancel,
+}: {
+  take: Take;
+  onDone: () => void;
+  onCancel: () => void;
+}) {
   const insets = useInsets();
-  const [linked, setLinked] = useState<string | null | undefined>(take.lastClosedGroup ? undefined : null);
+  const [linked, setLinked] = useState<string | null | undefined>(
+    take.lastClosedGroup ? undefined : null,
+  );
   const [busy, setBusy] = useState(false);
   const [shots, setShots] = useState(0);
 
@@ -20,7 +30,12 @@ export function WallTextFlow({ take, onDone, onCancel }: { take: Take; onDone: (
     async (pic: Picture) => {
       setBusy(true);
       try {
-        await saveFrame(take, pic, { kind: 'wall_text', group: null, gps: pic.gps, linked_group: linked ?? null });
+        await saveFrame(take, pic, {
+          kind: 'wall_text',
+          group: null,
+          gps: pic.gps,
+          linked_group: linked ?? null,
+        });
         setShots((n) => n + 1);
       } finally {
         setBusy(false);
@@ -34,8 +49,15 @@ export function WallTextFlow({ take, onDone, onCancel }: { take: Take; onDone: (
       <Screen>
         <ScrollView contentContainerStyle={[styles.sheet, { paddingTop: insets.top + 20 }]}>
           <H2>Does this go with the label you just shot?</H2>
-          <P muted>Some labels come as a system — tombstone here, a paragraph there. Linking them keeps the pieces together.</P>
-          <Button label="Yes, same work" onPress={() => setLinked(take.lastClosedGroup)} style={{ marginTop: 24 }} />
+          <P muted>
+            Some labels come as a system — tombstone here, a paragraph there. Linking them keeps the
+            pieces together.
+          </P>
+          <Button
+            label="Yes, same work"
+            onPress={() => setLinked(take.lastClosedGroup)}
+            style={{ marginTop: 24 }}
+          />
           <Button label="No, it stands alone" tone="secondary" onPress={() => setLinked(null)} />
           <Button label="Cancel" tone="quiet" onPress={onCancel} />
         </ScrollView>

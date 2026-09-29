@@ -1,0 +1,3 @@
+# Prettier also reads .gitignore, which covers build output and the generated ios/.
+# Markdown is prose: Prettier would rewrite list markers and table padding in it.
+*.md

@@ -134,6 +134,18 @@ frame and its OCR are wiped, and every other line keeps its exact bytes.
 and the candidates offered. Run it after any change to `src/accession.ts`; the
 manifests under `data/labels/raw/` are the device rows, so the count is machine-dependent.
 
+CI runs three checks on every PR (D46), and each has a script:
+
+```sh
+npm run typecheck      # tsc --noEmit, strict
+npm run lint           # ESLint with Expo's config; warnings fail too
+npm run format         # Prettier rewrites in place; `format:check` is what CI runs
+```
+
+A lint finding that is deliberate gets an inline `eslint-disable-next-line` with the
+reason on the line above it, never a rule switched off for the whole app to quiet one
+case.
+
 The preflight that used to be the whole app is now `src/screens/Preflight.tsx`, behind
 "Check this build" on the hub. It reports whether the native modules the capture path
 depends on are actually linked, and echoes the same readout to the Metro console.

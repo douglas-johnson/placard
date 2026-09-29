@@ -57,8 +57,13 @@ export default function App() {
     if (!__DEV__) return;
     const routeMarker = new File(Paths.document, 'devroute');
     if (routeMarker.exists) {
-      const [input, devPreset] = routeMarker.textSync().trim().split(':') as [Input, 'readback' | 'flags' | undefined];
+      const [input, devPreset] = routeMarker.textSync().trim().split(':') as [
+        Input,
+        'readback' | 'flags' | undefined,
+      ];
       routeMarker.delete();
+      // Development only: a one-shot route read from a marker file on mount.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (take) setRoute({ name: 'flow', input, devPreset });
     }
     const marker = new File(Paths.document, 'selftest');
@@ -78,7 +83,12 @@ export default function App() {
 
   let screen;
   if (route.name === 'visit' && visit) {
-    screen = <Visit take={visit} onBack={() => (route.from === 'home' && take ? home() : setRoute({ name: 'arrive' }))} />;
+    screen = (
+      <Visit
+        take={visit}
+        onBack={() => (route.from === 'home' && take ? home() : setRoute({ name: 'arrive' }))}
+      />
+    );
   } else if (!take || route.name === 'arrive' || route.name === 'visit') {
     screen = (
       <Arrive
@@ -104,7 +114,9 @@ export default function App() {
   } else if (route.name === 'flow') {
     switch (route.input) {
       case 'label':
-        screen = <LabelFlow take={take} onDone={home} onCancel={home} devPreset={route.devPreset} />;
+        screen = (
+          <LabelFlow take={take} onDone={home} onCancel={home} devPreset={route.devPreset} />
+        );
         break;
       case 'wall_text':
         screen = <WallTextFlow take={take} onDone={home} onCancel={home} />;

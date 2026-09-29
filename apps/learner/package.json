@@ -20,6 +20,10 @@
   "devDependencies": {
     "@types/node": "^20.19.43",
     "@types/react": "~19.2.2",
+    "eslint": "^9.39.5",
+    "eslint-config-expo": "~57.0.2",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.9",
     "typescript": "~6.0.3"
   },
   "scripts": {
@@ -28,7 +32,11 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "locator-eval": "tsc --ignoreConfig --outDir /tmp/placard-locator-eval --module commonjs --target es2022 --moduleResolution bundler --esModuleInterop --skipLibCheck --types node scripts/locator-eval.ts && node /tmp/placard-locator-eval/scripts/locator-eval.js",
-    "redaction-test": "tsc --ignoreConfig --outDir /tmp/placard-redaction-test --module commonjs --target es2022 --moduleResolution bundler --esModuleInterop --skipLibCheck --types node scripts/redaction-test.ts && node /tmp/placard-redaction-test/scripts/redaction-test.js"
+    "redaction-test": "tsc --ignoreConfig --outDir /tmp/placard-redaction-test --module commonjs --target es2022 --moduleResolution bundler --esModuleInterop --skipLibCheck --types node scripts/redaction-test.ts && node /tmp/placard-redaction-test/scripts/redaction-test.js",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit"
   },
   "private": true
 }

@@ -167,6 +167,9 @@ python3 -m unittest tools/corpus-pull/test_corpus_pull.py
 # Python lint and format (D45) — CI runs both checks on every PR
 services/ingest/.venv/bin/ruff format .
 services/ingest/.venv/bin/ruff check .
+
+# Capture app type check, lint and format (D46) — CI runs all three on every PR
+(cd apps/learner && npm run typecheck && npm run lint && npm run format:check)
 ```
 
 ## Machine

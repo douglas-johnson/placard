@@ -95,7 +95,11 @@ export function LabelFlow({
   // The last label frame read as nothing at all — a floor, a plinth, a frame that
   // never focused (Met f0030, field-beta §6.1). Offer the retake before any confirm.
   const [lastEmpty, setLastEmpty] = useState(false);
-  const [accession, setAccession] = useState<{ status: AccessionStatus; reading: string | null; value: string | null } | null>(null);
+  const [accession, setAccession] = useState<{
+    status: AccessionStatus;
+    reading: string | null;
+    value: string | null;
+  } | null>(null);
   const [typed, setTyped] = useState('');
   const [typing, setTyping] = useState(false);
   const [works, setWorks] = useState(0);
@@ -147,7 +151,8 @@ export function LabelFlow({
         // Union with earlier label frames of the same group, best first.
         setCandidates((prev) => {
           const all = new Map(prev.map((c) => [c.value, c]));
-          for (const c of found) if (!all.has(c.value) || all.get(c.value)!.score < c.score) all.set(c.value, c);
+          for (const c of found)
+            if (!all.has(c.value) || all.get(c.value)!.score < c.score) all.set(c.value, c);
           return [...all.values()].sort((a, b) => b.score - a.score).slice(0, 3);
         });
         setLastEmpty(result.observations.length === 0);
@@ -172,7 +177,13 @@ export function LabelFlow({
       const reading = candidates[0]?.value ?? null;
       const a = { status, reading, value };
       setAccession(a);
-      recordAccession(take, { group: g, status, reading, value, candidates: candidates.map((c) => c.value) });
+      recordAccession(take, {
+        group: g,
+        status,
+        reading,
+        value,
+        candidates: candidates.map((c) => c.value),
+      });
       setTyping(false);
       setStep('work');
     },
@@ -217,9 +228,22 @@ export function LabelFlow({
       note: note.trim() || null,
     });
     onDone();
-  }, [ensureGroup, take, labelFrames.length, works, crops, noWorkReason, flags, sharedCount, hardCases, note, onDone]);
+  }, [
+    ensureGroup,
+    take,
+    labelFrames.length,
+    works,
+    crops,
+    noWorkReason,
+    flags,
+    sharedCount,
+    hardCases,
+    note,
+    onDone,
+  ]);
 
-  const toggle = <T,>(list: T[], v: T) => (list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
+  const toggle = <T,>(list: T[], v: T) =>
+    list.includes(v) ? list.filter((x) => x !== v) : [...list, v];
 
   // ---- screens ------------------------------------------------------------
 
@@ -240,7 +264,9 @@ export function LabelFlow({
     const last = labelFrames[labelFrames.length - 1];
     return (
       <Screen>
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 28 }}>
+        <View
+          style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 28 }}
+        >
           {last ? <Image source={{ uri: last.file.uri }} style={styles.thumb} /> : null}
           <ActivityIndicator color={p.text} style={{ marginTop: 24 }} />
           <P muted>Reading the label…</P>
@@ -254,7 +280,12 @@ export function LabelFlow({
     const last = labelFrames[labelFrames.length - 1];
     return (
       <Screen>
-        <Sheet contentContainerStyle={[styles.sheet, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 24 }]}>
+        <Sheet
+          contentContainerStyle={[
+            styles.sheet,
+            { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 24 },
+          ]}
+        >
           {last ? <Image source={{ uri: last.file.uri }} style={styles.thumbSmall} /> : null}
           {lastEmpty && !typing ? (
             <>
@@ -263,13 +294,26 @@ export function LabelFlow({
                 Not a single line — usually the camera hadn't focused, or the label isn't in the
                 shot. The frame is kept either way. Another go?
               </P>
-              <Button label="Retake the label" onPress={() => { setLastEmpty(false); setStep('label'); }} style={{ marginTop: 20 }} />
-              <Button label="Carry on with this frame" tone="quiet" onPress={() => setLastEmpty(false)} />
+              <Button
+                label="Retake the label"
+                onPress={() => {
+                  setLastEmpty(false);
+                  setStep('label');
+                }}
+                style={{ marginTop: 20 }}
+              />
+              <Button
+                label="Carry on with this frame"
+                tone="quiet"
+                onPress={() => setLastEmpty(false)}
+              />
             </>
           ) : top && !typing ? (
             <>
               <H2>Is this the accession number?</H2>
-              <Text style={[type.mono, { color: p.text, fontSize: 28, marginTop: 8 }]}>{top.value}</Text>
+              <Text style={[type.mono, { color: p.text, fontSize: 28, marginTop: 8 }]}>
+                {top.value}
+              </Text>
               {top.contested ? (
                 <P muted>Read differently at different sizes — worth a close look.</P>
               ) : null}
@@ -278,14 +322,34 @@ export function LabelFlow({
                   <P muted>Or one of these:</P>
                   <ChipRow>
                     {candidates.slice(1).map((c) => (
-                      <Chip key={c.value} label={c.value} on={false} onPress={() => settle('confirmed', c.value)} />
+                      <Chip
+                        key={c.value}
+                        label={c.value}
+                        on={false}
+                        onPress={() => settle('confirmed', c.value)}
+                      />
                     ))}
                   </ChipRow>
                 </>
               ) : null}
-              <Button label="Yes, that's it" onPress={() => settle('confirmed', top.value)} style={{ marginTop: 20 }} />
-              <Button label="It's different — let me type it" tone="secondary" onPress={() => { setTyped(top.value); setTyping(true); }} />
-              <Button label="There's no accession on this label" tone="quiet" onPress={() => settle('none', null)} />
+              <Button
+                label="Yes, that's it"
+                onPress={() => settle('confirmed', top.value)}
+                style={{ marginTop: 20 }}
+              />
+              <Button
+                label="It's different — let me type it"
+                tone="secondary"
+                onPress={() => {
+                  setTyped(top.value);
+                  setTyping(true);
+                }}
+              />
+              <Button
+                label="There's no accession on this label"
+                tone="quiet"
+                onPress={() => settle('none', null)}
+              />
             </>
           ) : (
             <>
@@ -293,8 +357,8 @@ export function LabelFlow({
               {!typing ? (
                 <P muted>
                   {ocrNote ?? 'Nothing accession-shaped in the reading.'} If the line is tiny or
-                  low-contrast, a tight crop helps; if there just isn't one, say so — that's
-                  data too.
+                  low-contrast, a tight crop helps; if there just isn't one, say so — that's data
+                  too.
                 </P>
               ) : null}
               <Field
@@ -313,18 +377,38 @@ export function LabelFlow({
                 style={{ marginTop: 20 }}
               />
               {!typing && !top ? (
-                <Button label="C · Get closer on the number" tone="secondary" onPress={() => setStep('crop')} />
+                <Button
+                  label="C · Get closer on the number"
+                  tone="secondary"
+                  onPress={() => setStep('crop')}
+                />
               ) : null}
-              <Button label="There's no accession on this label" tone="quiet" onPress={() => settle('none', null)} />
+              <Button
+                label="There's no accession on this label"
+                tone="quiet"
+                onPress={() => settle('none', null)}
+              />
               {!top && !typing ? (
-                <Button label="Skip — I'll sort it out later" tone="quiet" onPress={() => settle('unread', null)} />
+                <Button
+                  label="Skip — I'll sort it out later"
+                  tone="quiet"
+                  onPress={() => settle('unread', null)}
+                />
               ) : null}
-              {typing ? <Button label="Back" tone="quiet" onPress={() => setTyping(false)} /> : null}
+              {typing ? (
+                <Button label="Back" tone="quiet" onPress={() => setTyping(false)} />
+              ) : null}
             </>
           )}
           <Rule />
-          <Button label="The label needed another frame" tone="quiet" onPress={() => setStep('label')} />
-          {ocrNote && top ? <Text style={[type.small, { color: p.muted, marginTop: 12 }]}>{ocrNote}</Text> : null}
+          <Button
+            label="The label needed another frame"
+            tone="quiet"
+            onPress={() => setStep('label')}
+          />
+          {ocrNote && top ? (
+            <Text style={[type.small, { color: p.muted, marginTop: 12 }]}>{ocrNote}</Text>
+          ) : null}
         </Sheet>
       </Screen>
     );
@@ -368,15 +452,30 @@ export function LabelFlow({
   if (step === 'noWork') {
     return (
       <Screen>
-        <ScrollView contentContainerStyle={[styles.sheet, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 24 }]}>
+        <ScrollView
+          contentContainerStyle={[
+            styles.sheet,
+            { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 24 },
+          ]}
+        >
           <H2>No work photo — why?</H2>
           <P muted>The reason is worth as much as the frame would have been.</P>
           <ChipRow>
             {NO_WORK_REASONS.map((r) => (
-              <Chip key={r.value} label={r.label} on={noWorkReason === r.value} onPress={() => setNoWorkReason(r.value)} />
+              <Chip
+                key={r.value}
+                label={r.label}
+                on={noWorkReason === r.value}
+                onPress={() => setNoWorkReason(r.value)}
+              />
             ))}
           </ChipRow>
-          <Button label="Continue" onPress={() => setStep('flags')} disabled={!noWorkReason} style={{ marginTop: 20 }} />
+          <Button
+            label="Continue"
+            onPress={() => setStep('flags')}
+            disabled={!noWorkReason}
+            style={{ marginTop: 20 }}
+          />
           <Button label="Actually, I can shoot it" tone="quiet" onPress={() => setStep('work')} />
         </ScrollView>
       </Screen>
@@ -386,31 +485,64 @@ export function LabelFlow({
   // flags
   return (
     <Screen>
-      <Sheet contentContainerStyle={[styles.sheet, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 24 }]}>
+      <Sheet
+        contentContainerStyle={[
+          styles.sheet,
+          { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 24 },
+        ]}
+      >
         <H2>Anything unusual about this one?</H2>
         <P muted>Skip straight to Close if not — most labels are ordinary, and that's fine.</P>
         <ChipRow>
           {FLAGS.map((f) => (
-            <Chip key={f.value} label={f.label} on={flags.includes(f.value)} onPress={() => setFlags((l) => toggle(l, f.value))} />
+            <Chip
+              key={f.value}
+              label={f.label}
+              on={flags.includes(f.value)}
+              onPress={() => setFlags((l) => toggle(l, f.value))}
+            />
           ))}
         </ChipRow>
         {flags.includes('shared_panel') ? (
           <View style={styles.stepper}>
             <Text style={[type.body, { color: p.text }]}>Governs the next</Text>
-            <Button label="−" tone="secondary" onPress={() => setSharedCount((n) => Math.max(1, n - 1))} style={styles.stepBtn} />
+            <Button
+              label="−"
+              tone="secondary"
+              onPress={() => setSharedCount((n) => Math.max(1, n - 1))}
+              style={styles.stepBtn}
+            />
             <Text style={[type.mono, { color: p.text }]}>{sharedCount}</Text>
-            <Button label="+" tone="secondary" onPress={() => setSharedCount((n) => n + 1)} style={styles.stepBtn} />
+            <Button
+              label="+"
+              tone="secondary"
+              onPress={() => setSharedCount((n) => n + 1)}
+              style={styles.stepBtn}
+            />
             <Text style={[type.body, { color: p.text }]}>works</Text>
           </View>
         ) : null}
         <Rule />
-        <Text style={[type.small, { color: p.muted }]}>Hard case — say so now, while you remember why</Text>
+        <Text style={[type.small, { color: p.muted }]}>
+          Hard case — say so now, while you remember why
+        </Text>
         <ChipRow>
           {HARD_CASES.map((h) => (
-            <Chip key={h} label={HARD_CASE_LABELS[h]} on={hardCases.includes(h)} onPress={() => setHardCases((l) => toggle(l, h))} />
+            <Chip
+              key={h}
+              label={HARD_CASE_LABELS[h]}
+              on={hardCases.includes(h)}
+              onPress={() => setHardCases((l) => toggle(l, h))}
+            />
           ))}
         </ChipRow>
-        <Field label="Note" value={note} onChangeText={setNote} placeholder="Anything the frames won't show" multiline />
+        <Field
+          label="Note"
+          value={note}
+          onChangeText={setNote}
+          placeholder="Anything the frames won't show"
+          multiline
+        />
         <Button label="Close this label" onPress={finish} style={{ marginTop: 24 }} />
       </Sheet>
     </Screen>

@@ -20,22 +20,28 @@ export function Done({ take, onClose }: { take: Take; onClose: () => void }) {
   const uploading = sending !== 'off' && sending !== 'unavailable';
   return (
     <Screen>
-      <ScrollView contentContainerStyle={[styles.sheet, { paddingTop: insets.top + 24, paddingBottom: insets.bottom + 24 }]}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.sheet,
+          { paddingTop: insets.top + 24, paddingBottom: insets.bottom + 24 },
+        ]}
+      >
         <H1>That's the visit</H1>
         <P muted>
-          {take.venue.name} · {c.labels} {c.labels === 1 ? 'label' : 'labels'}, {c.works} {c.works === 1 ? 'work' : 'works'},{' '}
-          {c.wall_texts} wall text, {c.venue_signs} {c.venue_signs === 1 ? 'sign' : 'signs'}.
+          {take.venue.name} · {c.labels} {c.labels === 1 ? 'label' : 'labels'}, {c.works}{' '}
+          {c.works === 1 ? 'work' : 'works'}, {c.wall_texts} wall text, {c.venue_signs}{' '}
+          {c.venue_signs === 1 ? 'sign' : 'signs'}.
         </P>
         <Rule />
         {uploading ? (
           <P>
-            The frames and the manifest go to the corpus together, whenever there's signal —
-            nothing to AirDrop. The camera roll has a copy too.
+            The frames and the manifest go to the corpus together, whenever there's signal — nothing
+            to AirDrop. The camera roll has a copy too.
           </P>
         ) : (
           <P>
-            The frames are in the camera roll. The manifest is what says which is which —
-            AirDrop it to the Mac now, or it's a tap away under earlier visits.
+            The frames are in the camera roll. The manifest is what says which is which — AirDrop it
+            to the Mac now, or it's a tap away under earlier visits.
           </P>
         )}
         <View style={{ marginTop: 16 }}>
