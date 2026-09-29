@@ -163,6 +163,10 @@ python3 -m unittest tools/corpus-pull/test_corpus_pull.py
 
 # The upload service
 (cd services/ingest && .venv/bin/pytest -q)
+
+# Python lint and format (D45) — CI runs both checks on every PR
+services/ingest/.venv/bin/ruff format .
+services/ingest/.venv/bin/ruff check .
 ```
 
 ## Machine

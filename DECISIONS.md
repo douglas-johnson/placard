@@ -1812,3 +1812,60 @@ switch keep sending there until they pick it up. Nothing about it needs removing
 domains, in which case the domain moves into `railway.ts` and the README's hand steps
 go away. Moving DNS to Cloudflare for the public site would change where the records
 live, but not this hostname.
+
+## D45 — Python is linted and formatted by Ruff, at 100 columns, enforced in CI
+
+**Date:** 2026-09-29 · **Status:** accepted · **Decided by:** Doug (the line length, and
+that CI enforces it); Claude's calls are marked
+
+All Python in the repository — `services/` and `tools/` alike — is formatted by
+`ruff format` and linted by `ruff check`, configured once in a root `ruff.toml`. A
+GitHub Actions job (`.github/workflows/python-lint.yml`) fails a PR on either. Until now
+nothing was configured anywhere: the code had a consistent style because it had been
+written carefully, and the only tooling that ever touched it was whatever the editor
+happened to have installed, which ran with defaults nobody chose and only on files saved
+by hand. Most of this code is written by Claude through tools, never saved in the editor,
+so an editor-only standard would have governed almost none of it. CI is the one layer
+every change passes through.
+
+**Ruff, not Black plus flake8 or Pylint** (Claude's call). One binary does both jobs,
+its formatter is Black's style, and its rule codes are flake8's, so the `# noqa: E402`
+comments already in the tools kept their meaning. It installs from pip as a prebuilt
+x86_64 macOS wheel, which on this machine is the difference between a second and an
+afternoon — the Homebrew trap in CLAUDE.md never comes up.
+
+**100 columns.** At 100 the first reformat rewrapped about 95 over-long lines of code
+and left 15 string literals to split by hand; at Black's 88 it would have been half
+again as many. The comments here are argued prose and read better with the room.
+
+**The rules** (Claude's call): pycodestyle, pyflakes, isort, pyupgrade and bugbear
+(`E W F I UP B`). Deliberately not the docstring or naming families: the comments in
+this code say *why*, and a rule that demands a docstring on every function is satisfied
+by an empty one. `target-version` is 3.13, the lower of the two interpreters (the
+service is pinned to 3.13, the tools run on the system 3.14), so an autofix never
+introduces syntax the service can't run.
+
+**One pin, shared by CI and the editor** (Claude's call). `ruff==` lives in
+`services/ingest/requirements-dev.txt`, because that venv is the only one the repository
+has; CI installs exactly that line, and `.vscode/settings.json` points the Ruff
+extension at that venv's binary. Two Ruff versions can disagree about where a line
+breaks, and a CI failure over a formatter difference nobody can see locally is the kind
+that teaches people to ignore CI. The workspace settings also override two user-level
+settings for Python only: `insertSpaces: false`, which would put tabs into
+space-indented files, and autopep8 as the format-on-save formatter.
+
+**The first reformat is its own commit,** listed in `.git-blame-ignore-revs` so that
+`git blame` — and GitHub's blame view, which reads the file automatically — skips it.
+Locally, `git config blame.ignoreRevsFile .git-blame-ignore-revs` does the same. Besides
+wrapping, it renamed seven one-letter `l` loop variables (E741) and moved two
+`timezone.utc` to `datetime.UTC`; the test suites passed unchanged on either side.
+
+**Not yet** (Claude's call): a type checker, and a pre-commit hook. About 40% of
+functions are annotated, which is too few for a type-check gate to say anything but
+"annotate more"; Pylance's editor checking is free in the meantime, and B1's `canon`
+service is the natural point to start one strictly. A pre-commit hook duplicates CI for
+a single committer and adds a tool to install.
+
+**What would reverse this:** little, for the formatter — the style is Black's, and
+leaving Ruff for Black would be a no-op on the code. The rule set is the part expected
+to grow; adding a family is one line in `ruff.toml` and one cleanup commit.
