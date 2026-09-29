@@ -1,7 +1,8 @@
 """corpus-pull.py against a fake bucket.
 
-    python3 -m unittest tools/corpus-pull/test_corpus_pull.py
+python3 -m unittest tools/corpus-pull/test_corpus_pull.py
 """
+
 import hashlib
 import importlib.util
 import json
@@ -9,7 +10,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
-spec = importlib.util.spec_from_file_location("corpus_pull", Path(__file__).with_name("corpus-pull.py"))
+spec = importlib.util.spec_from_file_location(
+    "corpus_pull", Path(__file__).with_name("corpus-pull.py")
+)
 cp = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(cp)
 
@@ -25,7 +28,13 @@ class FakeB2:
 
     def listing(self):
         return [
-            {"fileName": n, "fileId": n, "contentLength": len(b), "contentSha1": hashlib.sha1(b).hexdigest(), "action": "upload"}
+            {
+                "fileName": n,
+                "fileId": n,
+                "contentLength": len(b),
+                "contentSha1": hashlib.sha1(b).hexdigest(),
+                "action": "upload",
+            }
             for n, b in sorted(self.objects.items())
         ]
 
@@ -50,26 +59,43 @@ class PullTest(unittest.TestCase):
     def objects(self, ended=True):
         o = {
             P + "records/000001-take_started.json": rec(1, "take_started").encode(),
-            P + "records/000002-frame.json": rec(2, "frame", frame="f0001", file="f0001-label.jpg").encode(),
-            P + "records/000003-frame.json": rec(3, "frame", frame="f0002", file="f0002-work.jpg").encode(),
+            P + "records/000002-frame.json": rec(
+                2, "frame", frame="f0001", file="f0001-label.jpg"
+            ).encode(),
+            P + "records/000003-frame.json": rec(
+                3, "frame", frame="f0002", file="f0002-work.jpg"
+            ).encode(),
             P + "f0001-label.jpg": b"label-bytes",
             P + "f0002-work.jpg": b"work-bytes",
         }
         if ended:
-            o[P + "records/000004-take_ended.json"] = rec(4, "take_ended", counts={"frames": 2}).encode()
+            o[P + "records/000004-take_ended.json"] = rec(
+                4, "take_ended", counts={"frames": 2}
+            ).encode()
         return o
 
     def test_mirrors_the_bucket_and_derives_the_manifest(self):
         b2 = FakeB2(self.objects())
         self.assertEqual(cp.pull_take(b2, b2.listing(), self.root, False), [])
-        self.assertEqual((self.root / "data/labels" / P / "f0001-label.jpg").read_bytes(), b"label-bytes")
+        self.assertEqual(
+            (self.root / "data/labels" / P / "f0001-label.jpg").read_bytes(), b"label-bytes"
+        )
         status = cp.derive(C, TAKE, self.root)
         self.assertIn("complete", status)
         out = self.root / "data/labels/derived" / C / TAKE
-        seqs = [json.loads(l)["seq"] for l in (out / "manifest.ndjson").read_text().splitlines()]
+        seqs = [
+            json.loads(line)["seq"] for line in (out / "manifest.ndjson").read_text().splitlines()
+        ]
         self.assertEqual(seqs, [1, 2, 3, 4])
         frames = json.loads((out / "frames.json").read_text())
-        self.assertEqual(frames[0], {"key": f"raw/{C}/{TAKE}/f0001-label.jpg", "sha256": hashlib.sha256(b"label-bytes").hexdigest(), "bytes": 11})
+        self.assertEqual(
+            frames[0],
+            {
+                "key": f"raw/{C}/{TAKE}/f0001-label.jpg",
+                "sha256": hashlib.sha256(b"label-bytes").hexdigest(),
+                "bytes": 11,
+            },
+        )
         # The key is the bucket's own address and, from data/labels/, the mirror's path.
         self.assertEqual(frames[0]["key"], P + "f0001-label.jpg")
         self.assertTrue((self.root / "data/labels" / frames[0]["key"]).exists())
@@ -111,14 +137,20 @@ class PullTest(unittest.TestCase):
 
     def test_redaction_markers_follow_the_records(self):
         o = self.objects()
-        o[P + "records/redacted-f0001.json"] = json.dumps({"v": 1, "type": "redacted", "frame": "f0001"}).encode()
+        o[P + "records/redacted-f0001.json"] = json.dumps(
+            {"v": 1, "type": "redacted", "frame": "f0001"}
+        ).encode()
         del o[P + "f0001-label.jpg"]
         b2 = FakeB2(o)
         cp.pull_take(b2, b2.listing(), self.root, False)
         status = "; ".join(cp.derive(C, TAKE, self.root))
         self.assertIn("complete", status)  # a redacted frame is not a missing one
         self.assertIn("redacted: f0001", status)
-        last = (self.root / "data/labels/derived" / C / TAKE / "manifest.ndjson").read_text().splitlines()[-1]
+        last = (
+            (self.root / "data/labels/derived" / C / TAKE / "manifest.ndjson")
+            .read_text()
+            .splitlines()[-1]
+        )
         self.assertEqual(json.loads(last)["type"], "redacted")
 
 

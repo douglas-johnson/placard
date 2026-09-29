@@ -26,6 +26,7 @@ stored once with:
     security add-generic-password -s placard-b2-mac -a placard -w
     (type keyId:applicationKey at the hidden prompt)
 """
+
 from __future__ import annotations
 
 import argparse
@@ -66,8 +67,12 @@ def pull_take(b2: B2, files: list[dict], root: Path, dry: bool) -> list[str]:
         dest = root / "data/labels" / info["fileName"]
         sha1 = expected_sha1(info)
         if dest.exists():
-            if dest.stat().st_size != info["contentLength"] or (sha1 and digest(dest, "sha1") != sha1):
-                problems.append(f"{info['fileName']}: local copy differs from the bucket; left alone")
+            if dest.stat().st_size != info["contentLength"] or (
+                sha1 and digest(dest, "sha1") != sha1
+            ):
+                problems.append(
+                    f"{info['fileName']}: local copy differs from the bucket; left alone"
+                )
             continue
         if dry:
             print(f"  would fetch {info['fileName']}")
@@ -84,38 +89,69 @@ def pull_take(b2: B2, files: list[dict], root: Path, dry: bool) -> list[str]:
 
 
 def derive(c: str, take: str, root: Path) -> list[str]:
-    """Rebuild manifest.ndjson and frames.json from the local mirror; return a status line's parts."""
+    """Rebuild manifest.ndjson and frames.json from the local mirror.
+
+    Returns the parts of a status line.
+    """
     src = root / "data/labels/raw" / c / take
     out = root / "data/labels/derived" / c / take
-    records = sorted(
-        (int(m.group(1)), p) for p in (src / "records").glob("*.json") if (m := RECORD.match(f"records/{p.name}"))
-    ) if (src / "records").exists() else []
-    markers = sorted(p for p in (src / "records").glob("redacted-*.json")) if (src / "records").exists() else []
+    records = (
+        sorted(
+            (int(m.group(1)), p)
+            for p in (src / "records").glob("*.json")
+            if (m := RECORD.match(f"records/{p.name}"))
+        )
+        if (src / "records").exists()
+        else []
+    )
+    markers = (
+        sorted(p for p in (src / "records").glob("redacted-*.json"))
+        if (src / "records").exists()
+        else []
+    )
 
-    lines = [p.read_text().rstrip("\n") for _, p in records] + [p.read_text().rstrip("\n") for p in markers]
+    lines = [p.read_text().rstrip("\n") for _, p in records] + [
+        p.read_text().rstrip("\n") for p in markers
+    ]
     out.mkdir(parents=True, exist_ok=True)
-    (out / "manifest.ndjson").write_text("".join(l + "\n" for l in lines))
+    (out / "manifest.ndjson").write_text("".join(line + "\n" for line in lines))
 
     frames = sorted(p for p in src.glob("*.jpg") if FRAME_FILE.match(p.name))
-    (out / "frames.json").write_text(json.dumps([
-        # The full object key, raw/ included: the key is the address (D37), and the same
-        # string is the file's path under data/labels/ in this mirror.
-        {"key": f"raw/{c}/{take}/{p.name}", "sha256": digest(p, "sha256"), "bytes": p.stat().st_size} for p in frames
-    ], indent=1) + "\n")
+    (out / "frames.json").write_text(
+        json.dumps(
+            [
+                # The full object key, raw/ included: the key is the address (D37), and the same
+                # string is the file's path under data/labels/ in this mirror.
+                {
+                    "key": f"raw/{c}/{take}/{p.name}",
+                    "sha256": digest(p, "sha256"),
+                    "bytes": p.stat().st_size,
+                }
+                for p in frames
+            ],
+            indent=1,
+        )
+        + "\n"
+    )
 
     # Completeness: take_ended is a claim about what should exist (D38); compare.
-    parsed = [json.loads(l) for l in lines]
+    parsed = [json.loads(line) for line in lines]
     seqs = [s for s, _ in records]
     missing = sorted(set(range(1, (max(seqs) if seqs else 0) + 1)) - set(seqs))
     ended = next((r for r in parsed if r.get("type") == "take_ended"), None)
     redacted = {r["frame"] for r in parsed if r.get("type") == "redacted"}
     have = {p.name for p in frames}
-    wanted = [r["file"] for r in parsed if r.get("type") == "frame" and r.get("file") and r["frame"] not in redacted]
+    wanted = [
+        r["file"]
+        for r in parsed
+        if r.get("type") == "frame" and r.get("file") and r["frame"] not in redacted
+    ]
     absent = [f for f in wanted if f not in have]
 
     parts = [f"{len(frames)} frames, {len(records)} records"]
     if missing:
-        parts.append(f"records not yet up: seq {', '.join(map(str, missing[:8]))}{'…' if len(missing) > 8 else ''}")
+        more = "…" if len(missing) > 8 else ""
+        parts.append(f"records not yet up: seq {', '.join(map(str, missing[:8]))}{more}")
     if absent:
         parts.append(f"{len(absent)} frame(s) not yet up")
     if ended is None:
@@ -128,7 +164,9 @@ def derive(c: str, take: str, root: Path) -> list[str]:
 
 
 def main(argv: list[str]) -> int:
-    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     p.add_argument("--contributor")
     p.add_argument("--take")
     p.add_argument("--dry-run", action="store_true")
@@ -136,7 +174,11 @@ def main(argv: list[str]) -> int:
 
     key_id, _, key = keychain_secret("placard-b2-mac").partition(":")
     b2 = B2(key_id, key)
-    prefix = "raw/" + (f"{a.contributor}/" if a.contributor else "") + (f"{a.take}/" if a.contributor and a.take else "")
+    prefix = (
+        "raw/"
+        + (f"{a.contributor}/" if a.contributor else "")
+        + (f"{a.take}/" if a.contributor and a.take else "")
+    )
     takes: dict[tuple[str, str], list[dict]] = defaultdict(list)
     for info in b2.names(b2.bucket_id(), prefix):
         parts = info["fileName"].split("/", 3)

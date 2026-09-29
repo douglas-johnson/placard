@@ -1,0 +1,4 @@
+{
+  "recommendations": ["charliermarsh.ruff"],
+  "unwantedRecommendations": ["ms-python.autopep8", "ms-python.pylint"]
+}

@@ -1,0 +1,18 @@
+# Python lint and format for the whole repository (D45). One file at the root because
+# the Python lives in two places — services/ (pinned 3.13) and tools/ (system python3,
+# 3.14) — and a single standard across both is the point.
+
+line-length = 100
+# The lower of the two interpreters, so pyupgrade never suggests 3.14-only syntax.
+target-version = "py313"
+
+[lint]
+# pycodestyle, pyflakes, isort, pyupgrade, bugbear. Deliberately not pylint's naming
+# and docstring rules: the comments here are argued prose, and a rule that demands a
+# docstring on every function gets satisfied with an empty one.
+select = ["E", "W", "F", "I", "UP", "B"]
+
+[lint.isort]
+# The tools import these as top-level modules after putting their directory on
+# sys.path, so ruff can't discover them as first-party on its own.
+known-first-party = ["b2native", "redact", "app", "bucket", "store"]

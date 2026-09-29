@@ -5,6 +5,7 @@ returns the one already there, and the caller decides what an existing row means
 the same content is a retry, while different content is a conflict that must never
 be signed (D35).
 """
+
 from __future__ import annotations
 
 import json
@@ -54,10 +55,14 @@ class TakeStatus:
 
 
 class Store(Protocol):
-    def claim_frame(self, c: str, take: str, frame: str, file: str, size: int, md5: str) -> tuple[FrameRow, bool]: ...
+    def claim_frame(
+        self, c: str, take: str, frame: str, file: str, size: int, md5: str
+    ) -> tuple[FrameRow, bool]: ...
     def mark_frame_stored(self, c: str, take: str, frame: str) -> None: ...
     def get_frame(self, c: str, take: str, frame: str) -> FrameRow | None: ...
-    def claim_record(self, c: str, take: str, seq: int, type: str, sha256: str, body: dict) -> tuple[RecordRow, bool]: ...
+    def claim_record(
+        self, c: str, take: str, seq: int, type: str, sha256: str, body: dict
+    ) -> tuple[RecordRow, bool]: ...
     def mark_record_stored(self, c: str, take: str, seq: int) -> None: ...
     def take_status(self, c: str, take: str) -> TakeStatus: ...
 
@@ -137,14 +142,18 @@ class PgStore:
 
     def claim_frame(self, c, take, frame, file, size, md5):
         with self.pool.connection() as conn:
-            created = conn.execute(
-                """INSERT INTO corpus.frames (contributor, take, frame, file, bytes, md5)
+            created = (
+                conn.execute(
+                    """INSERT INTO corpus.frames (contributor, take, frame, file, bytes, md5)
                    VALUES (%s, %s, %s, %s, %s, %s)
                    ON CONFLICT DO NOTHING RETURNING 1""",
-                (c, take, frame, file, size, md5),
-            ).fetchone() is not None
+                    (c, take, frame, file, size, md5),
+                ).fetchone()
+                is not None
+            )
             row = conn.execute(
-                "SELECT file, bytes, md5, stored_at IS NOT NULL FROM corpus.frames WHERE contributor=%s AND take=%s AND frame=%s",
+                "SELECT file, bytes, md5, stored_at IS NOT NULL FROM corpus.frames "
+                "WHERE contributor=%s AND take=%s AND frame=%s",
                 (c, take, frame),
             ).fetchone()
         return FrameRow(*row), created
@@ -152,28 +161,34 @@ class PgStore:
     def mark_frame_stored(self, c, take, frame):
         with self.pool.connection() as conn:
             conn.execute(
-                "UPDATE corpus.frames SET stored_at = now() WHERE contributor=%s AND take=%s AND frame=%s AND stored_at IS NULL",
+                "UPDATE corpus.frames SET stored_at = now() "
+                "WHERE contributor=%s AND take=%s AND frame=%s AND stored_at IS NULL",
                 (c, take, frame),
             )
 
     def get_frame(self, c, take, frame):
         with self.pool.connection() as conn:
             row = conn.execute(
-                "SELECT file, bytes, md5, stored_at IS NOT NULL FROM corpus.frames WHERE contributor=%s AND take=%s AND frame=%s",
+                "SELECT file, bytes, md5, stored_at IS NOT NULL FROM corpus.frames "
+                "WHERE contributor=%s AND take=%s AND frame=%s",
                 (c, take, frame),
             ).fetchone()
         return FrameRow(*row) if row else None
 
     def claim_record(self, c, take, seq, type, sha256, body):
         with self.pool.connection() as conn:
-            created = conn.execute(
-                """INSERT INTO corpus.records (contributor, take, seq, type, sha256, body)
+            created = (
+                conn.execute(
+                    """INSERT INTO corpus.records (contributor, take, seq, type, sha256, body)
                    VALUES (%s, %s, %s, %s, %s, %s)
                    ON CONFLICT DO NOTHING RETURNING 1""",
-                (c, take, seq, type, sha256, json.dumps(body)),
-            ).fetchone() is not None
+                    (c, take, seq, type, sha256, json.dumps(body)),
+                ).fetchone()
+                is not None
+            )
             row = conn.execute(
-                "SELECT type, sha256, stored_at IS NOT NULL FROM corpus.records WHERE contributor=%s AND take=%s AND seq=%s",
+                "SELECT type, sha256, stored_at IS NOT NULL FROM corpus.records "
+                "WHERE contributor=%s AND take=%s AND seq=%s",
                 (c, take, seq),
             ).fetchone()
         return RecordRow(*row), created
@@ -181,20 +196,27 @@ class PgStore:
     def mark_record_stored(self, c, take, seq):
         with self.pool.connection() as conn:
             conn.execute(
-                "UPDATE corpus.records SET stored_at = now() WHERE contributor=%s AND take=%s AND seq=%s AND stored_at IS NULL",
+                "UPDATE corpus.records SET stored_at = now() "
+                "WHERE contributor=%s AND take=%s AND seq=%s AND stored_at IS NULL",
                 (c, take, seq),
             )
 
     def take_status(self, c, take):
         with self.pool.connection() as conn:
-            seqs = [r[0] for r in conn.execute(
-                "SELECT seq FROM corpus.records WHERE contributor=%s AND take=%s", (c, take)
-            ).fetchall()]
+            seqs = [
+                r[0]
+                for r in conn.execute(
+                    "SELECT seq FROM corpus.records WHERE contributor=%s AND take=%s", (c, take)
+                ).fetchall()
+            ]
             ended = conn.execute(
-                "SELECT body FROM corpus.records WHERE contributor=%s AND take=%s AND type='take_ended' ORDER BY seq DESC LIMIT 1",
+                "SELECT body FROM corpus.records WHERE contributor=%s AND take=%s "
+                "AND type='take_ended' ORDER BY seq DESC LIMIT 1",
                 (c, take),
             ).fetchone()
             allocated, stored = conn.execute(
-                "SELECT count(*), count(stored_at) FROM corpus.frames WHERE contributor=%s AND take=%s", (c, take)
+                "SELECT count(*), count(stored_at) FROM corpus.frames "
+                "WHERE contributor=%s AND take=%s",
+                (c, take),
             ).fetchone()
         return _status(seqs, ended[0] if ended else None, allocated, stored)

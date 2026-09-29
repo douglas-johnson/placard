@@ -31,6 +31,7 @@ What it does, in order:
 
 --dry-run mints a key without deleteFiles and stops after step 2.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -67,18 +68,32 @@ def say(msg: str) -> None:
 
 
 def parse(argv: list[str]) -> argparse.Namespace:
-    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     p.add_argument("--contributor", required=True)
     p.add_argument("--take", required=True)
     p.add_argument("--frame", required=True, action="append", help="repeatable")
     p.add_argument("--reason", required=True, choices=["minor"])
     p.add_argument("--group", help="the label group, for the audit line")
-    p.add_argument("--record", type=int, action="append", default=[], help="also destroy this record seq (e.g. a note that named the child)")
-    p.add_argument("--kept", default="", help="comma-separated: what the group keeps, for the audit line")
+    p.add_argument(
+        "--record",
+        type=int,
+        action="append",
+        default=[],
+        help="also destroy this record seq (e.g. a note that named the child)",
+    )
+    p.add_argument(
+        "--kept", default="", help="comma-separated: what the group keeps, for the audit line"
+    )
     p.add_argument("--fixture", help="the fixture that records the group, for the audit line")
     p.add_argument("--dry-run", action="store_true")
     a = p.parse_args(argv)
-    if not CONTRIBUTOR.match(a.contributor) or not TAKE.match(a.take) or not all(FRAME.match(f) for f in a.frame):
+    if (
+        not CONTRIBUTOR.match(a.contributor)
+        or not TAKE.match(a.take)
+        or not all(FRAME.match(f) for f in a.frame)
+    ):
         p.error("contributor, take or frame is not in the raw/ naming convention")
     return a
 
@@ -90,12 +105,20 @@ def _latest(k: B2, bucket_id: str, name: str) -> dict | None:
             try:
                 return json.loads(k.download_by_id(v["fileId"]))
             except ValueError:
-                raise Failed(f"cannot parse {name} ({v['fileId']}); refusing to guess what it holds") from None
+                raise Failed(
+                    f"cannot parse {name} ({v['fileId']}); refusing to guess what it holds"
+                ) from None
     return None
 
 
 def _record_names(k: B2, bucket_id: str, prefix: str, suffix: str) -> list[str]:
-    return sorted({v["fileName"] for v in k.versions(bucket_id, f"{prefix}records/") if v["fileName"].endswith(suffix)})
+    return sorted(
+        {
+            v["fileName"]
+            for v in k.versions(bucket_id, f"{prefix}records/")
+            if v["fileName"].endswith(suffix)
+        }
+    )
 
 
 def targets(k: B2, bucket_id: str, prefix: str, frames: list[str], seqs: list[int]):
@@ -123,7 +146,10 @@ def targets(k: B2, bucket_id: str, prefix: str, frames: list[str], seqs: list[in
             try:
                 rec = json.loads(k.download_by_id(v["fileId"]))
             except ValueError:
-                raise Failed(f"cannot parse {name} ({v['fileId']}); refusing to guess whether it names the frame") from None
+                raise Failed(
+                    f"cannot parse {name} ({v['fileId']}); "
+                    "refusing to guess whether it names the frame"
+                ) from None
             if rec.get("frame") in frames:
                 add(name)
                 if "ocr" not in removed:
@@ -138,7 +164,12 @@ def targets(k: B2, bucket_id: str, prefix: str, frames: list[str], seqs: list[in
     groups: dict[str, str] = {}
     for name in _record_names(k, bucket_id, prefix, "-frame.json"):
         rec = _latest(k, bucket_id, name)
-        if rec and rec.get("frame") in frames and rec.get("kind") in ("label", "accession_crop") and rec.get("group"):
+        if (
+            rec
+            and rec.get("frame") in frames
+            and rec.get("kind") in ("label", "accession_crop")
+            and rec.get("group")
+        ):
             groups[rec["frame"]] = rec["group"]
     if groups:
         for name in _record_names(k, bucket_id, prefix, "-accession.json"):
@@ -148,7 +179,11 @@ def targets(k: B2, bucket_id: str, prefix: str, frames: list[str], seqs: list[in
             if rec.get("reading") is None and not rec.get("candidates"):
                 continue  # nothing read from the photo in it
             add(name)
-            rewrites[name] = json.dumps({**rec, "reading": None, "candidates": []}, separators=(",", ":"), ensure_ascii=False).encode()
+            rewrites[name] = json.dumps(
+                {**rec, "reading": None, "candidates": []},
+                separators=(",", ":"),
+                ensure_ascii=False,
+            ).encode()
         if rewrites:
             removed.append("accession_reading")
 
@@ -166,36 +201,47 @@ def run(a: argparse.Namespace, admin: B2, mint_client=B2, root: Path = ROOT) -> 
     if DERIVED_BUCKET_IN_USE:
         # A precondition, not a late check: failing after the deletions would leave a
         # redaction with no audit line, the one thing D36's record must never lack.
-        say("FAILED: the derived bucket is in use and this tool does not purge it yet; nothing was touched")
+        say(
+            "FAILED: the derived bucket is in use and this tool does not purge it yet; "
+            "nothing was touched"
+        )
         return 1
     prefix = f"raw/{a.contributor}/{a.take}/"
     bucket_id = admin.bucket_id()
     caps = ["listFiles", "readFiles"] + ([] if a.dry_run else ["writeFiles", "deleteFiles"])
-    key = admin.call("b2_create_key", {
-        "accountId": admin.account_id,
-        "capabilities": caps,
-        "keyName": re.sub(r"[^A-Za-z0-9-]", "-", f"redact-{a.take}")[:100],
-        "validDurationInSeconds": 3600,
-        "bucketIds": [bucket_id],  # v4: a list, even for one bucket
-        "namePrefix": prefix,
-    })
+    key = admin.call(
+        "b2_create_key",
+        {
+            "accountId": admin.account_id,
+            "capabilities": caps,
+            "keyName": re.sub(r"[^A-Za-z0-9-]", "-", f"redact-{a.take}")[:100],
+            "validDurationInSeconds": 3600,
+            "bucketIds": [bucket_id],  # v4: a list, even for one bucket
+            "namePrefix": prefix,
+        },
+    )
     say(f"minted {key['applicationKeyId']} ({', '.join(caps)}) on {prefix} for one hour")
     status = 1
     try:
-        status = _redact(a, mint_client(key["applicationKeyId"], key["applicationKey"]), bucket_id, prefix, root)
+        status = _redact(
+            a, mint_client(key["applicationKeyId"], key["applicationKey"]), bucket_id, prefix, root
+        )
     except (Failed, B2Error) as e:
         say(f"FAILED: {e}")
         status = 1
     finally:
         try:
             admin.call("b2_delete_key", {"applicationKeyId": key["applicationKeyId"]})
-            left = admin.call("b2_list_keys", {"accountId": admin.account_id, "maxKeyCount": 1000})["keys"]
-            if any(k["applicationKeyId"] == key["applicationKeyId"] for k in left):
+            left = admin.call("b2_list_keys", {"accountId": admin.account_id, "maxKeyCount": 1000})
+            if any(k["applicationKeyId"] == key["applicationKeyId"] for k in left["keys"]):
                 raise Failed("key still listed after delete")
             say(f"revoked {key['applicationKeyId']}")
         except (Failed, B2Error) as e:
-            say(f"FAILED TO REVOKE {key['applicationKeyId']}: {e}\n"
-                f"  revoke it by hand now: b2 key delete {key['applicationKeyId']} (or the web console, App Keys)")
+            say(
+                f"FAILED TO REVOKE {key['applicationKeyId']}: {e}\n"
+                f"  revoke it by hand now: b2 key delete {key['applicationKeyId']} "
+                "(or the web console, App Keys)"
+            )
             status = 1
     return status
 
@@ -207,19 +253,31 @@ def _redact(a: argparse.Namespace, k: B2, bucket_id: str, prefix: str, root: Pat
     for name, vs in sorted(found.items()):
         say(f"  {name}: {len(vs)} version(s)")
     if not found:
-        say(f"nothing for {', '.join(a.frame)} under {prefix}" + ("" if in_bucket else " (the take is not in the bucket)"))
+        say(
+            f"nothing for {', '.join(a.frame)} under {prefix}"
+            + ("" if in_bucket else " (the take is not in the bucket)")
+        )
     for name in sorted(rewrites):
         say(f"  {name}: written back without the locator's reading and candidates")
     if a.group and groups and a.group not in groups:
-        say(f"  note: --group {a.group}, but the bucket puts {', '.join(a.frame)} in {', '.join(groups)}")
+        say(
+            f"  note: --group {a.group}, "
+            f"but the bucket puts {', '.join(a.frame)} in {', '.join(groups)}"
+        )
     if a.dry_run:
-        say(f"dry run: {n} version(s) would be destroyed, {len(rewrites)} record(s) written back scrubbed")
+        say(
+            f"dry run: {n} version(s) would be destroyed, "
+            f"{len(rewrites)} record(s) written back scrubbed"
+        )
         return 0
 
     for name, vs in found.items():
         for v in vs:
             k.call("b2_delete_file_version", {"fileName": name, "fileId": v["fileId"]})
-    survivors = {name: len([v for v in k.versions(bucket_id, name) if v["fileName"] == name]) for name in found}
+    survivors = {
+        name: len([v for v in k.versions(bucket_id, name) if v["fileName"] == name])
+        for name in found
+    }
     if any(survivors.values()):
         raise Failed(f"versions survived deletion: {survivors}")
     if found:
@@ -231,17 +289,27 @@ def _redact(a: argparse.Namespace, k: B2, bucket_id: str, prefix: str, root: Pat
         k.upload(bucket_id, name, body, "application/json")
         back = [v for v in k.versions(bucket_id, name) if v["fileName"] == name]
         if len(back) != 1:
-            raise Failed(f"{name}: expected exactly one version after writing it back, found {len(back)}")
+            raise Failed(
+                f"{name}: expected exactly one version after writing it back, found {len(back)}"
+            )
         say(f"  wrote back {name}")
 
-    ts = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    ts = dt.datetime.now(dt.UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
     if in_bucket:
         for f in a.frame:
             marker = f"{prefix}records/redacted-{f}.json"
             if k.versions(bucket_id, marker):
                 say(f"  {marker} already present")
                 continue
-            body = {"v": 1, "ts": ts, "type": "redacted", "take": a.take, "frame": f, "reason": a.reason, "removed": removed}
+            body = {
+                "v": 1,
+                "ts": ts,
+                "type": "redacted",
+                "take": a.take,
+                "frame": f,
+                "reason": a.reason,
+                "removed": removed,
+            }
             k.upload(bucket_id, marker, json.dumps(body).encode(), "application/json")
             if not k.versions(bucket_id, marker):
                 raise Failed(f"marker {marker} not visible after upload")
@@ -282,8 +350,17 @@ def _redact(a: argparse.Namespace, k: B2, bucket_id: str, prefix: str, root: Pat
     # exits non-zero and invites one — must not audit the same event twice. A rerun
     # that does destroy something is a new event and gets its own line.
     audit = root / "data/labels/redactions.ndjson"
-    done = [json.loads(l) for l in audit.read_text().splitlines() if l.strip()] if audit.exists() else []
-    audited = {f for d in done if (d.get("contributor"), d.get("take")) == (a.contributor, a.take) for f in d.get("frames", [])}
+    done = (
+        [json.loads(line) for line in audit.read_text().splitlines() if line.strip()]
+        if audit.exists()
+        else []
+    )
+    audited = {
+        f
+        for d in done
+        if (d.get("contributor"), d.get("take")) == (a.contributor, a.take)
+        for f in d.get("frames", [])
+    }
     if n == 0 and not rewrites and set(a.frame) <= audited:
         say(f"already audited in {audit.relative_to(root)}; nothing new to record")
         return 0

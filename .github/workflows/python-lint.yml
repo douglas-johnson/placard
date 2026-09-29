@@ -1,0 +1,39 @@
+# Python lint and format check (D45). Fails the PR when `ruff check` finds something
+# or when any file isn't in `ruff format` shape; the fix for the second is to run
+# `ruff format .` and commit the result.
+#
+# The Ruff version comes from services/ingest/requirements-dev.txt, the same pin the
+# editor uses through `ruff.path`, so a formatter upgrade happens in one place and
+# CI can't disagree with the Mac about where a line breaks.
+#
+# No `paths:` filter: the job takes seconds, and a path-filtered check that never runs
+# would block a PR if this ever becomes a required status check.
+
+name: Python lint
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  ruff:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install the pinned Ruff
+        run: pip install "$(grep -E '^ruff==' services/ingest/requirements-dev.txt | cut -d' ' -f1)"
+
+      - name: Lint
+        run: ruff check --output-format=github .
+
+      - name: Format
+        run: ruff format --check --diff .
