@@ -1,0 +1,46 @@
+# Type check, lint and format check for the capture app (D46). Fails the PR on any
+# of the three; the fix for the format check is `npm run format` in apps/learner.
+#
+# Tool versions come from apps/learner/package-lock.json through `npm ci`, the same
+# copies the editor resolves, so CI can't disagree with the Mac about formatting.
+#
+# ESLint runs with --max-warnings 0 (in the `lint` script): a warning CI tolerates is
+# one nobody reads. A deliberate exception is an inline disable with its reason.
+#
+# No `paths:` filter, for the reason python-lint.yml gives.
+
+name: Learner lint
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: apps/learner
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: apps/learner/package-lock.json
+
+      - run: npm ci
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format
+        run: npm run format:check

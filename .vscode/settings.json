@@ -19,5 +19,21 @@
   "pylint.enabled": false,
   "python.defaultInterpreterPath": "${workspaceFolder}/services/ingest/.venv/bin/python",
   "python.analysis.extraPaths": ["tools/lib", "tools/redact"],
-  "python.analysis.typeCheckingMode": "standard"
+  "python.analysis.typeCheckingMode": "standard",
+
+  // The capture app is linted by ESLint and formatted by Prettier (D46). Spaces for
+  // the same reason as Python: the user-level insertSpaces=false.
+  "[typescript][typescriptreact][javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.rulers": [100]
+  },
+  // Only format where a Prettier config exists — apps/learner today. Without this
+  // the extension would apply its own defaults to .railway/railway.ts.
+  "prettier.requireConfig": true,
+  // The app isn't at the repository root, so ESLint must be told where its config
+  // and node_modules live.
+  "eslint.workingDirectories": ["apps/learner"]
 }

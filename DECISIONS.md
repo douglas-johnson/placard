@@ -1869,3 +1869,68 @@ a single committer and adds a tool to install.
 **What would reverse this:** little, for the formatter — the style is Black's, and
 leaving Ruff for Black would be a no-op on the code. The rule set is the part expected
 to grow; adding a family is one line in `ruff.toml` and one cleanup commit.
+
+## D46 — The capture app is type-checked, linted by ESLint and formatted by Prettier, in CI
+
+**Date:** 2026-09-29 · **Status:** accepted · **Decided by:** Doug (the tools, 100
+columns, and that CI enforces all three); Claude's calls are marked · **Builds on:** D45
+
+`apps/learner` is checked by three tools, each with an npm script and each run by
+`.github/workflows/learner-lint.yml` on every PR: `tsc --noEmit` under the `strict`
+config it already had, ESLint with Expo's `eslint-config-expo`, and Prettier at 100
+columns with single quotes. As with Python before D45, nothing was configured: the
+code was consistent because it had been written carefully, the ESLint and Prettier
+extensions were installed in the editor with no configuration to act on, and an
+`eslint-disable` comment in `App.tsx` was addressed to a linter that wasn't installed.
+
+**The type check is the strongest of the three and cost nothing.** Unlike the Python in
+D45, the app was already fully typed under `strict` and passed. Putting it in CI turns a
+property that held by habit into one that holds by construction.
+
+**ESLint and Prettier, not Biome.** Biome is the closer analogue to D45's Ruff — one
+binary, lint and format — and was the real alternative. What decided it was Expo's
+config: it carries the React hooks rules, including `exhaustive-deps`, which catches the
+stale-closure bug that is the commonest real React defect, and it tracks Expo's own
+module resolution, which matters on an app that ships by OTA update (D33). Every Expo
+and React Native resource assumes this pair, so a problem met here is a problem already
+answered somewhere. On 4,000 lines Biome's speed would not be felt.
+`eslint-config-prettier` comes last in the ESLint config, so formatting belongs to
+Prettier alone and the two never argue. `typescript-eslint` 8.71 supports TypeScript
+`<6.1`; the app is on 6.0.3, checked before adopting it.
+
+**Warnings fail CI** (Claude's call), through `--max-warnings 0` in the `lint` script. A
+warning CI tolerates is one nobody reads. A deliberate exception is an
+`eslint-disable-next-line` with the reason on the line above it.
+
+**`react/no-unescaped-entities` is narrowed to `>` and `}`** (Claude's call). The rule
+exists for HTML, where a stray `'` in JSX text is usually a markup typo. In React Native
+it is UI copy, and the rule's fix — `can&apos;t` — would make copy that carries the
+voice constraint (§1) harder to read and edit. The two characters kept are the ones that
+do signal a mistake.
+
+**The adoption changed no behavior** (Claude's call), because the next OTA update ships
+whatever is on `main`, and the camera and upload fixes it carries are still untested in
+a gallery. ESLint found four `react-hooks/set-state-in-effect` errors and one
+`exhaustive-deps` warning; each was read, found deliberate or harmless, and given an
+inline disable with its reason rather than a fix. The iOS bundle was exported from
+`main` and from the branch and compared: the minified JavaScript differs in exactly one
+place, where Prettier moved a `·` across a line break in `Visit.tsx`'s JSX and the text
+splits into children differently while rendering the same string. The Prettier reformat
+is its own commit, in `.git-blame-ignore-revs`.
+
+**One follow-up, deliberately deferred:** `useUploadStatus` in `src/upload.ts`
+subscribes in an effect and then sets state to catch an update between render and
+subscribe. `useSyncExternalStore` is React's purpose-built form of exactly this and
+should replace it — after the first real upload, so that visit tests the upload queue
+that was built, not a rewrite of it.
+
+**Scope.** Prettier formats code and the app's JSON config, not `AGENTS.md`: Markdown is
+prose, and Prettier would rewrite its list markers and table padding. The workspace
+settings make Prettier the TypeScript formatter only where a Prettier config exists, so
+`.railway/railway.ts` is untouched; `apps/backoffice` and `apps/public-site` will get
+their own configs when they exist. The Swift in `modules/vision-ocr/` is outside this
+decision; `swift format` ships with Xcode if it's ever wanted.
+
+**What would reverse this:** Expo adopting Biome or Oxc as its default, or
+`eslint-config-expo` falling behind the SDK. The formatting would survive a move, since
+Biome formats as Prettier does to within a few percent; the Expo-specific rules would not.
