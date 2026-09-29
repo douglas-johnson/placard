@@ -16,5 +16,8 @@
   // extension's bundled copy if the venv doesn't exist yet.
   "ruff.path": ["${workspaceFolder}/services/ingest/.venv/bin/ruff"],
   // Ruff covers what Pylint would say here; two linters means duplicate squiggles.
-  "pylint.enabled": false
+  "pylint.enabled": false,
+  "python.defaultInterpreterPath": "${workspaceFolder}/services/ingest/.venv/bin/python",
+  "python.analysis.extraPaths": ["tools/lib", "tools/redact"],
+  "python.analysis.typeCheckingMode": "standard"
 }
