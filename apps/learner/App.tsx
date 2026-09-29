@@ -62,6 +62,8 @@ export default function App() {
         'readback' | 'flags' | undefined,
       ];
       routeMarker.delete();
+      // Development only: a one-shot route read from a marker file on mount.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (take) setRoute({ name: 'flow', input, devPreset });
     }
     const marker = new File(Paths.document, 'selftest');

@@ -175,6 +175,9 @@ export function useUploadStatus(): UploadStatus {
   const [s, set] = useState(status);
   useEffect(() => {
     listeners.add(set);
+    // Catches an update between render and subscribe. useSyncExternalStore is the
+    // proper form, left until after the first real upload (D46).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     set(status);
     return () => {
       listeners.delete(set);

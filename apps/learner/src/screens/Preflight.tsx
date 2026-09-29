@@ -72,6 +72,8 @@ export function Preflight({ onBack }: { onBack: () => void }) {
 
   useEffect(() => {
     if (!VisionOcr.isAvailable) {
+      // A diagnostic screen; both outcomes of the check stay in one place.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setOcrState({
         label: 'On-device OCR',
         state: 'fail',
@@ -157,6 +159,8 @@ export function Preflight({ onBack }: { onBack: () => void }) {
   }, []);
 
   useEffect(() => {
+    // The state updates follow an await on the permission API.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     readLocationPermission();
   }, [readLocationPermission]);
 
@@ -201,6 +205,8 @@ export function Preflight({ onBack }: { onBack: () => void }) {
     console.log(
       '[preflight]\n' + checks.map((c) => `  ${GLYPH[c.state]} ${c.label}: ${c.detail}`).join('\n'),
     );
+    // The fields, not `checks`: that array is rebuilt every render and would log on each.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     cameraPermission?.status,
     locationState.state,
