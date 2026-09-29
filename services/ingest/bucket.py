@@ -3,6 +3,7 @@
 `ingest`'s key holds listFiles, readFiles and writeFiles on raw/ and never deleteFiles
 (D35, infrastructure.md §3.2). Nothing here deletes, and nothing could.
 """
+
 from __future__ import annotations
 
 import re
@@ -31,7 +32,9 @@ class Bucket:
                 region_name=m.group(1) if m else "us-east-005",
                 aws_access_key_id=key_id,
                 aws_secret_access_key=key,
-                config=Config(signature_version="s3v4", retries={"max_attempts": 3, "mode": "standard"}),
+                config=Config(
+                    signature_version="s3v4", retries={"max_attempts": 3, "mode": "standard"}
+                ),
             )
         # botocore sends Expect: 100-continue on uploads with a body; B2 answers with an
         # empty reason phrase and http.client then fails with BadStatusLine
@@ -48,7 +51,9 @@ class Bucket:
             raise
         return Head(bytes=r["ContentLength"], etag=r.get("ETag", "").strip('"'))
 
-    def presign_put(self, key: str, content_type: str, md5_b64: str, expires: int = 900) -> tuple[str, dict[str, str]]:
+    def presign_put(
+        self, key: str, content_type: str, md5_b64: str, expires: int = 900
+    ) -> tuple[str, dict[str, str]]:
         """A URL that accepts exactly one body: the one whose MD5 was declared (D43).
 
         Content-Type and Content-MD5 are signed, so the client must send both headers
@@ -56,7 +61,12 @@ class Bucket:
         """
         url = self.s3.generate_presigned_url(
             "put_object",
-            Params={"Bucket": self.name, "Key": key, "ContentType": content_type, "ContentMD5": md5_b64},
+            Params={
+                "Bucket": self.name,
+                "Key": key,
+                "ContentType": content_type,
+                "ContentMD5": md5_b64,
+            },
             ExpiresIn=expires,
         )
         return url, {"Content-Type": content_type, "Content-MD5": md5_b64}

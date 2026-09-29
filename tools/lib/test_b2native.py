@@ -6,6 +6,7 @@ The tools' own tests use fake clients, so they could not catch the first live ru
 failure: the client spoke v2, and a multi-bucket key only authorizes at v4. This pins
 the request version and the v4 shape of b2_authorize_account's answer.
 """
+
 import io
 import json
 import sys
@@ -27,9 +28,17 @@ V4_AUTH = {
             "s3ApiUrl": "https://s3.us-east-005.backblazeb2.com",
             "absoluteMinimumPartSize": 5000000,
             "recommendedPartSize": 100000000,
-            "allowed": {"buckets": [{"id": "bkt123", "name": "placard-raw"}], "capabilities": ["listFiles"], "namePrefix": "raw/"},
+            "allowed": {
+                "buckets": [{"id": "bkt123", "name": "placard-raw"}],
+                "capabilities": ["listFiles"],
+                "namePrefix": "raw/",
+            },
         },
-        "groupsApi": {"capabilities": [], "groupsApiUrl": "https://example", "infoType": "groupsApi"},
+        "groupsApi": {
+            "capabilities": [],
+            "groupsApiUrl": "https://example",
+            "infoType": "groupsApi",
+        },
     },
 }
 
@@ -50,7 +59,9 @@ class B2NativeTest(unittest.TestCase):
             self.urls.append(req.full_url)
             if req.full_url.endswith("b2_authorize_account"):
                 return Response(json.dumps(V4_AUTH).encode())
-            return Response(json.dumps({"buckets": [{"bucketId": "listed", "bucketName": "other"}]}).encode())
+            return Response(
+                json.dumps({"buckets": [{"bucketId": "listed", "bucketName": "other"}]}).encode()
+            )
 
         patcher = mock.patch.object(b2native.urllib.request, "urlopen", urlopen)
         patcher.start()
@@ -59,7 +70,10 @@ class B2NativeTest(unittest.TestCase):
     def test_authorizes_at_v4_and_reads_the_nested_storage_api(self):
         b2 = b2native.B2("id", "key")
         self.assertIn("/b2api/v4/b2_authorize_account", self.urls[0])
-        self.assertEqual((b2.api_url, b2.download_url, b2.token), ("https://api005.backblazeb2.com", "https://f005.backblazeb2.com", "tok"))
+        self.assertEqual(
+            (b2.api_url, b2.download_url, b2.token),
+            ("https://api005.backblazeb2.com", "https://f005.backblazeb2.com", "tok"),
+        )
 
     def test_calls_are_made_at_v4(self):
         b2 = b2native.B2("id", "key")

@@ -13,6 +13,7 @@ holds different content is a conflict. It is reported and never overwritten.
 
     uvicorn app:from_env --factory --host 0.0.0.0 --port $PORT
 """
+
 from __future__ import annotations
 
 import base64
@@ -148,7 +149,9 @@ def create_app(store: Store, bucket: Bucket, tokens: list[str]) -> FastAPI:
         if head is None:
             return {"status": "missing"}
         if head.bytes != row.bytes or not _etag_agrees(head, row.md5):
-            log.warning("stored object disagrees with its claim: %s/%s/%s", c, body.take, body.frame)
+            log.warning(
+                "stored object disagrees with its claim: %s/%s/%s", c, body.take, body.frame
+            )
             raise HTTPException(409, "the stored object does not match what was declared")
         store.mark_frame_stored(c, body.take, body.frame)
         return {"status": "stored"}

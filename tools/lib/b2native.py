@@ -5,6 +5,7 @@ offers: minting and revoking keys (tools/redact, D36) and listing every version 
 name (both). Standard library so the tools run interpreted with the system python3,
 like tools/manifest, and nothing is installed from Homebrew (CLAUDE.md).
 """
+
 from __future__ import annotations
 
 import base64
@@ -45,7 +46,9 @@ def _request(req: urllib.request.Request) -> bytes:
 class B2:
     def __init__(self, key_id: str, key: str) -> None:
         basic = base64.b64encode(f"{key_id}:{key}".encode()).decode()
-        auth = json.loads(_request(urllib.request.Request(AUTH_URL, headers={"Authorization": f"Basic {basic}"})))
+        auth = json.loads(
+            _request(urllib.request.Request(AUTH_URL, headers={"Authorization": f"Basic {basic}"}))
+        )
         self.account_id: str = auth["accountId"]
         self.token: str = auth["authorizationToken"]
         storage = auth["apiInfo"]["storageApi"]
@@ -67,7 +70,9 @@ class B2:
         for b in self.allowed.get("buckets") or []:
             if b.get("name") == name:
                 return b["id"]
-        buckets = self.call("b2_list_buckets", {"accountId": self.account_id, "bucketName": name})["buckets"]
+        buckets = self.call("b2_list_buckets", {"accountId": self.account_id, "bucketName": name})[
+            "buckets"
+        ]
         if not buckets:
             raise B2Error(404, "no_bucket", name)
         return buckets[0]["bucketId"]
@@ -102,12 +107,18 @@ class B2:
 
     def download_by_id(self, file_id: str) -> bytes:
         q = urllib.parse.urlencode({"fileId": file_id})
-        req = urllib.request.Request(f"{self.download_url}/b2api/{API}/b2_download_file_by_id?{q}", headers={"Authorization": self.token})
+        req = urllib.request.Request(
+            f"{self.download_url}/b2api/{API}/b2_download_file_by_id?{q}",
+            headers={"Authorization": self.token},
+        )
         return _request(req)
 
     def download_to(self, file_id: str, dest) -> None:
         q = urllib.parse.urlencode({"fileId": file_id})
-        req = urllib.request.Request(f"{self.download_url}/b2api/{API}/b2_download_file_by_id?{q}", headers={"Authorization": self.token})
+        req = urllib.request.Request(
+            f"{self.download_url}/b2api/{API}/b2_download_file_by_id?{q}",
+            headers={"Authorization": self.token},
+        )
         try:
             with urllib.request.urlopen(req, timeout=600) as r, open(dest, "wb") as f:
                 while chunk := r.read(1 << 20):
@@ -136,7 +147,9 @@ def keychain_secret(service: str) -> str:
     `security add-generic-password -s <service> -a placard -w` (which prompts, hidden).
     Never an environment variable or a file: a key staged in a file leaks through
     whatever editor has it open."""
-    r = subprocess.run(["security", "find-generic-password", "-s", service, "-w"], capture_output=True, text=True)
+    r = subprocess.run(
+        ["security", "find-generic-password", "-s", service, "-w"], capture_output=True, text=True
+    )
     if r.returncode != 0:
         raise SystemExit(
             f"no keychain item '{service}'. Store it once with:\n"

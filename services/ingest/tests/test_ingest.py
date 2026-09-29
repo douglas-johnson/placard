@@ -4,6 +4,7 @@ moto stands in for B2's S3 API. It does not check presigned signatures, so a
 phone's PUT is simulated with put_object, and whether B2 enforces a signed
 Content-MD5 is a live check (D43), not something these tests can show.
 """
+
 import base64
 import hashlib
 import json
@@ -32,7 +33,9 @@ def env():
     with mock_aws():
         s3 = boto3.client("s3", region_name="us-east-1")
         s3.create_bucket(Bucket="placard-raw")
-        s3.put_bucket_versioning(Bucket="placard-raw", VersioningConfiguration={"Status": "Enabled"})
+        s3.put_bucket_versioning(
+            Bucket="placard-raw", VersioningConfiguration={"Status": "Enabled"}
+        )
         store = MemoryStore()
         app = create_app(store, Bucket("", "", "", "placard-raw", client=s3), [TOKEN])
         yield TestClient(app), s3, store
@@ -55,7 +58,17 @@ def test_needs_token_and_contributor(env):
     client, _, _ = env
     assert client.post("/v1/frames", json={}).status_code == 401
     bad = {**AUTH, "X-Placard-Contributor": "Doug!"}
-    r = client.post("/v1/frames", headers=bad, json={"take": TAKE, "frame": "f0001", "file": "f0001-label.jpg", "bytes": 1, "md5": md5(b"x")})
+    r = client.post(
+        "/v1/frames",
+        headers=bad,
+        json={
+            "take": TAKE,
+            "frame": "f0001",
+            "file": "f0001-label.jpg",
+            "bytes": 1,
+            "md5": md5(b"x"),
+        },
+    )
     assert r.status_code == 400
 
 
@@ -63,7 +76,17 @@ def test_rejects_names_outside_the_convention(env):
     client, _, _ = env
     assert claim(client, frame="f0001", file="f0002-label.jpg").status_code == 400
     assert claim(client, frame="f0001", file="../f0001-label.jpg").status_code == 400
-    r = client.post("/v1/frames", headers=AUTH, json={"take": "../x", "frame": "f0001", "file": "f0001-label.jpg", "bytes": 1, "md5": md5(b"x")})
+    r = client.post(
+        "/v1/frames",
+        headers=AUTH,
+        json={
+            "take": "../x",
+            "frame": "f0001",
+            "file": "f0001-label.jpg",
+            "bytes": 1,
+            "md5": md5(b"x"),
+        },
+    )
     assert r.status_code == 400
 
 
@@ -87,7 +110,9 @@ def test_complete_confirms_what_landed(env):
     client, s3, _ = env
     claim(client)
     ref = {"take": TAKE, "frame": "f0001"}
-    assert client.post("/v1/frames/complete", headers=AUTH, json=ref).json() == {"status": "missing"}
+    assert client.post("/v1/frames/complete", headers=AUTH, json=ref).json() == {
+        "status": "missing"
+    }
     s3.put_object(Bucket="placard-raw", Key=f"raw/{C}/{TAKE}/f0001-label.jpg", Body=b"jpeg-bytes")
     assert client.post("/v1/frames/complete", headers=AUTH, json=ref).json() == {"status": "stored"}
     assert claim(client).json() == {"status": "stored"}
@@ -103,7 +128,9 @@ def test_a_landed_put_whose_confirmation_was_lost_is_recognised(env):
 def test_never_signs_over_different_content_already_in_the_bucket(env):
     client, s3, _ = env
     # e.g. the index was lost and rebuilt, and a different phone bug reuses the name
-    s3.put_object(Bucket="placard-raw", Key=f"raw/{C}/{TAKE}/f0001-label.jpg", Body=b"somebody-else")
+    s3.put_object(
+        Bucket="placard-raw", Key=f"raw/{C}/{TAKE}/f0001-label.jpg", Body=b"somebody-else"
+    )
     r = claim(client)
     assert r.status_code == 409
     assert "url" not in r.json()
@@ -113,11 +140,18 @@ def test_complete_refuses_a_mismatched_object(env):
     client, s3, _ = env
     claim(client)
     s3.put_object(Bucket="placard-raw", Key=f"raw/{C}/{TAKE}/f0001-label.jpg", Body=b"truncated")
-    assert client.post("/v1/frames/complete", headers=AUTH, json={"take": TAKE, "frame": "f0001"}).status_code == 409
+    assert (
+        client.post(
+            "/v1/frames/complete", headers=AUTH, json={"take": TAKE, "frame": "f0001"}
+        ).status_code
+        == 409
+    )
 
 
 def rec(seq, type_="group_opened", take=TAKE, **extra):
-    return json.dumps({"v": 1, "ts": "2026-09-27T14:00:00.000Z", "take": take, "seq": seq, "type": type_, **extra})
+    return json.dumps(
+        {"v": 1, "ts": "2026-09-27T14:00:00.000Z", "take": take, "seq": seq, "type": type_, **extra}
+    )
 
 
 def test_records_become_one_object_each_with_the_devices_bytes(env):
@@ -168,7 +202,9 @@ def test_take_is_complete_when_observed_matches_claimed(env):
     client.post("/v1/records", headers=AUTH, json={"take": TAKE, "lines": lines[:2]})
     assert client.get(f"/v1/takes/{TAKE}", headers=AUTH).json()["complete"] is False
     client.post("/v1/records", headers=AUTH, json={"take": TAKE, "lines": lines[2:]})
-    assert client.get(f"/v1/takes/{TAKE}", headers=AUTH).json()["complete"] is False  # frame not stored yet
+    assert (
+        client.get(f"/v1/takes/{TAKE}", headers=AUTH).json()["complete"] is False
+    )  # frame not stored yet
     s3.put_object(Bucket="placard-raw", Key=f"raw/{C}/{TAKE}/f0001-label.jpg", Body=body)
     client.post("/v1/frames/complete", headers=AUTH, json={"take": TAKE, "frame": "f0001"})
     status = client.get(f"/v1/takes/{TAKE}", headers=AUTH).json()
@@ -179,6 +215,16 @@ def test_contributors_are_separate_namespaces(env):
     client, _, _ = env
     claim(client)
     other = {**AUTH, "X-Placard-Contributor": "zzzzzzzzzzzzzzzz"}
-    r = client.post("/v1/frames", headers=other, json={"take": TAKE, "frame": "f0001", "file": "f0001-label.jpg", "bytes": 5, "md5": md5(b"other")})
+    r = client.post(
+        "/v1/frames",
+        headers=other,
+        json={
+            "take": TAKE,
+            "frame": "f0001",
+            "file": "f0001-label.jpg",
+            "bytes": 5,
+            "md5": md5(b"other"),
+        },
+    )
     assert r.json()["status"] == "upload"
     assert "raw/zzzzzzzzzzzzzzzz/" in r.json()["url"]
