@@ -6,6 +6,7 @@
  * Adding a venue to the corpus means adding it to data/venues/ AND to the list below.
  * Metro can't glob a directory, so the list is explicit; it's short.
  */
+import cooperHewitt from '../../../data/venues/cooper-hewitt.json';
 import mcny from '../../../data/venues/mcny.json';
 import met from '../../../data/venues/met.json';
 
@@ -45,7 +46,7 @@ function load(raw: any): Venue {
   };
 }
 
-export const venues: Venue[] = [load(mcny), load(met)];
+export const venues: Venue[] = [load(mcny), load(met), load(cooperHewitt)];
 
 /** Great-circle distance in metres. */
 export function distanceMetres(

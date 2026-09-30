@@ -1,0 +1,126 @@
+{
+  "slug": "cooper-hewitt",
+  "name": "Cooper Hewitt, Smithsonian Design Museum",
+  "aliases": ["Cooper Hewitt"],
+  "alias_note": "The tester added the venue on the phone as 'Cooper Hewitt' with slug 'cooper-hewitt' (take 2026-09-29, a low-confidence venue_added record). The registry slug is the same, so the two join without a mapping. The full name is from the venue sign (f0001): 'COOPER HEWITT / Smithsonian Design Museum'.",
+  "type": "museum",
+  "parent_institution": "Smithsonian Institution",
+  "location": {
+    "latitude": 40.7846,
+    "longitude": -73.9579,
+    "address": null,
+    "address_note": "Not on any frame from the visit. Fill from the institution's own page, not from memory (§8.2).",
+    "city": "New York",
+    "region": "US-NY",
+    "footprint_note": "From the take's own fixes (2026-09-29): the three venue-sign frames at the entrance fall within 40.78453–40.78466 N, 73.95760–73.95797 W. Every frame after the first label carries one fix from 20:16:20 UTC, including the exterior shot 17 minutes later — the phone produced no new fix indoors — so the interior has no GPS evidence of its own. A single point with a ~150 m radius covers the building."
+  },
+  "collection_api": {
+    "available": "partial",
+    "base_url": "https://api.si.edu/openaccess/api/v1.0",
+    "notes": "Cooper Hewitt's own collection site (collection.cooperhewitt.org) now redirects to si.edu behind a request-verification page, which answers scripts with 403; it is not to be worked around. Two machine-readable primary sources remain, both the museum's own data (constraint 6 does not apply). (1) The Smithsonian Open Access API, unit_code CHNDM: a free api.data.gov key (keychain item 'placard-si-api'); the shared DEMO_KEY is exhausted within a dozen calls. It holds only the CC0 subset, 58,198 Cooper Hewitt records on 2026-09-29, and none of the nine objects from the first visit are in it: modern design is mostly in copyright. A record is fetched as /content/edanmdm:chndm_<accession>, and full-text search tokenizes on the hyphens, so searching a number returns noise. (2) The museum's published dataset, github.com/cooperhewitt/collection, CC0: meta/objects.csv (194,316 objects, accession_number, title, date, medium, creditline, year_acquired, url) and meta/objects-participants.csv (designers, makers, donors, with nationality and dates). Last pushed 2018-01-10, so it covers objects acquired through 2017 and records as they stood then; 2018-40-1 and 2025-11-1 are not in it. Fixtures verified this way say verified_against 'catalog_dataset'.",
+    "verified": "2026-09-29"
+  },
+  "accession_formats": {
+    "policy": "LOCATE, DO NOT VALIDATE (D11, D21). Patterns rank candidates; nothing is rejected for failing them.",
+    "samples_seen": [
+      "1990-143-1",
+      "2018-40-1",
+      "1975-32-9",
+      "2007-25-4",
+      "2025-11-1-a,b",
+      "2007-42-1",
+      "2009-16-6",
+      "2015-1-18",
+      "1966-78-1",
+      "1992-131-8",
+      "1992-132-1-a,b"
+    ],
+    "catalog_census": "Measured over the museum's published objects.csv (194,316 objects, 2026-09-29): 192,248 (98.9%) begin YYYY-N-N, and in every one of them the first component equals the record's year_acquired. 127,858 are exactly three groups, 41,044 four; about 21,000 carry a lower-case part designator (-c, -a,b, -a/g).",
+    "shapes": [
+      {
+        "pattern": "^(?:1[89]|20)\\d{2}-\\d{1,4}-\\d{1,5}$",
+        "example": "2018-40-1",
+        "sample_count": 11,
+        "notes": "Year of acquisition, then the lot within that year, then the item within the lot. Dominant shape: 66% of the catalog."
+      },
+      {
+        "pattern": "^(?:1[89]|20)\\d{2}-\\d{1,4}-\\d{1,5}-\\d{1,5}$",
+        "example": "1984-86-3-35",
+        "sample_count": 0,
+        "notes": "A fourth group numbers the leaves of a portfolio or album (1921-6-548-138). 21% of the catalog; not yet seen on a label."
+      }
+    ],
+    "part_designators": "A hyphen and lower-case letters after the number — '-a,b' (a kettle and its lid), '-a/d' (a range), '-c'. The locator keeps them on the token and strips them before matching a shape, as it does MCNY's '14A-B' (D24).",
+    "locating_heuristic": "Last on the credit line, after a comma, with no parentheses: 'Gift of Donald M. Genaro, 2018-40-1'. The line often wraps so the number sits alone on the next line. The credit line carries no separate year: the key's first component IS the acquisition year, so the locator's credit-year agreement fires on the key itself. That is harmless here, and true.",
+    "traps": [
+      "THE NUMBERS LOOK LIKE DATES. On the first visit the tester answered 'no number' on four of eight labels because '2018-40-1' read as a date — and the phone had offered the right number every time. Validity as a calendar date does not separate them: 154,082 catalog numbers have a middle group above 12, but 13,021 (6.8%) are real calendar dates (2015-1-18, 2025-11-1). The read-back is where this has to be solved, not the locator.",
+      "Old-style figures in the credit line's serif — descending 3, 4, 5, 7, 9 and a small-cap-like 1 — sit beside lining figures in the title's sans. Vision read both correctly on every label of the first visit.",
+      "Shorthand lists: 'Gift of Gerald Gulotta, 2009-16-6, 7-a, 8-a,b, 11' is four objects — 2009-16-6, 2009-16-7-a (catalog: 2009-16-7-a/d), 2009-16-8-a,b and 2009-16-11. Only the first is a complete token; the rest inherit its prefix.",
+      "One credit line can cover two numbers with different credits: 'Museum purchase through bequest of Ida McNeil…, 1992-131-8, 1992-132-1-a,b' — the catalog credits the drawing 1992-131-8 as a gift of the designer. The first number on a line is not necessarily the photographed object.",
+      "Shared panels keyed by black silhouettes, one per object, instead of numbers or positions (the 'Vessel / Sculptura telephone / Vase' panel). The silhouette is the only thing that ties a tombstone to an object in the case."
+    ]
+  },
+  "labels": {
+    "dialects_observed": 1,
+    "dialects": [
+      {
+        "id": "house_card",
+        "where": "Collection galleries, 2026-09-29",
+        "format": "printed on brushed metal, in a perforated channel, a vitrine edge or a free-standing panel",
+        "typeface": "bold sans (title, date) over a serif with old-style figures (everything else)",
+        "field_order": [
+          "title, date — 'Paper dress, 1966'; the object name is part of the title, with the proper name italic",
+          "maker line(s): 'Designed by …', 'Manufactured by …', 'Made by …', each person with (nationality, dates) and each firm with (city, region, country)",
+          "medium",
+          "credit line, small type, ending with the accession",
+          "interpretive paragraph, often on a separate plate below"
+        ],
+        "has_silhouette_key": "Most cards carry a black silhouette of the object at the left or top — a pictogram, not text. Shared panels use it to tell objects apart.",
+        "bilingual": false
+      }
+    ],
+    "photography": "unknown",
+    "photography_note": "The field log says 'unknown'; no photography sign was photographed.",
+    "lighting": "Dim, warm, with glass vitrines throughout; the tester tagged reflective_glass on seven of nine groups."
+  },
+  "access_rules": [
+    {
+      "id": "pay-what-you-wish-5-6",
+      "kind": "pay_what_you_wish",
+      "audience": "everyone",
+      "recurrence": "FREQ=DAILY",
+      "window": "17:00-18:00",
+      "reservation": { "required": null },
+      "reservation_note": "The same sign says 'Reserve your tickets online at cooperhewitt.org' without saying whether that applies to the pay-what-you-wish hour.",
+      "obtainability": null,
+      "confirmed_by_visit": "2026-09-29"
+    }
+  ],
+  "access_rules_note": "Pay what you wish is not free, so it is its own kind rather than a free_window. The field log records the visit as 'Paid'.",
+  "hours": {
+    "mon": "10:00-18:00",
+    "tue": "10:00-18:00",
+    "wed": "10:00-18:00",
+    "thu": "10:00-18:00",
+    "fri": "10:00-18:00",
+    "sat": "10:00-18:00",
+    "sun": "10:00-18:00",
+    "source": "on-site sign, 'MUSEUM HOURS DAILY 10 A.M.–6 P.M.', observed 2026-09-29"
+  },
+  "accessibility": {
+    "step_free_entrance": null,
+    "note": "A 'PRESS TO OPERATE DOOR' button with the wheelchair symbol, beside curved stone steps (f0003). Whether that door is step-free is not visible in the frame; the main door in the exterior shot (f0028) is up several steps."
+  },
+  "provenance": {
+    "source": "first-hand visit, 2026-09-29, F0 collector's build (TestFlight update 01a0e458), the first take to arrive through the upload path (D43)",
+    "source_type": "institutional_signage",
+    "verified": "2026-09-29",
+    "verified_by": "visit",
+    "source_images": {
+      "name_sign": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0001-venue_sign.jpg",
+      "hours_admission": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0002-venue_sign.jpg",
+      "accessible_entrance": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0003-venue_sign.jpg",
+      "exterior": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0028-exterior.jpg"
+    }
+  }
+}
