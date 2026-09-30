@@ -401,8 +401,8 @@ Cooper Hewitt's year–lot–item keys, and the museum's own catalog shows how l
 check would help. A middle group above 12 rules out a date for 154,082 of 192,248
 numbers, but 13,021 are real calendar dates, the kettle's among them. The Met's problem
 was a date offered as a number; this one is a number doubted as a date. The locator
-can't fix that. The read-back could, by saying what the venue's numbers look like, which
-the registry now knows.
+can't fix that. The read-back could, by saying what the venue's numbers look like, but
+one visit is too little to write that from; #21 waits for more (D47).
 
 **A confirmation is about the label, not the work.** The last card carried two numbers,
 a drawing and a vase, on one credit line. The tester confirmed the first one offered,

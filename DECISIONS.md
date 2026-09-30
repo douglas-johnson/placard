@@ -1987,11 +1987,15 @@ unchanged.
 (Claude's call), `source_image` included, rather than bare paths that the rebinding
 would then have to convert. The 23 USB fixtures still wait for that pass.
 
-**Open, for Doug:** two read-back changes this visit argues for, both JS-only under
-D33. The accession step could say what the venue's numbers look like when a candidate
-matches a registry shape — at Cooper Hewitt, that they start with the year acquired.
-And on a shared panel, the confirmation should ask which object was photographed; the
-tester confirmed the drawing's number for a photo of the vase.
+**Deferred by Doug, pending more data:** the accession step saying what the venue's
+numbers look like when a candidate matches a registry shape (at Cooper Hewitt, that
+they start with the year acquired). One visit, one tester and a doubt that stopped by
+the seventh label don't yet say whether it is this venue, this key shape, or the first
+labels anywhere new. Issue #21 lists what to count on the next visits.
+
+**Open, for Doug:** on a shared panel, the confirmation could ask which object was
+photographed; the tester confirmed the drawing's number for a photo of the vase. JS-only
+under D33.
 
 **What would reverse this:** a reachable Cooper Hewitt source for current records
 (the dataset updated, or the objects entering Open Access), which would move the
