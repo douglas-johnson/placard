@@ -27,10 +27,16 @@ export type Candidate = {
 // A run of digit groups joined by dots — or hyphens, which Vision produces for a dot
 // often enough (D19; the simulator read `38.447-4`) that the reading is offered as-is
 // for the human to judge — optionally letter-prefixed (X2011…, MoAF…) and optionally
-// suffixed with a part designator (14A-B — D24). Two or more groups, so a bare year
-// or a decimal in a dimension line doesn't pass on its own.
-const TOKEN =
-  /(?<![\w.])[A-Za-z]{0,4}\.?\d{1,4}(?:[.-]\d{1,6}){1,5}(?:[A-Za-z]{1,2}(?:-[A-Za-z]{1,2})?)?(?![\w.])/g;
+// suffixed with a part designator: attached capitals at MCNY (14A-B — D24), or a
+// hyphen and lower-case letters at Cooper Hewitt (2025-11-1-a,b; 2009-16-7-a/d), where
+// about one object in nine carries one. Two or more groups, so a bare year or a decimal
+// in a dimension line doesn't pass on its own.
+const PART = '(?:[A-Za-z]{1,2}(?:-[A-Za-z]{1,2})?|-[a-z]{1,3}(?:[,/][a-z]{1,3})*)';
+const TOKEN = new RegExp(
+  `(?<![\\w.])[A-Za-z]{0,4}\\.?\\d{1,4}(?:[.-]\\d{1,6}){1,5}${PART}?(?![\\w.])`,
+  'g',
+);
+const PART_SUFFIX = new RegExp(`${PART}$`);
 
 // The native module normalizes the reference reading of each line but hands the
 // other scale's variants back raw, so a contested line's alternative can still carry
@@ -117,7 +123,7 @@ export function findAccessionCandidates(
         if (YEAR_RANGE.test(value)) continue;
         let score = 0;
         // Shapes describe the number; a part designator (14A-B, D24) is not part of it.
-        const bare = value.replace(/[A-Za-z]{1,2}(?:-[A-Za-z]{1,2})?$/, '');
+        const bare = value.replace(PART_SUFFIX, '');
         if (shapes.some((re) => re.test(bare))) score += 3;
         if (ACCESSION_WORD.test(text)) score += 2;
         const onDimensionLine = DIMENSION.test(text);
