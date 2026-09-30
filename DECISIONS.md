@@ -1995,7 +1995,7 @@ labels anywhere new. Issue #21 lists what to count on the next visits.
 
 **Open, for Doug:** on a shared panel, the confirmation could ask which object was
 photographed; the tester confirmed the drawing's number for a photo of the vase. JS-only
-under D33.
+under D33; issue #22.
 
 **What would reverse this:** a reachable Cooper Hewitt source for current records
 (the dataset updated, or the objects entering Open Access), which would move the
