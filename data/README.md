@@ -137,12 +137,18 @@ Cooper Hewitt (2026-09-29), the first take pulled from the bucket, added four mo
 - **`expected.makers`** — for design objects, which have designers, manufacturers and
   firms rather than one artist: each entry is the label's role phrase (`Designed by`,
   `Manufactured by`, `Made by`, or `null` when the card gives none), the name, and the
-  card's own parenthetical as `display` or `place`. `artist` stays, as the designer,
-  so the field every fixture has still means the same thing.
+  card's own parenthetical: `display` for a person's nationality and dates (`American,
+  b. 1932`), `place` for a firm's city (`Hoboken, NJ, USA`), and `of` for the firm a
+  designer worked for (`Henry Dreyfuss Associates (New York, NY, USA)`, from
+  "Designed by Donald M. Genaro … of Henry Dreyfuss Associates"). `artist` stays, as
+  the designer, so the field every fixture has still means the same thing.
 - **In a `shared_panel`**, `key` says how the card ties a tombstone to its object —
-  `silhouette` (a black pictogram per object) or `none` — and an object whose number
-  the card abbreviates carries `as_written_on_label` beside the full accession
-  (`7-a` for `2009-16-7-a`, the card's shorthand list).
+  `silhouette` (a black pictogram per object) or `none`. An object whose number the
+  card abbreviates carries `as_written_on_label` beside the full accession (`7-a` for
+  `2009-16-7-a`, the card's shorthand list). Where the card has one tombstone for all
+  its objects rather than one each, an object carries `what` instead of its own title:
+  a few words, ours and not the card's, saying which object the number is (`drawing`,
+  `vase: the bottle and its plywood frame`), taken from the catalog.
 - **`related_groups`** — manifest groups from the same take that belong to this
   fixture but aren't fixtures themselves, keyed by group ID with a sentence saying why.
   The first is a caption shot as a label (g0005): no tombstone and no number, so its
