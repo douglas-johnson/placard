@@ -1,0 +1,199 @@
+{
+  "id": "cooper-hewitt-2018-40-1",
+  "venue": "cooper-hewitt",
+  "gallery_dialect": "house_card",
+  "captured": "2026-09-29",
+  "source_image": {
+    "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0004-label.jpg",
+    "sha256": "95d1b6cf2da02f0988ef4007c3683d7a0cc948374a402f6d63298c9af10ce156"
+  },
+  "frames": {
+    "label": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0004-label.jpg",
+      "sha256": "95d1b6cf2da02f0988ef4007c3683d7a0cc948374a402f6d63298c9af10ce156"
+    },
+    "work": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0005-work.jpg",
+      "sha256": "b4abad455a0fbd8672f832fa71145f383122606cd1dd8c65a7ab431d45b62a7a"
+    }
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": true,
+    "gps_note": "Every frame carries capture time with a -04:00 offset and the F0 build's 9-key GPS block. But from the first label (f0004, 16:18) to the exterior (f0028, 16:33) every frame carries the same fix, taken at 16:16:20 by the entrance: the phone produced no new fix indoors. The fix places the take at Cooper Hewitt; it says nothing about where in the building a frame was shot."
+  },
+  "label_form": "printed_card",
+  "label_kind": "shared_panel",
+  "verified_against": "label_only",
+  "verification_note": "Accessioned 2018, after the museum's published dataset was last updated (2018-01-10), and not in the Smithsonian Open Access API (CC0 records only). The catalog site answers scripts with a request-verification page. Transcribed from the label frame and checked against the work photo; per §4.7 this is a label claim, not a catalog fact. Upgrade to a catalog check when a source that holds the record is reachable. The panel's other two objects are in the dataset and verified there.",
+  "shared_panel": {
+    "count": 3,
+    "key": "silhouette",
+    "objects": [
+      {
+        "accession_number": "1990-143-1",
+        "title": "Vessel",
+        "date_edtf": "1879/1882",
+        "medium": "Glazed earthenware",
+        "credit_line": "Museum purchase from Decorative Arts Association Acquisition Fund",
+        "catalog": {
+          "checked": "2026-09-29",
+          "source": "github.com/cooperhewitt/collection, meta/objects.csv and meta/objects-participants.csv (CC0; last pushed 2018-01-10)",
+          "object_id": 18634195,
+          "url": "https://collection.cooperhewitt.org/objects/18634195/",
+          "accession_number": "1990-143-1",
+          "title": "Vessel (England), 1879–82",
+          "object_date": "1879–82",
+          "medium": "glazed earthenware",
+          "credit_line": "Museum purchase from Decorative Arts Association Acquisition Fund",
+          "year_acquired": 1990,
+          "makers": [
+            {
+              "name": "Linthorpe Pottery, Yorkshire",
+              "role": "Manufactured by",
+              "dates": "1879–1889"
+            },
+            {
+              "name": "Christopher Dresser",
+              "role": "Designed by",
+              "dates": "English, 1834–1904"
+            }
+          ]
+        }
+      },
+      {
+        "accession_number": "2018-40-1",
+        "title": "Sculptura telephone",
+        "date_edtf": "1974~",
+        "medium": "Thermoplastic, electronic components",
+        "credit_line": "Gift of Donald M. Genaro",
+        "catalog": null
+      },
+      {
+        "accession_number": "1975-32-9",
+        "title": "Vase",
+        "date_edtf": "1895~",
+        "medium": "Hand-blown glass",
+        "credit_line": "Gift of Stanley Siegel, from the Stanley Siegel Collection",
+        "catalog": {
+          "checked": "2026-09-29",
+          "source": "github.com/cooperhewitt/collection, meta/objects.csv and meta/objects-participants.csv (CC0; last pushed 2018-01-10)",
+          "object_id": 18488153,
+          "url": "https://collection.cooperhewitt.org/objects/18488153/",
+          "accession_number": "1975-32-9",
+          "title": "Vase, ca. 1895",
+          "object_date": "ca. 1895",
+          "medium": "favrile glass",
+          "credit_line": "Gift of Stanley Siegel, from the Stanley Siegel Collection",
+          "year_acquired": 1975,
+          "makers": [
+            {
+              "name": "Louis Comfort Tiffany",
+              "role": "Designed by",
+              "dates": "American, 1848–1933"
+            }
+          ]
+        }
+      }
+    ],
+    "note": "One tall panel, three tombstones stacked, each beside a black silhouette of its object — a kettle-shaped vessel, a ring telephone, a tall vase. The silhouette is the only thing tying a tombstone to an object in the case; there are no numbers or positions. The work photo shows the telephone, with a marbled ceramic vase from a neighbouring case at the bottom edge."
+  },
+  "difficulty": [
+    "shared_panel",
+    "silhouette_key",
+    "accession_looks_like_a_date",
+    "human_rejected_correct_candidate",
+    "accession_wrapped_to_own_line",
+    "old_style_figures",
+    "circa_marker",
+    "reflective_glass",
+    "multiple_makers"
+  ],
+  "expected": {
+    "accession_number": "2018-40-1",
+    "title": "Sculptura telephone",
+    "object_name_in_title": "telephone",
+    "date_raw": "ca. 1974",
+    "date_edtf": "1974~",
+    "artist": "Donald M. Genaro",
+    "artist_role": "designer",
+    "artist_nationality": "American",
+    "artist_dates": "1932/..",
+    "makers": [
+      {
+        "role": "Designed by",
+        "name": "Donald M. Genaro",
+        "display": "American, b. 1932",
+        "of": "Henry Dreyfuss Associates (New York, NY, USA)"
+      },
+      {
+        "role": "Manufactured by",
+        "name": "Western Electric Manufacturing Company",
+        "place": "Indianapolis, IN, USA"
+      },
+      {
+        "role": "Manufactured by",
+        "name": "Bell System Division, AT&T",
+        "place": "Murray Hill, NJ, USA"
+      }
+    ],
+    "medium": "Thermoplastic, electronic components",
+    "credit_line": "Gift of Donald M. Genaro",
+    "owning_institution": null,
+    "attribution_qualifier": null
+  },
+  "label_vs_catalog": {
+    "note": "Top-level object not checkable (see verification_note). For the other two:",
+    "1990-143-1": {
+      "agree": [
+        "title",
+        "date",
+        "medium",
+        "credit_line",
+        "designer",
+        "manufacturer"
+      ],
+      "differ": {
+        "designer_nationality": "label 'Scottish', catalog 'English, 1834–1904'. The same institution making two claims about one person; keep both (§4.7).",
+        "manufacturer": "label 'Linthorpe Pottery (Linthorpe, England)', catalog 'Linthorpe Pottery, Yorkshire'"
+      }
+    },
+    "1975-32-9": {
+      "agree": [
+        "title",
+        "date",
+        "credit_line",
+        "designer"
+      ],
+      "differ": {
+        "medium": "label 'Hand-blown glass', catalog 'favrile glass'",
+        "designer_role": "label 'Design director: Louis Comfort Tiffany', catalog role 'Designer'",
+        "maker": "label 'Produced by Tiffany Glass and Decorating Company'; the 2018 dataset lists no maker"
+      }
+    }
+  },
+  "capture": {
+    "build": "F0, TestFlight update 01a0e458-7ac2-7721-a872-abba9f99f608",
+    "group": "g0001",
+    "on_device_candidates": [
+      "2018-40-1",
+      "1975-32-9",
+      "1990-143-1"
+    ],
+    "accession_status": "none",
+    "machine_reading": "2018-40-1",
+    "human_value": null,
+    "flags": [
+      "loan_no_accession"
+    ],
+    "hard_cases_tagged": [
+      "reflective_glass"
+    ],
+    "note": "OCR thought a date was the ascension"
+  },
+  "traps": {
+    "date_shaped_accession": "The number reads as a date, and the tester answered 'no number' on the spot. Cooper Hewitt's key is acquisition year, lot, item. See data/venues/cooper-hewitt.json traps. Here the locator ranked the right object first, and all three panel numbers were offered.",
+    "loan_flag_wrong": "Tagged 'loan, no accession' on the spot. All three objects are Cooper Hewitt's own.",
+    "life_dates_as_ranges": "'1834–1904', '1848–1933' and the title date '1879–82' are all two groups joined by a dash; the locator's YEAR_RANGE skips them, correctly."
+  }
+}

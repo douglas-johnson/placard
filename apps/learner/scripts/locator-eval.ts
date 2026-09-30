@@ -4,7 +4,11 @@
  * model is not the Mac's (D30):
  *
  *   device  — the `ocr` records in each take's manifest: what the app actually saw,
- *             scored against what the human confirmed or typed on the spot.
+ *             scored against the fixture for that group where one exists, and
+ *             otherwise against what the human confirmed or typed on the spot. The
+ *             fixture wins because the human can be the one who's wrong: at Cooper
+ *             Hewitt the tester answered "no number" to four right candidates that
+ *             looked like dates.
  *   mac     — data/labels/derived/<take>.ndjson from tools/ocr, joined to the
  *             fixtures by source_image, scored against `expected.accession_number`.
  *
@@ -12,6 +16,10 @@
  * offered, or when what's offered is at least not a date — the D17 degraded path.
  *
  *   npm run locator-eval
+ *
+ * Takes imported by USB have their manifest at raw/<take>/manifest.ndjson; takes
+ * pulled from the bucket have it at derived/<contributor>/<take>/manifest.ndjson,
+ * written by tools/corpus-pull (D38). Both are read.
  *
  * No Metro, no simulator: tsc compiles this and src/accession.ts to the scratch
  * directory and node runs it. Raw takes are gitignored, so device rows only appear
@@ -58,6 +66,44 @@ function judge(accepted: string[], got: string[]): boolean {
 
 const rows: Row[] = [];
 
+/** A frame reference is a bare path until the rebinding (D37), `{key, sha256}` after. */
+function frameKey(ref: unknown): string | null {
+  if (typeof ref === 'string') return ref;
+  if (ref && typeof ref === 'object' && typeof (ref as any).key === 'string') {
+    return (ref as any).key;
+  }
+  return null;
+}
+
+/** `raw/2026-09-20-met/X.JPG` → `2026-09-20-met`; `raw/<contributor>/<take>/f.jpg` → `<contributor>/<take>`. */
+function takeOf(key: string): string {
+  return path.dirname(key).replace(/^raw\//, '');
+}
+
+function acceptedFor(fx: any): string[] {
+  const expected = fx.expected?.accession_number ?? null;
+  return (
+    fx.shared_panel?.objects?.map((o: any) => o.accession_number) ?? (expected ? [expected] : [])
+  );
+}
+
+const fixtures = fs
+  .readdirSync(path.join(DATA, 'fixtures'))
+  .filter((n) => n.endsWith('.json'))
+  .map((f) => JSON.parse(fs.readFileSync(path.join(DATA, 'fixtures', f), 'utf8')));
+
+// take + group → the fixture's answer, for judging device rows.
+const truth = new Map<string, { expected: string | null; accepted: string[] }>();
+for (const fx of fixtures) {
+  const key = frameKey(fx.source_image);
+  const group = fx.capture?.group;
+  if (!key || !group) continue;
+  truth.set(`${takeOf(key)} ${group}`, {
+    expected: fx.expected?.accession_number ?? null,
+    accepted: acceptedFor(fx),
+  });
+}
+
 // mac: fixtures × derived
 const derived = new Map<string, any>();
 for (const f of fs.readdirSync(path.join(DATA, 'derived')).filter((n) => n.endsWith('.ndjson'))) {
@@ -67,62 +113,72 @@ for (const f of fs.readdirSync(path.join(DATA, 'derived')).filter((n) => n.endsW
     derived.set(`raw/${f.replace('.ndjson', '')}/${r.filename}`, r);
   }
 }
-for (const f of fs.readdirSync(path.join(DATA, 'fixtures')).filter((n) => n.endsWith('.json'))) {
-  const fx = JSON.parse(fs.readFileSync(path.join(DATA, 'fixtures', f), 'utf8'));
-  if (!fx.source_image) continue;
-  const r = derived.get(fx.source_image);
+for (const fx of fixtures) {
+  const key = frameKey(fx.source_image);
+  if (!key) continue;
+  const r = derived.get(key);
   if (!r) continue;
   const got = findAccessionCandidates(r.observations, shapesFor(fx.venue)).map((c) => c.value);
-  const expected = fx.expected?.accession_number ?? null;
-  const accepted: string[] =
-    fx.shared_panel?.objects?.map((o: any) => o.accession_number) ?? (expected ? [expected] : []);
   rows.push({
-    take: fx.source_image.split('/')[1],
+    take: takeOf(key),
     source: 'mac',
-    frame: path.basename(fx.source_image),
-    expected,
+    frame: path.basename(key),
+    expected: fx.expected?.accession_number ?? null,
     got,
-    ok: judge(accepted, got),
+    ok: judge(acceptedFor(fx), got),
   });
 }
 
-// device: manifests
+// device: manifests, from both layouts
+const manifests: { take: string; file: string }[] = [];
 const rawDir = path.join(DATA, 'raw');
 if (fs.existsSync(rawDir)) {
   for (const take of fs.readdirSync(rawDir)) {
     const m = path.join(rawDir, take, 'manifest.ndjson');
-    if (!fs.existsSync(m)) continue;
-    const recs = fs
-      .readFileSync(m, 'utf8')
-      .split('\n')
-      .filter(Boolean)
-      .map((l) => JSON.parse(l));
-    const started = recs.find((r) => r.type === 'take_started');
-    const slug =
-      started?.venue?.slug === 'the-metropolitan-museum-of-art'
-        ? 'met'
-        : (started?.venue?.slug ?? '');
-    const shapes = shapesFor(slug);
-    for (const acc of recs.filter((r) => r.type === 'accession')) {
-      const ocr = recs.filter(
-        (r) => r.type === 'ocr' && r.group === acc.group && r.lines.length > 0,
-      );
-      if (ocr.length === 0) continue; // redacted, or nothing read
-      const lines = ocr.flatMap((o) => o.lines);
-      const got = findAccessionCandidates(lines, shapes).map((c) => c.value);
-      const expected = acc.status === 'none' ? null : acc.value;
-      if (acc.status === 'unread') continue;
-      // On the device the human settled on one number; the manifest doesn't know the
-      // panel's others, so a shared panel is judged on the confirmed one only.
-      rows.push({
-        take,
-        source: 'device',
-        frame: acc.group,
-        expected,
-        got,
-        ok: judge(expected ? [expected] : [], got),
-      });
-    }
+    if (fs.existsSync(m)) manifests.push({ take, file: m });
+  }
+}
+const derivedDir = path.join(DATA, 'derived');
+for (const contributor of fs.readdirSync(derivedDir)) {
+  const dir = path.join(derivedDir, contributor);
+  if (!fs.statSync(dir).isDirectory()) continue;
+  for (const take of fs.readdirSync(dir)) {
+    const m = path.join(dir, take, 'manifest.ndjson');
+    if (fs.existsSync(m)) manifests.push({ take: `${contributor}/${take}`, file: m });
+  }
+}
+for (const { take, file: m } of manifests) {
+  const recs = fs
+    .readFileSync(m, 'utf8')
+    .split('\n')
+    .filter(Boolean)
+    .map((l) => JSON.parse(l));
+  const started = recs.find((r) => r.type === 'take_started');
+  const slug =
+    started?.venue?.slug === 'the-metropolitan-museum-of-art'
+      ? 'met'
+      : (started?.venue?.slug ?? '');
+  const shapes = shapesFor(slug);
+  for (const acc of recs.filter((r) => r.type === 'accession')) {
+    const ocr = recs.filter((r) => r.type === 'ocr' && r.group === acc.group && r.lines.length > 0);
+    if (ocr.length === 0) continue; // redacted, or nothing read
+    const lines = ocr.flatMap((o) => o.lines);
+    const got = findAccessionCandidates(lines, shapes).map((c) => c.value);
+    const fixture = truth.get(`${take} ${acc.group}`);
+    if (!fixture && acc.status === 'unread') continue;
+    // Without a fixture, the human's answer on the spot is the truth, and the
+    // manifest doesn't know a shared panel's other numbers, so the panel is judged
+    // on the confirmed one only.
+    const onTheSpot = acc.status === 'none' ? null : acc.value;
+    const accepted = fixture?.accepted ?? (onTheSpot ? [onTheSpot] : []);
+    rows.push({
+      take,
+      source: 'device',
+      frame: acc.group,
+      expected: fixture ? fixture.expected : onTheSpot,
+      got,
+      ok: judge(accepted, got),
+    });
   }
 }
 

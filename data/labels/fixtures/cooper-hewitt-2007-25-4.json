@@ -1,0 +1,104 @@
+{
+  "id": "cooper-hewitt-2007-25-4",
+  "venue": "cooper-hewitt",
+  "gallery_dialect": "house_card",
+  "captured": "2026-09-29",
+  "source_image": {
+    "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0006-label.jpg",
+    "sha256": "8d8e745c35275d3053b93a571d3c059611ce7e58b2e1ebb0822d1e6cedc26302"
+  },
+  "frames": {
+    "label": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0006-label.jpg",
+      "sha256": "8d8e745c35275d3053b93a571d3c059611ce7e58b2e1ebb0822d1e6cedc26302"
+    },
+    "work": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0007-work.jpg",
+      "sha256": "123549b861a0d20c516b35129a15bc0d239e333d9a33e74597812c956ad58fe5"
+    },
+    "extended_label": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0008-wall_text.jpg",
+      "sha256": "c0a020b71b378063a0aeffb65dda0e576ca97de3a3a7b21abba6d7702b07cb69"
+    }
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": true,
+    "gps_note": "Every frame carries capture time with a -04:00 offset and the F0 build's 9-key GPS block. But from the first label (f0004, 16:18) to the exterior (f0028, 16:33) every frame carries the same fix, taken at 16:16:20 by the entrance: the phone produced no new fix indoors. The fix places the take at Cooper Hewitt; it says nothing about where in the building a frame was shot."
+  },
+  "label_form": "printed_card",
+  "verified_against": "catalog_dataset",
+  "catalog": {
+    "checked": "2026-09-29",
+    "source": "github.com/cooperhewitt/collection, meta/objects.csv and meta/objects-participants.csv (CC0; last pushed 2018-01-10)",
+    "object_id": 18710401,
+    "url": "https://collection.cooperhewitt.org/objects/18710401/",
+    "accession_number": "2007-25-4",
+    "title": "Poster, Self Promotion: This Being a First in a Series of Posters, Featuring an Exaltation of Protean Ornament and Other Fancy Stuff, 2005",
+    "object_date": "2005",
+    "medium": "off-set lithograph on white wove paper",
+    "credit_line": "Gift of Marian Bantjes",
+    "year_acquired": 2007,
+    "makers": [
+      {
+        "name": "Marian Bantjes",
+        "role": "Designed by",
+        "dates": "Canadian, b. 1963"
+      }
+    ]
+  },
+  "difficulty": [
+    "accession_looks_like_a_date",
+    "human_rejected_correct_candidate",
+    "old_style_figures",
+    "perforated_metal_surround",
+    "reflective_glass",
+    "extended_label_below"
+  ],
+  "expected": {
+    "accession_number": "2007-25-4",
+    "title": "Poster One",
+    "date_edtf": "2005",
+    "artist": "Marian Bantjes",
+    "artist_role": "designer",
+    "artist_nationality": "Canadian",
+    "artist_dates": "1963/..",
+    "medium": "Offset lithograph on paper",
+    "credit_line": "Gift of Marian Bantjes",
+    "owning_institution": null,
+    "attribution_qualifier": null
+  },
+  "label_vs_catalog": {
+    "agree": [
+      "date",
+      "credit_line",
+      "designer",
+      "designer_nationality_and_dates"
+    ],
+    "differ": {
+      "title": "label 'Poster One', catalog 'Poster, Self Promotion: This Being a First in a Series of Posters, Featuring an Exaltation of Protean Ornament and Other Fancy Stuff, 2005' — the catalog title is the poster's own text; the label's is a short name for it",
+      "medium": "label 'Offset lithograph on paper', catalog 'off-set lithograph on white wove paper'"
+    }
+  },
+  "capture": {
+    "build": "F0, TestFlight update 01a0e458-7ac2-7721-a872-abba9f99f608",
+    "group": "g0002",
+    "on_device_candidates": [
+      "2007-25-4"
+    ],
+    "accession_status": "none",
+    "machine_reading": "2007-25-4",
+    "human_value": null,
+    "flags": [
+      "loan_no_accession"
+    ],
+    "hard_cases_tagged": [
+      "reflective_glass"
+    ],
+    "note": "Says gift, but no ascension"
+  },
+  "traps": {
+    "date_shaped_accession": "The number reads as a date, and the tester answered 'no number' on the spot. Cooper Hewitt's key is acquisition year, lot, item. See data/venues/cooper-hewitt.json traps. The note says it: the credit line reads 'Gift of' and the tester still saw no number, because the number looked like a date.",
+    "no_designer_role_word": "The maker line is just 'Marian Bantjes (Canadian, b. 1963)' — no 'Designed by'. The catalog records her as Designer."
+  }
+}

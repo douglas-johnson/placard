@@ -1,0 +1,86 @@
+{
+  "id": "cooper-hewitt-2025-11-1",
+  "venue": "cooper-hewitt",
+  "gallery_dialect": "house_card",
+  "captured": "2026-09-29",
+  "source_image": {
+    "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0009-label.jpg",
+    "sha256": "1bbfd1e6a9ddb03366631cb2e43fa4d567c74c56a9e687dede06c8e7165475da"
+  },
+  "frames": {
+    "label": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0009-label.jpg",
+      "sha256": "1bbfd1e6a9ddb03366631cb2e43fa4d567c74c56a9e687dede06c8e7165475da"
+    },
+    "work": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0010-work.jpg",
+      "sha256": "87367c12df8b494f990b86d40de43a9f8389b9b5fe09dd219cbf36ae4fcd413b"
+    }
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": true,
+    "gps_note": "Every frame carries capture time with a -04:00 offset and the F0 build's 9-key GPS block. But from the first label (f0004, 16:18) to the exterior (f0028, 16:33) every frame carries the same fix, taken at 16:16:20 by the entrance: the phone produced no new fix indoors. The fix places the take at Cooper Hewitt; it says nothing about where in the building a frame was shot."
+  },
+  "label_form": "printed_card",
+  "verified_against": "label_only",
+  "verification_note": "Accessioned 2025, after the museum's published dataset was last updated (2018-01-10), and not in the Smithsonian Open Access API (CC0 records only). The catalog site answers scripts with a request-verification page. Transcribed from the label frame and checked against the work photo; per §4.7 this is a label claim, not a catalog fact. Upgrade to a catalog check when a source that holds the record is reachable.",
+  "difficulty": [
+    "accession_looks_like_a_date",
+    "accession_is_a_valid_calendar_date",
+    "human_rejected_correct_candidate",
+    "part_designator_lowercase",
+    "contested_line",
+    "accession_wrapped_to_own_line",
+    "old_style_figures",
+    "reflective_glass",
+    "two_credit_clauses"
+  ],
+  "expected": {
+    "accession_number": "2025-11-1-a,b",
+    "title": "Spinning Whistle tea kettle",
+    "date_edtf": "1999",
+    "artist": "Michael Graves",
+    "artist_role": "designer",
+    "artist_nationality": "American",
+    "artist_dates": "1934/2015",
+    "makers": [
+      {
+        "role": "Designed by",
+        "name": "Michael Graves",
+        "display": "American, 1934–2015"
+      },
+      {
+        "role": "Manufactured by",
+        "name": "Target Corporation",
+        "place": "Minneapolis, MN, USA"
+      }
+    ],
+    "medium": "Stainless steel, plastic",
+    "credit_line": "Liliane and David M. Stewart Collection, Gift of Dr. Michael Sze",
+    "owning_institution": null,
+    "attribution_qualifier": null
+  },
+  "capture": {
+    "build": "F0, TestFlight update 01a0e458-7ac2-7721-a872-abba9f99f608",
+    "group": "g0003",
+    "on_device_candidates": [
+      "2025-11-1"
+    ],
+    "accession_status": "none",
+    "machine_reading": "2025-11-1",
+    "human_value": null,
+    "flags": [
+      "loan_no_accession"
+    ],
+    "hard_cases_tagged": [
+      "reflective_glass"
+    ],
+    "note": null
+  },
+  "traps": {
+    "date_shaped_accession": "The number reads as a date, and the tester answered 'no number' on the spot. Cooper Hewitt's key is acquisition year, lot, item. See data/venues/cooper-hewitt.json traps. And this one IS a valid calendar date — 1 November 2025 — so no validity check could have told the tester otherwise.",
+    "part_designator": "The line was contested three ways: '2025-11-1-а,6' (Cyrillic а, digit 6), '2025-11-1-а,b', '2025-11-1-a,b'. The locator before 2026-09-29 dropped the suffix and offered '2025-11-1' for all three; it now keeps '-a,b' where the letters are Latin, which is only the third variant.",
+    "two_credit_clauses": "'Liliane and David M. Stewart Collection, Gift of Dr. Michael Sze' — a named collection and a donor in one line."
+  }
+}

@@ -1934,3 +1934,69 @@ decision; `swift format` ships with Xcode if it's ever wanted.
 **What would reverse this:** Expo adopting Biome or Oxc as its default, or
 `eslint-config-expo` falling behind the SDK. The formatting would survive a move, since
 Biome formats as Prettier does to within a few percent; the Expo-specific rules would not.
+
+---
+
+## D47 — Cooper Hewitt: verified against the museum's published dataset, and a date-shaped key is ranked, never doubted
+
+**Date:** 2026-09-29 · **Status:** accepted · **Decided by:** Doug (that the first
+uploaded take becomes fixtures, re-read for accessions that look like dates); every
+call below is Claude's · **Builds on:** D11, D21, D24, D37, D43
+
+The first take through the upload queue was Cooper Hewitt's, and its accessions look
+like dates: `2018-40-1` is the first item of the museum's fortieth acquisition of 2018.
+On the spot the tester answered *no number* to four right candidates. Re-reading the
+take against the museum's own catalog settled five things.
+
+**The catalog is the museum's published dataset, not its website** (Claude's call).
+Cooper Hewitt's collection site now redirects to si.edu behind a request-verification
+page that answers scripts with 403, and that page is not to be worked around: a
+museum that asks automated clients to stop has said something, and constraint 6's
+point about a later conversation applies to primary sources too. The Smithsonian Open
+Access API is the museum's own data but holds only CC0 records, 58,198 of them, and
+none of the nine objects on the first visit. The museum's own `objects.csv` on GitHub
+(CC0, last pushed 2018-01-10) holds six of the eight labels' objects and all of the
+panel-mates. Fixtures checked this way say `verified_against: catalog_dataset`, and
+the two objects acquired after 2017 stay `label_only` until a source that holds them
+is reachable. A dataset is a snapshot, so where it disagrees with a 2026 label the
+fixture says which differences are its age.
+
+**Calendar validity is not a signal** (Claude's call). Across the museum's 192,248
+year–lot–item keys, a middle group above 12 rules out a date for 154,082, but 13,021
+are valid dates, including one on this visit. A score that rewarded "cannot be a date"
+would push down one real key in fifteen for no gain, because the locator was already
+right on every label: the four misses were human. The venue shape ranks the family
+(+3, D11), and the fix for the doubt belongs in the read-back, which is Doug's call and
+not taken here.
+
+**The locator keeps Cooper Hewitt's part designators** (Claude's call). `-a,b`, `-a/d`
+and `-c` are on about one object in nine, and the device dropped them, offering
+`2025-11-1` for `2025-11-1-a,b`. The token now takes a hyphen and lower-case letters as
+a part designator beside MCNY's attached capitals (D24), and strips either before
+matching a venue shape. Shorthand lists (`2009-16-6, 7-a, 8-a,b, 11`) are recorded in
+the fixture and not yet expanded.
+
+**`locator-eval` judges a device row by its fixture when one exists** (Claude's call).
+It used the tester's answer on the spot, which here was *no number* four times, so it
+would have scored the locator on the human's mistake. It also now reads the bucket
+layout (`derived/<contributor>/<take>/manifest.ndjson`), which it didn't see before.
+40/43, up from 32/35: the eight new rows pass, the three failing Met rows are
+unchanged.
+
+**Fixtures from a bucket take use D37's `{key, sha256}` shape from the start**
+(Claude's call), `source_image` included, rather than bare paths that the rebinding
+would then have to convert. The 23 USB fixtures still wait for that pass.
+
+**Deferred by Doug, pending more data:** the accession step saying what the venue's
+numbers look like when a candidate matches a registry shape (at Cooper Hewitt, that
+they start with the year acquired). One visit, one tester and a doubt that stopped by
+the seventh label don't yet say whether it is this venue, this key shape, or the first
+labels anywhere new. Issue #21 lists what to count on the next visits.
+
+**Open, for Doug:** on a shared panel, the confirmation could ask which object was
+photographed; the tester confirmed the drawing's number for a photo of the vase. JS-only
+under D33; issue #22.
+
+**What would reverse this:** a reachable Cooper Hewitt source for current records
+(the dataset updated, or the objects entering Open Access), which would move the
+fixtures to `catalog_api` and supersede the snapshot's claims, not delete them.

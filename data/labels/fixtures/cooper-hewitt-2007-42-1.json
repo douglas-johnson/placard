@@ -1,0 +1,128 @@
+{
+  "id": "cooper-hewitt-2007-42-1",
+  "venue": "cooper-hewitt",
+  "gallery_dialect": "house_card",
+  "captured": "2026-09-29",
+  "source_image": {
+    "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0011-label.jpg",
+    "sha256": "4487a65e376391637dc7cf48e582340b3edf13c80ab448647e2305db5ccefdfc"
+  },
+  "frames": {
+    "label": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0011-label.jpg",
+      "sha256": "4487a65e376391637dc7cf48e582340b3edf13c80ab448647e2305db5ccefdfc"
+    },
+    "work": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0012-work.jpg",
+      "sha256": "81921b64c300b28c139b6a2d54b0e6a09c499f841fdfc75545a1ffe7c6424785"
+    },
+    "extended_label": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0015-wall_text.jpg",
+      "sha256": "eafe2f8d7a499e15f26d788df779645a65e639bf1cdb763bb129ca52033a9152"
+    },
+    "extended_label_shot_as_label_g0005": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0013-label.jpg",
+      "sha256": "e77da5eb11d06a3bd312349db03d2ff971ed14772064089f70ef964b358982ee"
+    },
+    "work_again_g0005": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0014-work.jpg",
+      "sha256": "592e78b4167678a8a661fc08674f6f8feae8ae445f31fc92f4c5cc2874dc4c97"
+    }
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": true,
+    "gps_note": "Every frame carries capture time with a -04:00 offset and the F0 build's 9-key GPS block. But from the first label (f0004, 16:18) to the exterior (f0028, 16:33) every frame carries the same fix, taken at 16:16:20 by the entrance: the phone produced no new fix indoors. The fix places the take at Cooper Hewitt; it says nothing about where in the building a frame was shot."
+  },
+  "label_form": "printed_card",
+  "verified_against": "catalog_dataset",
+  "catalog": {
+    "checked": "2026-09-29",
+    "source": "github.com/cooperhewitt/collection, meta/objects.csv and meta/objects-participants.csv (CC0; last pushed 2018-01-10)",
+    "object_id": 18711505,
+    "url": "https://collection.cooperhewitt.org/objects/18711505/",
+    "accession_number": "2007-42-1",
+    "title": "Sidewall, Harlem Toile de Jouy, 2006",
+    "object_date": "2006",
+    "medium": "screen-printed on paper",
+    "credit_line": "Gift of Studio Printworks",
+    "year_acquired": 2007,
+    "makers": [
+      {
+        "name": "Studio Printworks",
+        "role": "Made by"
+      },
+      {
+        "name": "Sheila Bridges",
+        "role": "Designed by"
+      }
+    ]
+  },
+  "difficulty": [
+    "accession_looks_like_a_date",
+    "human_rejected_correct_candidate",
+    "old_style_figures",
+    "reflective_glass",
+    "silhouette_key",
+    "label_on_case_edge_below_work"
+  ],
+  "expected": {
+    "accession_number": "2007-42-1",
+    "title": "Harlem Toile de Jouy wallpaper",
+    "date_edtf": "2006",
+    "artist": "Sheila Bridges",
+    "artist_role": "designer",
+    "artist_nationality": "American",
+    "artist_dates": "1964/..",
+    "makers": [
+      {
+        "role": "Designed by",
+        "name": "Sheila Bridges",
+        "display": "American, b. 1964"
+      },
+      {
+        "role": "Made by",
+        "name": "Studio Printworks",
+        "place": "Hoboken, NJ, USA"
+      }
+    ],
+    "medium": "Ink on coated paper",
+    "credit_line": "Gift of Studio Printworks",
+    "owning_institution": null,
+    "attribution_qualifier": null
+  },
+  "label_vs_catalog": {
+    "agree": [
+      "date",
+      "credit_line",
+      "designer",
+      "maker"
+    ],
+    "differ": {
+      "title": "label 'Harlem Toile de Jouy wallpaper', catalog 'Sidewall, Harlem Toile de Jouy, 2006' — the catalog's object type for wallpaper is 'Sidewall'",
+      "medium": "label 'Ink on coated paper', catalog 'screen-printed on paper' — a technique against a material; not a contradiction, two different descriptions"
+    }
+  },
+  "capture": {
+    "build": "F0, TestFlight update 01a0e458-7ac2-7721-a872-abba9f99f608",
+    "group": "g0004",
+    "on_device_candidates": [
+      "2007-42-1"
+    ],
+    "accession_status": "none",
+    "machine_reading": "2007-42-1",
+    "human_value": null,
+    "flags": [],
+    "hard_cases_tagged": [
+      "reflective_glass"
+    ],
+    "note": null
+  },
+  "related_groups": {
+    "g0005": "The extended caption below this label ('Popular in the 18th century, toiles de Jouy…'), shot as a label group with the same wallpaper as its work. Tester's note: 'Duplicate of Harlem Toile de Jouy wallpaper'. It has no tombstone and no number (accession 'unread' twice), so it is not a fixture of its own; its frames are kept here. f0015 is the same caption shot as wall text."
+  },
+  "traps": {
+    "date_shaped_accession": "The number reads as a date, and the tester answered 'no number' on the spot. Cooper Hewitt's key is acquisition year, lot, item. See data/venues/cooper-hewitt.json traps.",
+    "ocr_of_the_work": "Vision read the wallpaper's own edge printing as '7.' and 'n Tolle' / 'Tolle' above the title — text in the work, not on the label."
+  }
+}

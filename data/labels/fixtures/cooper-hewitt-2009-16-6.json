@@ -1,0 +1,229 @@
+{
+  "id": "cooper-hewitt-2009-16-6",
+  "venue": "cooper-hewitt",
+  "gallery_dialect": "house_card",
+  "captured": "2026-09-29",
+  "source_image": {
+    "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0016-label.jpg",
+    "sha256": "87f52d086a10416f81562005f9d60ceefe60678a2a082fa1f5f6c08a1d365808"
+  },
+  "frames": {
+    "label": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0016-label.jpg",
+      "sha256": "87f52d086a10416f81562005f9d60ceefe60678a2a082fa1f5f6c08a1d365808"
+    },
+    "work": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0017-work.jpg",
+      "sha256": "4463f8bb32b3c284b68ae026456574d438cd3f6ddc3d35e4662eb00269849fbb"
+    },
+    "extended_label": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0018-wall_text.jpg",
+      "sha256": "4713813b76d79599435e46685743d3ce31c770a8e72cb4c5a23f512fbbb5a201"
+    },
+    "section_wall_text": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0019-wall_text.jpg",
+      "sha256": "b67e816654a9968f7f0ff6be663d0eece8b3e94f0246d18c2914b6c383241836"
+    }
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": true,
+    "gps_note": "Every frame carries capture time with a -04:00 offset and the F0 build's 9-key GPS block. But from the first label (f0004, 16:18) to the exterior (f0028, 16:33) every frame carries the same fix, taken at 16:16:20 by the entrance: the phone produced no new fix indoors. The fix places the take at Cooper Hewitt; it says nothing about where in the building a frame was shot."
+  },
+  "label_form": "printed_card",
+  "label_kind": "shared_panel",
+  "verified_against": "catalog_dataset",
+  "catalog": {
+    "checked": "2026-09-29",
+    "source": "github.com/cooperhewitt/collection, meta/objects.csv and meta/objects-participants.csv (CC0; last pushed 2018-01-10)",
+    "object_id": 18730697,
+    "url": "https://collection.cooperhewitt.org/objects/18730697/",
+    "accession_number": "2009-16-6",
+    "title": "Lola Coffeepot Model, Design date 1988",
+    "object_date": "Design date 1988",
+    "medium": "plaster",
+    "credit_line": "Gift of Gerald Gulotta",
+    "year_acquired": 2009,
+    "makers": [
+      {
+        "name": "Gerald Gulotta (American, b. 1921)",
+        "role": "Designed by"
+      }
+    ]
+  },
+  "shared_panel": {
+    "count": 4,
+    "key": "none",
+    "objects": [
+      {
+        "accession_number": "2009-16-6",
+        "as_written_on_label": "2009-16-6",
+        "what": "plaster model",
+        "catalog": {
+          "checked": "2026-09-29",
+          "source": "github.com/cooperhewitt/collection, meta/objects.csv and meta/objects-participants.csv (CC0; last pushed 2018-01-10)",
+          "object_id": 18730697,
+          "url": "https://collection.cooperhewitt.org/objects/18730697/",
+          "accession_number": "2009-16-6",
+          "title": "Lola Coffeepot Model, Design date 1988",
+          "object_date": "Design date 1988",
+          "medium": "plaster",
+          "credit_line": "Gift of Gerald Gulotta",
+          "year_acquired": 2009,
+          "makers": [
+            {
+              "name": "Gerald Gulotta (American, b. 1921)",
+              "role": "Designed by"
+            }
+          ]
+        }
+      },
+      {
+        "accession_number": "2009-16-7-a",
+        "as_written_on_label": "7-a",
+        "what": "coffeepot model with knob variants",
+        "catalog": {
+          "checked": "2026-09-29",
+          "source": "github.com/cooperhewitt/collection, meta/objects.csv and meta/objects-participants.csv (CC0; last pushed 2018-01-10)",
+          "object_id": 18730699,
+          "url": "https://collection.cooperhewitt.org/objects/18730699/",
+          "accession_number": "2009-16-7-a/d",
+          "title": "Coffeepot Model With Knob Variants, Design date 1988",
+          "object_date": "Design date 1988",
+          "medium": "clay, ceramic, paper",
+          "credit_line": "Gift of Gerald Gulotta",
+          "year_acquired": 2009,
+          "makers": [
+            {
+              "name": "Gerald Gulotta (American, b. 1921)",
+              "role": "Designed by"
+            }
+          ]
+        }
+      },
+      {
+        "accession_number": "2009-16-8-a,b",
+        "as_written_on_label": "8-a,b",
+        "what": "coffeepot prototype, pot and lid",
+        "catalog": {
+          "checked": "2026-09-29",
+          "source": "github.com/cooperhewitt/collection, meta/objects.csv and meta/objects-participants.csv (CC0; last pushed 2018-01-10)",
+          "object_id": 18730701,
+          "url": "https://collection.cooperhewitt.org/objects/18730701/",
+          "accession_number": "2009-16-8-a,b",
+          "title": "Lola Coffepot Prototype, Design Date 1988",
+          "object_date": "Design Date 1988",
+          "medium": "porcelain",
+          "credit_line": "Gift of Gerald Gulotta",
+          "year_acquired": 2009,
+          "makers": [
+            {
+              "name": "Porcelanas de Bidasoa",
+              "role": "Manufactured by"
+            },
+            {
+              "name": "Gerald Gulotta (American, b. 1921)",
+              "role": "Designed by"
+            }
+          ]
+        }
+      },
+      {
+        "accession_number": "2009-16-11",
+        "as_written_on_label": "11",
+        "what": "pitcher prototype (final)",
+        "catalog": {
+          "checked": "2026-09-29",
+          "source": "github.com/cooperhewitt/collection, meta/objects.csv and meta/objects-participants.csv (CC0; last pushed 2018-01-10)",
+          "object_id": 18730707,
+          "url": "https://collection.cooperhewitt.org/objects/18730707/",
+          "accession_number": "2009-16-11",
+          "title": "Lola Pitcher Prototype (final), Design Date 1988",
+          "object_date": "Design Date 1988",
+          "medium": "porcelain",
+          "credit_line": "Gift of Gerald Gulotta",
+          "year_acquired": 2009,
+          "makers": [
+            {
+              "name": "Gerald Gulotta (American, b. 1921)",
+              "role": "Designed by"
+            }
+          ]
+        }
+      }
+    ],
+    "note": "One tombstone for a group: 'Gift of Gerald Gulotta, 2009-16-6, 7-a, 8-a,b, 11'. Only the first is a full number; the rest inherit its '2009-16-' prefix. The work photo shows all four together. Which accession names which object comes from the catalog, not the card."
+  },
+  "difficulty": [
+    "shared_panel",
+    "shorthand_accession_list",
+    "part_designator_lowercase",
+    "label_vs_catalog_accession_differs",
+    "old_style_figures",
+    "reflective_glass",
+    "prototype_not_product"
+  ],
+  "expected": {
+    "accession_number": "2009-16-6",
+    "accession_numbers_on_label": [
+      "2009-16-6",
+      "2009-16-7-a",
+      "2009-16-8-a,b",
+      "2009-16-11"
+    ],
+    "title": "Prototypes for Lola coffeepot and cream pitcher",
+    "date_edtf": "1988",
+    "artist": "Gerald Gulotta",
+    "artist_role": "designer",
+    "artist_nationality": "American",
+    "artist_dates": "1921/2018",
+    "makers": [
+      {
+        "role": null,
+        "name": "Gerald Gulotta",
+        "display": "American, 1921–2018"
+      },
+      {
+        "role": "for",
+        "name": "Porcelanas Bidasoa",
+        "place": "Irun, Spain"
+      }
+    ],
+    "medium": "Plaster, clay, paper, ceramic, porcelain",
+    "credit_line": "Gift of Gerald Gulotta",
+    "owning_institution": null,
+    "attribution_qualifier": null
+  },
+  "label_vs_catalog": {
+    "agree": [
+      "date",
+      "credit_line",
+      "designer"
+    ],
+    "differ": {
+      "accession_2009-16-7": "label '7-a', catalog '2009-16-7-a/d' — the catalog object has four parts; the label names one",
+      "title": "the label titles the group; the catalog titles each object ('Lola Coffeepot Model, Design date 1988', 'Coffeepot Model With Knob Variants', 'Lola Coffepot Prototype' [sic], 'Lola Pitcher Prototype (final)') and calls the pitcher a pitcher, not a cream pitcher",
+      "designer_dates": "label '1921–2018', catalog 'b. 1921' — the dataset predates his death",
+      "client_name": "label 'Porcelanas Bidasoa', catalog 'Porcelanas de Bidasoa'",
+      "medium": "the label pools the four objects' media; each catalog record carries its own (plaster; clay, ceramic, paper; porcelain; porcelain)"
+    }
+  },
+  "capture": {
+    "build": "F0, TestFlight update 01a0e458-7ac2-7721-a872-abba9f99f608",
+    "group": "g0006",
+    "on_device_candidates": [
+      "2009-16-6"
+    ],
+    "accession_status": "corrected",
+    "machine_reading": "2009-16-6",
+    "human_value": "2009-16-6, 7-a, 8-a,b, 11",
+    "flags": [],
+    "hard_cases_tagged": [
+      "reflective_glass"
+    ],
+    "note": null
+  },
+  "traps": {
+    "shorthand": "The locator offers '2009-16-6' only; '7-a', '8-a,b' and '11' are not tokens on their own. The tester typed the whole list, which is the honest answer and not a single key. Expanding the shorthand needs the prefix carried along the line — not yet done."
+  }
+}

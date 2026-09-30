@@ -1,0 +1,110 @@
+{
+  "id": "cooper-hewitt-2015-1-18",
+  "venue": "cooper-hewitt",
+  "gallery_dialect": "house_card",
+  "captured": "2026-09-29",
+  "source_image": {
+    "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0020-label.jpg",
+    "sha256": "dc3026fcec8ae4ca05c3f1cd96a7d94ddefcef114752596e4cc7280b4615dbcf"
+  },
+  "frames": {
+    "label": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0020-label.jpg",
+      "sha256": "dc3026fcec8ae4ca05c3f1cd96a7d94ddefcef114752596e4cc7280b4615dbcf"
+    },
+    "work": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0021-work.jpg",
+      "sha256": "3487243f9add5f71a43bd0874bfd7e5ef73d77134ee6dbf695c00d169760e7e2"
+    }
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": true,
+    "gps_note": "Every frame carries capture time with a -04:00 offset and the F0 build's 9-key GPS block. But from the first label (f0004, 16:18) to the exterior (f0028, 16:33) every frame carries the same fix, taken at 16:16:20 by the entrance: the phone produced no new fix indoors. The fix places the take at Cooper Hewitt; it says nothing about where in the building a frame was shot."
+  },
+  "label_form": "printed_card",
+  "verified_against": "catalog_dataset",
+  "catalog": {
+    "checked": "2026-09-29",
+    "source": "github.com/cooperhewitt/collection, meta/objects.csv and meta/objects-participants.csv (CC0; last pushed 2018-01-10)",
+    "object_id": 68268301,
+    "url": "https://collection.cooperhewitt.org/objects/68268301/",
+    "accession_number": "2015-1-18",
+    "title": "Textile (Netherlands), 2011",
+    "object_date": "2011",
+    "medium": "100% cotton",
+    "credit_line": "Gift of Vlisco",
+    "year_acquired": 2015,
+    "makers": [
+      {
+        "name": "Marjo Penninx",
+        "role": "Designed by"
+      },
+      {
+        "name": "Vlisco",
+        "role": "Manufactured by",
+        "dates": "Helmond, Netherlands, founded 1846"
+      }
+    ]
+  },
+  "difficulty": [
+    "accession_looks_like_a_date",
+    "accession_is_a_valid_calendar_date",
+    "old_style_figures",
+    "silhouette_key"
+  ],
+  "expected": {
+    "accession_number": "2015-1-18",
+    "title": "Style Stiletto textile",
+    "date_edtf": "2011",
+    "artist": "Marjo Penninx",
+    "artist_role": "designer",
+    "artist_nationality": "Dutch",
+    "artist_dates": "1965/..",
+    "makers": [
+      {
+        "role": "Designed by",
+        "name": "Marjo Penninx",
+        "display": "Dutch, b. 1965"
+      },
+      {
+        "role": "Manufactured by",
+        "name": "Vlisco",
+        "place": "Helmond, Netherlands"
+      }
+    ],
+    "medium": "Wax-resist printed on cotton plain weave",
+    "credit_line": "Gift of Vlisco",
+    "owning_institution": null,
+    "attribution_qualifier": null
+  },
+  "label_vs_catalog": {
+    "agree": [
+      "date",
+      "credit_line",
+      "designer",
+      "manufacturer"
+    ],
+    "differ": {
+      "title": "label 'Style Stiletto textile', catalog 'Textile (Netherlands), 2011' — the catalog title is generic",
+      "medium": "label 'Wax-resist printed on cotton plain weave', catalog '100% cotton'",
+      "designer_nationality": "label 'Dutch, b. 1965'; the dataset has no nationality or dates for her"
+    }
+  },
+  "capture": {
+    "build": "F0, TestFlight update 01a0e458-7ac2-7721-a872-abba9f99f608",
+    "group": "g0007",
+    "on_device_candidates": [
+      "2015-1-18"
+    ],
+    "accession_status": "confirmed",
+    "machine_reading": "2015-1-18",
+    "human_value": "2015-1-18",
+    "flags": [],
+    "hard_cases_tagged": [],
+    "note": null
+  },
+  "traps": {
+    "valid_date": "18 January 2015 is a real date. Confirmed on the spot anyway: by this point in the visit the tester had recognized the pattern (their account afterwards)."
+  }
+}

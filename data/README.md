@@ -90,9 +90,12 @@ frame, so `frames` names each one by its role:
 
 **This shape changes when raw moves to a bucket.** A frame reference becomes
 `{"key": "...", "sha256": "..."}` rather than a bare path — the key is the address, the
-hash is the identity, and the hash is what says if the two ever disagree (D37). Nothing
-has migrated yet; all 23 fixtures are rebound in one pass, and the examples above are
-the current committed shape until then.
+hash is the identity, and the hash is what says if the two ever disagree (D37). A
+fixture from a take pulled from the bucket is written in this shape from the start —
+the Cooper Hewitt fixtures are, with keys and hashes taken from the take's
+`frames.json` — and `source_image` is a reference too. The 23 fixtures from USB takes
+keep bare paths until they are rebound in one pass, and `npm run locator-eval` reads
+both.
 
 Roles are free text but reuse the ones already in the set (`work`, `label`,
 `accession_crop`, `tombstone`, `numbered_panel_key`, `artist_biography_panel`,
@@ -113,13 +116,43 @@ now part of the format:
 - **`shared_panel`**, with `label_kind: "shared_panel"` — one card governing several
   objects. `count`, then `objects[]`, each with its accession, what the card says
   about it, and its own `catalog` record. The fixture's top-level `expected` is the
-  object the tester confirmed; the panel is the unit, and any of its accessions first
-  is a correct locate.
+  object in the work frame, which is usually the one the tester confirmed; when it
+  isn't, the photograph wins and `capture` keeps what was confirmed
+  (`cooper-hewitt-1992-132-1`, #22). The panel is the unit, and any of its accessions
+  first is a correct locate.
 - **`catalog`** and **`label_vs_catalog`** — for `verified_against: catalog_api`, a
   snapshot of the institution's record (object ID, URL, title, date, medium, credit
   line, gallery, the date it was checked) and a diff against the label: `agree` lists
   the fields that match, `differ` explains each that doesn't. Two claims from one
   institution about one object, kept side by side (§4.7).
+
+Cooper Hewitt (2026-09-29), the first take pulled from the bucket, added four more:
+
+- **`verified_against: catalog_dataset`** — checked against a catalog the institution
+  publishes as a file rather than serves, when its API doesn't hold the record. The
+  Smithsonian Open Access API carries only Cooper Hewitt's CC0 records and none of the
+  first visit's objects, but the museum's own `objects.csv` on GitHub does. A dataset
+  is a snapshot, so `catalog.source` names it and a disagreement with the label may be
+  the dataset's age (a designer's death date it predates) rather than an error.
+- **`expected.makers`** — for design objects, which have designers, manufacturers and
+  firms rather than one artist: each entry is the label's role phrase (`Designed by`,
+  `Manufactured by`, `Made by`, or `null` when the card gives none), the name, and the
+  card's own parenthetical: `display` for a person's nationality and dates (`American,
+  b. 1932`), `place` for a firm's city (`Hoboken, NJ, USA`), and `of` for the firm a
+  designer worked for (`Henry Dreyfuss Associates (New York, NY, USA)`, from
+  "Designed by Donald M. Genaro … of Henry Dreyfuss Associates"). `artist` stays, as
+  the designer, so the field every fixture has still means the same thing.
+- **In a `shared_panel`**, `key` says how the card ties a tombstone to its object —
+  `silhouette` (a black pictogram per object) or `none`. An object whose number the
+  card abbreviates carries `as_written_on_label` beside the full accession (`7-a` for
+  `2009-16-7-a`, the card's shorthand list). Where the card has one tombstone for all
+  its objects rather than one each, an object carries `what` instead of its own title:
+  a few words, ours and not the card's, saying which object the number is (`drawing`,
+  `vase: the bottle and its plywood frame`), taken from the catalog.
+- **`related_groups`** — manifest groups from the same take that belong to this
+  fixture but aren't fixtures themselves, keyed by group ID with a sentence saying why.
+  The first is a caption shot as a label (g0005): no tombstone and no number, so its
+  frames are kept under this fixture's `frames` and the group is explained here.
 
 `frame_metadata` says what the files actually carry. `gps: false` is the honest state of
 the first visit — the camera had no location permission — and a fixture without GPS
