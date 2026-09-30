@@ -1,0 +1,171 @@
+{
+  "id": "cooper-hewitt-1992-132-1",
+  "venue": "cooper-hewitt",
+  "gallery_dialect": "house_card",
+  "captured": "2026-09-29",
+  "source_image": {
+    "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0025-label.jpg",
+    "sha256": "df8c1ba57f1b9421c768d359f61385902e3193d5452a5c6a859787742bdf6133"
+  },
+  "frames": {
+    "label": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0025-label.jpg",
+      "sha256": "df8c1ba57f1b9421c768d359f61385902e3193d5452a5c6a859787742bdf6133"
+    },
+    "work": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0026-work.jpg",
+      "sha256": "2b0e456bc892490637715c1dccfa6b6c26dc8961cf7398dfd09eb3ea79892097"
+    },
+    "extended_label": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0027-wall_text.jpg",
+      "sha256": "e79854c149769099b9dd4c687afaaf086c21a1e9b9025744b00d6447bdd7fb0e"
+    }
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": true,
+    "gps_note": "Every frame carries capture time with a -04:00 offset and the F0 build's 9-key GPS block. But from the first label (f0004, 16:18) to the exterior (f0028, 16:33) every frame carries the same fix, taken at 16:16:20 by the entrance: the phone produced no new fix indoors. The fix places the take at Cooper Hewitt; it says nothing about where in the building a frame was shot."
+  },
+  "label_form": "printed_card",
+  "label_kind": "shared_panel",
+  "verified_against": "catalog_dataset",
+  "catalog": {
+    "checked": "2026-09-29",
+    "source": "github.com/cooperhewitt/collection, meta/objects.csv and meta/objects-participants.csv (CC0; last pushed 2018-01-10)",
+    "object_id": 18638893,
+    "url": "https://collection.cooperhewitt.org/objects/18638893/",
+    "accession_number": "1992-132-1-a,b",
+    "title": "\"Wisk Bottle\" from \"Recycle Series\" Vase, 1989",
+    "object_date": "1989",
+    "medium": "plastic, wood",
+    "credit_line": "Museum purchase through bequest of Ida McNeil in memory of Lincoln C. McNeil and Catherine McNeil",
+    "year_acquired": 1992,
+    "makers": [
+      {
+        "name": "Constantin Boym",
+        "role": "Designed by",
+        "dates": "Russian, active USA, b. 1955"
+      }
+    ]
+  },
+  "shared_panel": {
+    "count": 2,
+    "key": "silhouette",
+    "objects": [
+      {
+        "accession_number": "1992-131-8",
+        "what": "drawing",
+        "catalog": {
+          "checked": "2026-09-29",
+          "source": "github.com/cooperhewitt/collection, meta/objects.csv and meta/objects-participants.csv (CC0; last pushed 2018-01-10)",
+          "object_id": 18638889,
+          "url": "https://collection.cooperhewitt.org/objects/18638889/",
+          "accession_number": "1992-131-8",
+          "title": "Drawing, Recycle Tabletop Objects, 1988",
+          "object_date": "1988",
+          "medium": "graphite, pen and ink, color pencil on white wove paper",
+          "credit_line": "Gift of Constantin Boym",
+          "year_acquired": 1992,
+          "makers": [
+            {
+              "name": "Constantin Boym",
+              "role": "Designed by",
+              "dates": "Russian, active USA, b. 1955"
+            }
+          ]
+        }
+      },
+      {
+        "accession_number": "1992-132-1-a,b",
+        "what": "vase: the bottle and its plywood frame",
+        "catalog": {
+          "checked": "2026-09-29",
+          "source": "github.com/cooperhewitt/collection, meta/objects.csv and meta/objects-participants.csv (CC0; last pushed 2018-01-10)",
+          "object_id": 18638893,
+          "url": "https://collection.cooperhewitt.org/objects/18638893/",
+          "accession_number": "1992-132-1-a,b",
+          "title": "\"Wisk Bottle\" from \"Recycle Series\" Vase, 1989",
+          "object_date": "1989",
+          "medium": "plastic, wood",
+          "credit_line": "Museum purchase through bequest of Ida McNeil in memory of Lincoln C. McNeil and Catherine McNeil",
+          "year_acquired": 1992,
+          "makers": [
+            {
+              "name": "Constantin Boym",
+              "role": "Designed by",
+              "dates": "Russian, active USA, b. 1955"
+            }
+          ]
+        }
+      }
+    ],
+    "note": "One tombstone, 'Recycle series drawing and vase made from Wisk bottle, 1988–89', with both numbers at the end of one credit line. The silhouette and the work photo are the vase; the drawing was not photographed."
+  },
+  "difficulty": [
+    "shared_panel",
+    "two_accessions_one_line",
+    "human_confirmed_the_other_object",
+    "credit_line_covers_objects_with_different_credits",
+    "part_designator_lowercase",
+    "old_style_figures",
+    "reflective_glass",
+    "date_range_in_title"
+  ],
+  "expected": {
+    "accession_number": "1992-132-1-a,b",
+    "title": "Recycle series drawing and vase made from Wisk bottle",
+    "date_raw": "1988–89",
+    "date_edtf": "1988/1989",
+    "date_edtf_note": "The label's range covers both objects; the catalog dates the drawing 1988 and the vase 1989.",
+    "artist": "Constantin Boym",
+    "artist_role": "designer",
+    "artist_nationality": "American",
+    "artist_birthplace": "Russia",
+    "artist_dates": "1955/..",
+    "makers": [
+      {
+        "role": null,
+        "name": "Constantin Boym",
+        "display": "American, b. Russia, 1955",
+        "of": "Boym Partners, Inc. (New York, NY, USA)"
+      }
+    ],
+    "medium": "Graphite, ink, and colored pencil on paper; plastic bottle, plywood",
+    "credit_line": "Museum purchase through bequest of Ida McNeil in memory of Lincoln C. McNeil and Catherine McNeil",
+    "owning_institution": null,
+    "attribution_qualifier": null
+  },
+  "label_vs_catalog": {
+    "agree": [
+      "designer",
+      "credit_line_for_the_vase"
+    ],
+    "differ": {
+      "credit_line_for_the_drawing": "the label's one credit line covers both, but the catalog credits the drawing 1992-131-8 'Gift of Constantin Boym' — only the vase was bought through the McNeil bequest. A reader that attaches the line's credit to every number on it is wrong for the drawing.",
+      "designer_nationality": "label 'American, b. Russia, 1955', catalog 'Russian, active USA, b. 1955' — the same facts with different emphasis",
+      "title": "catalog: drawing 'Drawing, Recycle Tabletop Objects, 1988'; vase '\"Wisk Bottle\" from \"Recycle Series\" Vase, 1989'",
+      "medium": "catalog vase 'plastic, wood'; drawing 'graphite, pen and ink, color pencil on white wove paper'"
+    }
+  },
+  "capture": {
+    "build": "F0, TestFlight update 01a0e458-7ac2-7721-a872-abba9f99f608",
+    "group": "g0009",
+    "on_device_candidates": [
+      "1992-131-8",
+      "1992-132-1"
+    ],
+    "accession_status": "confirmed",
+    "machine_reading": "1992-131-8",
+    "human_value": "1992-131-8",
+    "flags": [],
+    "hard_cases_tagged": [
+      "reflective_glass"
+    ],
+    "note": null
+  },
+  "traps": {
+    "confirmed_the_wrong_object": "The tester confirmed the first number offered, 1992-131-8, which is the drawing. The photographed object is the vase, 1992-132-1-a,b. Both are on the card, so the confirmation was not wrong about the label — it was wrong about the work. The read-back asks 'is this the number?', not 'is this the number of what you photographed?'.",
+    "part_designator": "On the device the vase was offered as '1992-132-1' — the '-a,b' dropped. The locator now keeps it, and ranks it first because the longer token scores higher.",
+    "bare_number_on_wall_text": "The extended label (f0027) ends with a pictogram and '133' — a guide or stop number, not an accession."
+  }
+}

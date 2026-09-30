@@ -1,0 +1,100 @@
+{
+  "id": "cooper-hewitt-1966-78-1",
+  "venue": "cooper-hewitt",
+  "gallery_dialect": "house_card",
+  "captured": "2026-09-29",
+  "source_image": {
+    "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0022-label.jpg",
+    "sha256": "ba357e491d267af893ed50f0c1146875fb66a4ac6eb182a4e23ba8d8948d5830"
+  },
+  "frames": {
+    "label": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0022-label.jpg",
+      "sha256": "ba357e491d267af893ed50f0c1146875fb66a4ac6eb182a4e23ba8d8948d5830"
+    },
+    "work": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0023-work.jpg",
+      "sha256": "ae29bee9e8378d67fb70a563af1cbbdb3fc64c6fa6c29be133f0cad7561fb15d"
+    },
+    "extended_label": {
+      "key": "raw/uua65eo2qbs6et3m/2026-09-29-cooper-hewitt/f0024-wall_text.jpg",
+      "sha256": "5528496ffc4ac549ad47b900b0d6bb2cd5fee9e93a795c6b5cbf99d7767ad8b4"
+    }
+  },
+  "frame_metadata": {
+    "exif_datetime": true,
+    "gps": true,
+    "gps_note": "Every frame carries capture time with a -04:00 offset and the F0 build's 9-key GPS block. But from the first label (f0004, 16:18) to the exterior (f0028, 16:33) every frame carries the same fix, taken at 16:16:20 by the entrance: the phone produced no new fix indoors. The fix places the take at Cooper Hewitt; it says nothing about where in the building a frame was shot."
+  },
+  "label_form": "printed_card",
+  "verified_against": "catalog_dataset",
+  "catalog": {
+    "checked": "2026-09-29",
+    "source": "github.com/cooperhewitt/collection, meta/objects.csv and meta/objects-participants.csv (CC0; last pushed 2018-01-10)",
+    "object_id": 18454659,
+    "url": "https://collection.cooperhewitt.org/objects/18454659/",
+    "accession_number": "1966-78-1",
+    "title": "Dress (USA), 1966",
+    "object_date": "1966",
+    "medium": "paper",
+    "credit_line": "Gift of Edna J. Curran",
+    "year_acquired": 1966,
+    "makers": []
+  },
+  "difficulty": [
+    "accession_looks_like_a_date",
+    "old_style_figures",
+    "perforated_metal_surround",
+    "silhouette_key",
+    "reflective_glass",
+    "no_designer",
+    "year_in_title_equals_accession_year"
+  ],
+  "expected": {
+    "accession_number": "1966-78-1",
+    "title": "Paper dress",
+    "date_edtf": "1966",
+    "artist": null,
+    "makers": [
+      {
+        "role": null,
+        "name": "Mars Manufacturing Company",
+        "place": "Asheville, NC, USA"
+      }
+    ],
+    "medium": "Printed paper",
+    "credit_line": "Gift of Edna J. Curran",
+    "owning_institution": null,
+    "attribution_qualifier": null
+  },
+  "label_vs_catalog": {
+    "agree": [
+      "date",
+      "credit_line",
+      "medium"
+    ],
+    "differ": {
+      "title": "label 'Paper dress', catalog 'Dress (USA), 1966'",
+      "maker": "label 'Mars Manufacturing Company (Asheville, NC, USA)'; the 2018 dataset lists no maker, only the donor"
+    }
+  },
+  "capture": {
+    "build": "F0, TestFlight update 01a0e458-7ac2-7721-a872-abba9f99f608",
+    "group": "g0008",
+    "on_device_candidates": [
+      "1966-78-1"
+    ],
+    "accession_status": "confirmed",
+    "machine_reading": "1966-78-1",
+    "human_value": "1966-78-1",
+    "flags": [],
+    "hard_cases_tagged": [
+      "reflective_glass"
+    ],
+    "note": null
+  },
+  "traps": {
+    "year_twice": "The dress is dated 1966 and was acquired in 1966, so the title date and the key's first group are the same number on one card. A reader that takes the key's year as the object's date is right here by accident.",
+    "ocr_garbage_line": "The last line read '04деe дако» Аvоeбsк' — the extended label's first words, clipped by the frame edge and read as Cyrillic."
+  }
+}

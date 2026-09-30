@@ -90,9 +90,12 @@ frame, so `frames` names each one by its role:
 
 **This shape changes when raw moves to a bucket.** A frame reference becomes
 `{"key": "...", "sha256": "..."}` rather than a bare path — the key is the address, the
-hash is the identity, and the hash is what says if the two ever disagree (D37). Nothing
-has migrated yet; all 23 fixtures are rebound in one pass, and the examples above are
-the current committed shape until then.
+hash is the identity, and the hash is what says if the two ever disagree (D37). A
+fixture from a take pulled from the bucket is written in this shape from the start —
+the Cooper Hewitt fixtures are, with keys and hashes taken from the take's
+`frames.json` — and `source_image` is a reference too. The 23 fixtures from USB takes
+keep bare paths until they are rebound in one pass, and `npm run locator-eval` reads
+both.
 
 Roles are free text but reuse the ones already in the set (`work`, `label`,
 `accession_crop`, `tombstone`, `numbered_panel_key`, `artist_biography_panel`,
@@ -115,6 +118,12 @@ now part of the format:
   about it, and its own `catalog` record. The fixture's top-level `expected` is the
   object the tester confirmed; the panel is the unit, and any of its accessions first
   is a correct locate.
+- **`verified_against: catalog_dataset`** — checked against a catalog the institution
+  publishes as a file rather than serves, when its API doesn't hold the record. Cooper
+  Hewitt's first: the Smithsonian Open Access API carries only its CC0 records and none
+  of the first visit's objects, but the museum's own `objects.csv` on GitHub does. A
+  dataset is a snapshot, so `catalog.source` names it and a disagreement with the label
+  may be the dataset's age (a designer's death date it predates) rather than an error.
 - **`catalog`** and **`label_vs_catalog`** — for `verified_against: catalog_api`, a
   snapshot of the institution's record (object ID, URL, title, date, medium, credit
   line, gallery, the date it was checked) and a diff against the label: `agree` lists
