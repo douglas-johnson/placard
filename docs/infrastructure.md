@@ -430,8 +430,9 @@ Housekeeping: the `placard-scratch` bucket and key are gone (2026-09-22).
      BadDigest` (§8, 2026-09-27).
    - ~~Does B2 return an MD5 ETag for a simple PUT?~~ Yes (§8).
    - ~~The plain-`DeleteObject` marker check from step 2~~ — soft (§8).
-   - The app's native half — `File.info({md5})` and `UploadTask` — against the
-     deployed service, from the phone. Still open; it is the first real upload.
+   - ~~The app's native half — `File.info({md5})` and `UploadTask` — against the
+     deployed service, from the phone.~~ The first real upload, Cooper Hewitt,
+     2026-09-29: 28 frames and 68 records, pulled complete (field-beta §6.2).
 
 One housekeeping note: the Vercel plugin hooks in Claude Code sessions will keep
 steering toward Vercel now that the proposal has moved off it. Remove the plugin from

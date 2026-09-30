@@ -105,19 +105,21 @@ update (D33). What exists:
 - `tools/redact/` — the version-by-version redaction tool (D36, D42)
 - `tools/corpus-pull/` — B2 → `data/labels/raw/<contributor>/<take>/`, replacing USB
 - `tools/ocr/`, `tools/exif/`, `tools/manifest/` — the Mac-side corpus pipeline
-- `data/` — 23 fixtures (MCNY label-only, the Met verified against its API); venue registry
+- `data/` — 31 fixtures (MCNY label-only, the Met verified against its API, Cooper
+  Hewitt against the museum's published dataset); venue registry
 - `docs/capture-protocol.md` — the field procedure
 
 **Deployed 2026-09-27:** `ingest` and its Postgres on Railway, at
 `ingest.placard.pics` (D44; `ingest-testflight.up.railway.app` also answers), the EAS variables, and the OTA update carrying the
-upload queue. The B2 live checks passed (infrastructure §8). **Not yet done:** the first
-real upload. It waits on a museum visit: turn on "Send your visits" on the phone before
-starting the visit, shoot as usual with the stock camera alongside, then run
-`corpus-pull`. Don't test with throwaway photos, since `placard-raw` keeps everything.
+upload queue. The B2 live checks passed (infrastructure §8).
 
-**Next:** that first upload, which is also the first field test of the camera's focus
-and crop fixes (JS, 126489b, shipped 2026-09-20 and not yet tried in a gallery); then
-F1 (field-beta §7), meaning the consent screen, face blur, and external testers.
+**First real upload, 2026-09-29, Cooper Hewitt** (field-beta §6.2): 28 frames and 68
+records, `corpus-pull` reported the take complete, and the camera's focus and crop fixes
+(126489b) held in a gallery. Don't test with throwaway photos, since `placard-raw` keeps
+everything.
+
+**Next:** F1 (field-beta §7), meaning the consent screen, face blur, and external
+testers; and the two post-visit follow-ups, #18 and #19.
 
 ## Repository layout
 

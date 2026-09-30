@@ -377,6 +377,45 @@ the institution's catalog, on a phone in airplane mode, with the Mac out of the 
 until the evening. What was not: that the app's camera can replace the stock one.
 For the next visit it can't, and the protocol's *stock camera comes too* stands.
 
+### 6.2 What happened at Cooper Hewitt — 2026-09-29
+
+The first take to leave the phone by the upload queue (D43) rather than by cable. Nine
+label groups (one of them a caption shot as a label), six wall texts, three venue signs, one exterior, 28 frames and 68 manifest
+records, and `corpus-pull` reported the take complete against its own `take_ended`
+record on the first run. Nothing was hand-carried, bound by capture time, or renamed.
+Cooper Hewitt was not in the registry, so the tester added it on the phone as a
+low-confidence venue; it is in `data/venues/` now.
+
+**The camera fixes held.** 126489b was untested in a gallery until this visit, and all
+nine label frames are sharp, seven of them shot through glass the tester tagged as reflective. Every frame is
+3024 × 4032, the sensor's own aspect, where the Met's were 1860 wide. On-device OCR read
+every accession cleanly. On one visit and one phone, that answers the Met's open
+question in the app's favour; whether the protocol can drop *stock camera comes too*
+wants a second venue first.
+
+**The phone was right and the answers were wrong.** On all eight real labels the right
+accession was among the candidates, and on the three-object panel it was first. On the
+first four the tester answered *no number*, three of them tagged *loan*, because the
+numbers looked like dates: `2018-40-1`, `2007-25-4`, `2025-11-1`, `2007-42-1`. They are
+Cooper Hewitt's year–lot–item keys, and the museum's own catalog shows how little a date
+check would help. A middle group above 12 rules out a date for 154,082 of 192,248
+numbers, but 13,021 are real calendar dates, the kettle's among them. The Met's problem
+was a date offered as a number; this one is a number doubted as a date. The locator
+can't fix that. The read-back could, by saying what the venue's numbers look like, which
+the registry now knows.
+
+**A confirmation is about the label, not the work.** The last card carried two numbers,
+a drawing and a vase, on one credit line. The tester confirmed the first one offered,
+the drawing's; the photo is of the vase. Nothing asked which object the number belonged
+to, and on a shared panel that is the question.
+
+**GPS stopped at the door.** Every frame from the first label to the exterior, fifteen
+minutes later, carries the same fix, taken at the entrance at 16:16:20. The phone
+produced no new fix indoors. The fix is honest, since each frame's GPS block carries
+its own timestamp, but the exterior shot, which is meant to bookend the visit with a
+fresh position, got the stale one. Worth one line in the location watcher when it is
+next touched: a bookend frame should wait briefly for a fix newer than the take's last.
+
 ---
 
 ## 7. Milestones

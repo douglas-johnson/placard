@@ -44,7 +44,7 @@ test.** What it does, and where:
 | `src/screens/Done.tsx` | After the exterior: the manifest, and nothing else, before the take is let go |
 | `src/screens/Capture.tsx` | The viewfinder. Preview is 3:4 on purpose — expo-camera crops the still to the preview — and there is no `autofocus` prop on purpose: `"on"` means focus-once-and-lock (field-beta §6.1) |
 | `src/screens/LabelFlow.tsx` | A label → on-device read → accession shown back → C only if nothing read → B enforced, or a stated reason → flags and hard cases |
-| `src/accession.ts` | Finds and ranks accession-shaped lines; locates, never validates (D11). `npm run locator-eval` scores it against every reading in the corpus — device manifests and Mac OCR — 32/35 first-candidate correct after the Met |
+| `src/accession.ts` | Finds and ranks accession-shaped lines; locates, never validates (D11). `npm run locator-eval` scores it against every reading in the corpus — device manifests and Mac OCR — 40/43 first-candidate correct after Cooper Hewitt |
 | `src/screens/VenueFlow.tsx` | Arrival signage in the protocol's order; the exterior on leaving, which ends the take |
 | `src/screens/WallTextFlow.tsx` | The interpretive panel, optionally linked to the last label group |
 | `src/location.ts` | One position watcher per session; the fix is written into each JPEG's EXIF via `additionalExif` |
