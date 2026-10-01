@@ -14,7 +14,8 @@
     "testflight": {
       "distribution": "store",
       "autoIncrement": true,
-      "channel": "testflight"
+      "channel": "testflight",
+      "environment": "preview"
     },
     "production": {
       "extends": "testflight",
