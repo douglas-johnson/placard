@@ -18,7 +18,7 @@
  * P.S. Art label did until it could be removed on the phone (D41).
  */
 import { File, Paths, UploadTask } from 'expo-file-system';
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { AppState } from 'react-native';
 import { listTakes, manifestLines, onAppend, type Take } from './take';
 
@@ -171,19 +171,15 @@ function publish(patch: Partial<UploadStatus> = {}): void {
   listeners.forEach((l) => l(status));
 }
 
+function uploadStatusSubscription(onStoreChange: () => void): () => void {
+  listeners.add(onStoreChange);
+  return () => {
+    listeners.delete(onStoreChange);
+  };
+}
+
 export function useUploadStatus(): UploadStatus {
-  const [s, set] = useState(status);
-  useEffect(() => {
-    listeners.add(set);
-    // Catches an update between render and subscribe. useSyncExternalStore is the
-    // proper form, left until after the first real upload (D46).
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    set(status);
-    return () => {
-      listeners.delete(set);
-    };
-  }, []);
-  return s;
+  return useSyncExternalStore(uploadStatusSubscription, () => status);
 }
 
 // ---------------------------------------------------------------------------
