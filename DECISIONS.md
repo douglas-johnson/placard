@@ -2180,3 +2180,26 @@ frame, so ingest would have to learn to call such a visit complete.
 **What would reverse this:** a tester who wants to keep one kind back, most likely
 venue exteriors now that faces are blurred anyway (D49), would argue for the toggles,
 along with the ingest change they need.
+
+---
+
+## D51 — A label group can be settled again, and the later accession governs
+
+**Date:** 2026-10-04 · **Status:** accepted · **Decided by:** Claude, asked to decide it
+in the PR (#31) · **Issue:** #31
+
+When the label flow became routes, #31 asked what Back from the work to the read-back
+should do once the accession has been settled. Either the gesture goes, or settling
+again appends a correction. The Back button already allowed it, and settling again
+appended a second `accession` record, so the manifest already carried corrections
+without saying so.
+
+That stays, and is now explicit: **a group can have more than one `accession` record,
+and the later one governs.** Going back to fix a wrong "Yes, that's it" is worth more
+than being blocked from it, and an append keeps the first answer on the record, the way
+claims are superseded and never deleted (constraint 2). Swipe-back is off in the label
+flow, as it was in the visit's flows. Every step has its own Back, and the camera screens
+are full-bleed.
+
+`npm run locator-eval` judges each group on its last answer. Nothing else reads
+`accession` records yet. Anything that does should take the last one per group.

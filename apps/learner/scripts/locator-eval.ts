@@ -159,7 +159,11 @@ for (const { take, file: m } of manifests) {
       ? 'met'
       : (started?.venue?.slug ?? '');
   const shapes = shapesFor(slug);
-  for (const acc of recs.filter((r) => r.type === 'accession')) {
+  // A group settled twice, after going back from the work, is judged on the later
+  // answer, which governs (D51).
+  const settled = new Map<string, any>();
+  for (const r of recs) if (r.type === 'accession') settled.set(r.group, r);
+  for (const acc of settled.values()) {
     const ocr = recs.filter((r) => r.type === 'ocr' && r.group === acc.group && r.lines.length > 0);
     if (ocr.length === 0) continue; // redacted, or nothing read
     const lines = ocr.flatMap((o) => o.lines);
