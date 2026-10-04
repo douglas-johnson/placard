@@ -6,8 +6,9 @@ import { endTake } from '../../src/take';
 
 /** The exterior on leaving, which ends the visit. */
 export default function Exterior() {
-  const take = useCurrentTake()!;
+  const take = useCurrentTake();
   const router = useRouter();
+  if (!take) return null; // leaving the visit: see visit/_layout.tsx
   return (
     <VenueFlow
       take={take}

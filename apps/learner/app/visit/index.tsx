@@ -14,8 +14,9 @@ const ROUTE: Record<
 
 /** The hub for the visit in progress. */
 export default function Hub() {
-  const take = useCurrentTake()!;
+  const take = useCurrentTake();
   const router = useRouter();
+  if (!take) return null; // leaving the visit: see visit/_layout.tsx
   return (
     <Home
       take={take}

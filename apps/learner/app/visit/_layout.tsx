@@ -8,6 +8,10 @@ import { usePalette } from '../../src/theme';
  * honest about where a group ends, so the swipe-back gesture is off for them; a
  * swipe out of the label flow would leave its group open. Done is the end of the
  * visit and has nothing to go back to.
+ *
+ * Done's Close and the hub's Delete clear the visit after navigating away, but a
+ * native stack keeps the outgoing screens mounted through their exit transition, so
+ * every route under here renders nothing when there's no visit, whatever the order.
  */
 // The hub beneath any screen under visit/ that's opened directly, so Back from it lands
 // on the hub. A deep link gets this on its own; a router call needs `withAnchor`.

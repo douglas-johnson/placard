@@ -40,7 +40,12 @@ export default function RootLayout() {
     if (routeMarker.exists) {
       const [input, preset] = routeMarker.textSync().trim().split(':');
       routeMarker.delete();
-      const path = { label: 'label', wall_text: 'wall-text', venue: 'signage' }[input];
+      const path = {
+        label: 'label',
+        wall_text: 'wall-text',
+        venue: 'signage',
+        exterior: 'exterior',
+      }[input];
       if (take && path)
         router.push(`/visit/${path}${preset ? `?preset=${preset}` : ''}`, { withAnchor: true });
     }
