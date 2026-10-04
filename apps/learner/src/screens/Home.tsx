@@ -4,6 +4,7 @@ import { shareManifest } from '../share';
 import type { Take } from '../take';
 import { type, usePalette } from '../theme';
 import { Button, H1, P, Rule, Screen } from '../ui';
+import { DeleteVisit } from './DeleteVisit';
 import { PastTakes } from './PastTakes';
 import { UploadPanel } from './UploadPanel';
 
@@ -19,11 +20,13 @@ export function Home({
   onInput,
   onPreflight,
   onOpenVisit,
+  onDeleted,
 }: {
   take: Take;
   onInput: (input: Input) => void;
   onPreflight: () => void;
   onOpenVisit: (take: Take) => void;
+  onDeleted: () => void;
 }) {
   const p = usePalette();
   const insets = useInsets();
@@ -85,6 +88,7 @@ export function Home({
         <UploadPanel />
         <Rule />
         <PastTakes except={take.id} onOpen={onOpenVisit} />
+        <DeleteVisit take={take} onDeleted={onDeleted} />
         <Pressable onPress={onPreflight} hitSlop={8} style={{ marginTop: 20 }}>
           <Text style={[type.small, { color: p.muted }]}>Check this build</Text>
         </Pressable>

@@ -17,6 +17,7 @@ import { type FrameKind, type ManifestRecord, recordsOf, redactFrame, type Take 
 import { dark, type, usePalette } from '../theme';
 import { Button, H1, P, Rule, Screen } from '../ui';
 import { sentToCorpus } from '../upload';
+import { DeleteVisit } from './DeleteVisit';
 
 type FrameRecord = Extract<ManifestRecord, { type: 'frame' }>;
 type FrameView = FrameRecord & { uri: string; exists: boolean };
@@ -41,7 +42,15 @@ const KIND: Record<FrameKind, string> = {
  * usually a label and a label can't be read at thumbnail size — the first removal
  * was made blind, picking by kind and time.
  */
-export function Visit({ take, onBack }: { take: Take; onBack: () => void }) {
+export function Visit({
+  take,
+  onBack,
+  onDeleted,
+}: {
+  take: Take;
+  onBack: () => void;
+  onDeleted: () => void;
+}) {
   const p = usePalette();
   const insets = useInsets();
   const [frames, setFrames] = useState(() => framesOf(take));
@@ -130,10 +139,9 @@ export function Visit({ take, onBack }: { take: Take; onBack: () => void }) {
               <View style={[styles.confirm, { backgroundColor: p.card }]}>
                 <Text style={[type.body, { color: p.text }]}>Remove this photo for good?</Text>
                 <P muted>
-                  It's the one change a visit can take, and it's for one case: a photo that
-                  identifies a child — a student's name on a label, say. The photo is deleted here
-                  and any text the app read from it is wiped. The record that a photo was taken
-                  stays, so the visit still adds up.
+                  It's for one case: a photo that identifies a child — a student's name on a label,
+                  say. The photo is deleted here and any text the app read from it is wiped. The
+                  record that a photo was taken stays, so the visit still adds up.
                 </P>
                 <P muted>The copy in your camera roll is separate. Delete that one in Photos.</P>
                 {sentToCorpus(take, f.frame) ? (
@@ -148,6 +156,7 @@ export function Visit({ take, onBack }: { take: Take; onBack: () => void }) {
             ) : null}
           </View>
         ))}
+        <DeleteVisit take={take} onDeleted={onDeleted} />
         <Text style={[type.small, { color: p.pending, marginTop: 24 }]}>{take.id}</Text>
       </ScrollView>
       {viewing ? (

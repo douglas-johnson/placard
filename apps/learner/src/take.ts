@@ -299,6 +299,8 @@ function readManifest(dir: Directory): ManifestRecord[] {
     });
 }
 
+const DELETING = '.deleting-';
+
 /** Every take on the device, newest first. */
 export function listTakes(): Take[] {
   const root = takesDir();
@@ -306,6 +308,16 @@ export function listTakes(): Take[] {
   return root
     .list()
     .filter((e): e is Directory => e instanceof Directory)
+    .filter((dir) => {
+      if (!dir.name.startsWith(DELETING)) return true;
+      // A deletion a crash interrupted (deleteTake): finish it.
+      try {
+        dir.delete();
+      } catch (e) {
+        console.warn('[take] could not finish deleting', dir.name, e);
+      }
+      return false;
+    })
     .map((dir) => replay(dir.name, dir, readManifest(dir)))
     .filter((t): t is Take => t != null)
     .sort((a, b) => (a.started < b.started ? 1 : -1));
@@ -600,6 +612,20 @@ export function discardFrame(take: Take, frame: string): void {
   if (!redact(redactionFs(take.dir), frame, 'retake', day, 'discarded').found)
     throw new Error(`no frame ${frame} in ${take.id}`);
   recount(take);
+}
+
+/**
+ * Delete a visit from the phone, frames, manifest and ledger together (D48). Only
+ * ever one that has sent nothing: upload.ts deleteUnsent checks that and is the way
+ * in. The directory is renamed first, in one step, and from then on no listing sees
+ * it, so a crash before the delete leaves a hidden directory that the next listing
+ * clears, never a visit that replays half there. The camera-roll copies are separate
+ * assets the app never recorded, as with redactFrame.
+ */
+export function deleteTake(take: Take): void {
+  const name = `${DELETING}${take.id}`;
+  take.dir.rename(name);
+  new Directory(takesDir(), name).delete();
 }
 
 /** The manifest file, for the share sheet. */
