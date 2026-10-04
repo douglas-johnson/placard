@@ -164,6 +164,10 @@ export type ManifestRecord =
       candidates: string[];
     })
   | (Base & {
+      /**
+       * The tester's answer for a group. A group can have more than one, when the tester
+       * goes back from the work and settles again; the later one governs (D51).
+       */
       type: 'accession';
       group: string;
       status: AccessionStatus;

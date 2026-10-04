@@ -1,6 +1,7 @@
 import { Asset } from 'expo-asset';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { File, Paths } from 'expo-file-system';
+import { useFocusEffect, useIsFocused } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ReactNode, useCallback, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
@@ -40,8 +41,13 @@ export function Capture({
 }) {
   const insets = useSafeAreaInsets();
   const camera = useRef<CameraView>(null);
+  // In a stack this screen stays mounted under the next one: the label flow's capture
+  // sits beneath its read-back (#31). Off screen, the camera stops and the status bar
+  // is the other screen's, and coming back waits for the camera to be ready again.
+  const focused = useIsFocused();
   const [permission, requestPermission] = useCameraPermissions();
   const [ready, setReady] = useState(false);
+  useFocusEffect(useCallback(() => () => setReady(false), []));
   const [taking, setTaking] = useState(false);
 
   const shoot = useCallback(async () => {
@@ -130,7 +136,7 @@ export function Capture({
 
   return (
     <View style={styles.root}>
-      <StatusBar style="light" />
+      {focused ? <StatusBar style="light" /> : null}
       {/*
         Two things the Met visit taught about this view (field-beta §6.1), both
         verified against expo-camera's iOS source rather than its prop names:
@@ -150,13 +156,15 @@ export function Capture({
       */}
       <View style={styles.viewport} pointerEvents="none">
         <View style={styles.sensorFrame}>
-          <CameraView
-            ref={camera}
-            style={StyleSheet.absoluteFill}
-            facing="back"
-            animateShutter={false}
-            onCameraReady={() => setReady(true)}
-          />
+          {focused ? (
+            <CameraView
+              ref={camera}
+              style={StyleSheet.absoluteFill}
+              facing="back"
+              animateShutter={false}
+              onCameraReady={() => setReady(true)}
+            />
+          ) : null}
         </View>
       </View>
 

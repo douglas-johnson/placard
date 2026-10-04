@@ -3,6 +3,7 @@ import { Stack, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
+import { seedForDev } from '../src/labelGroup';
 import { startWatching, stopWatching } from '../src/location';
 import { setCurrentTake, useCurrentTake } from '../src/session';
 import { usePalette } from '../src/theme';
@@ -42,8 +43,6 @@ export default function RootLayout() {
     if (routeMarker.exists) {
       const text = routeMarker.textSync().trim();
       routeMarker.delete();
-      // A path opens as is, to look at a screen the simulator can't be tapped to.
-      if (text.startsWith('/')) router.push(text as never);
       const [input, preset] = text.split(':');
       const path = {
         label: 'label',
@@ -51,8 +50,18 @@ export default function RootLayout() {
         venue: 'signage',
         exterior: 'exterior',
       }[input];
-      if (take && path)
-        router.push(`/visit/${path}${preset ? `?preset=${preset}` : ''}`, { withAnchor: true });
+      // After the landing's redirect to a resumed visit, which would otherwise replace
+      // whatever this pushes.
+      setTimeout(() => {
+        // A path opens as is, to look at a screen the simulator can't be tapped to.
+        if (text.startsWith('/')) router.push(text as never);
+        // `label:readback` and `label:flags` open the label flow at that step, with
+        // stand-in readings seeded (src/labelGroup.tsx).
+        else if (take && path === 'label' && (preset === 'readback' || preset === 'flags')) {
+          seedForDev(preset);
+          router.push(`/visit/label/${preset}`, { withAnchor: true });
+        } else if (take && path) router.push(`/visit/${path}`, { withAnchor: true });
+      }, 1000);
     }
     const marker = new File(Paths.document, 'selftest');
     if (!marker.exists) return;

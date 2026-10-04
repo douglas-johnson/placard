@@ -16,7 +16,7 @@ export type Removal = 'redacted' | 'discarded';
  *   ocr records        →  lines: [], candidates: [], warnings: [REDACTED/DISCARDED …]
  *   accession records  →  reading: null, candidates: []  — only when the frame is a
  *                          label or accession crop, whose OCR the locator read them
- *                          from (LabelFlow). The group's status and value stay: they
+ *                          from (labelGroup.tsx). The group's status and value stay: they
  *                          are the tester's answer, like the group's note, which the
  *                          Mac-side redaction of the Met kept too.
  *   take_ended         →  counts.frames less one, when the visit has already ended
