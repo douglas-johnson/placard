@@ -103,6 +103,16 @@ assert.equal(redactManifest(mac, 'f0035', 'identifies a minor', '2026-09-27').te
 
 assert.equal(redactManifest(text, 'f9999', 'x', '2026-09-27').found, false);
 
+// A visit that has already ended claims its photos in take_ended (D38). Removing one
+// that was never sent takes it off the claim, once, however many times it runs.
+const ended = rec({ seq: 97, type: 'take_ended', counts: { labels: 1, frames: 2 } });
+const withEnd = [...lines.slice(0, -1), ended, ''].join('\n');
+const e1 = redactManifest(withEnd, 'f0035', 'identifies a minor', '2026-09-27');
+assert.equal(JSON.parse(e1.text.split('\n')[7]).counts.frames, 1);
+assert.equal(JSON.parse(e1.text.split('\n')[7]).counts.labels, 1);
+const e2 = redactManifest(e1.text, 'f0035', 'identifies a minor', '2026-09-28');
+assert.equal(e2.text, e1.text, 'a second run takes nothing more off');
+
 // A retake (D48) goes the same way under its own field, so tools downstream can tell a
 // thrown-away frame from one that identified a minor.
 const d = redactManifest(text, 'f0035', 'retake', '2026-10-04', 'discarded');

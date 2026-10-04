@@ -104,6 +104,7 @@ export function LabelFlow({
     return [...all.values()].sort((a, b) => b.score - a.score).slice(0, 3);
   }, [readings]);
   const [ocrNote, setOcrNote] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   // The last label frame read as nothing at all — a floor, a plinth, a frame that
   // never focused (Met f0030, field-beta §6.1). Offer the retake before any confirm.
   const [lastEmpty, setLastEmpty] = useState(false);
@@ -186,12 +187,13 @@ export function LabelFlow({
       try {
         discardFrame(take, last.id);
       } catch (e) {
-        setOcrNote(e instanceof Error ? e.message : "Couldn't discard that frame");
+        setError(`Couldn't throw that frame away: ${e instanceof Error ? e.message : e}`);
         return;
       }
       setLabelFrames((f) => f.slice(0, -1));
       setReadings(({ [last.id]: _gone, ...rest }) => rest);
     }
+    setError(null);
     setLastEmpty(false);
     setOcrNote(null);
     setTyping(false);
@@ -320,6 +322,9 @@ export function LabelFlow({
                 <Button label="Retake" tone="secondary" onPress={retake} style={styles.retake} />
               ) : null}
             </View>
+          ) : null}
+          {error ? (
+            <Text style={[type.small, { color: p.fail, marginBottom: 12 }]}>{error}</Text>
           ) : null}
           {lastEmpty && !typing ? (
             <>

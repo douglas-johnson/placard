@@ -168,8 +168,15 @@ the label frame was deleted from `raw/`, its OCR lines were stripped from the ma
 (the record stays, marked `redacted`, so replay and sequence numbers are intact), and
 `derived/` was regenerated. The fixture for that group records the work and the
 exhibition wall text, and `expected.artist` is `null` with a note saying why. This is
-the one edit that is ever made to a raw take, and the capture protocol says not to shoot
-the label in the first place.
+the one edit that is ever made to a raw take after the fact, and the capture protocol
+says not to shoot the label in the first place.
+
+A retake is the other thing a manifest can record, and it isn't an edit after the fact
+(D48). The tester throws a label frame away on the read-back and shoots it again. That
+happens while the label is still being shot, and the upload queue holds the group until
+it closes, so the frame never reaches `raw/`. It goes the same way on the phone, with
+the image deleted and its OCR emptied, but the frame record is marked `discarded`, not
+`redacted`, and `tools/manifest/bind-frames.py` lists it separately.
 
 The app can make the same edit on the phone: an earlier visit's photo can be removed,
 producing the same `file: null` / `redacted` frame record and emptied `ocr` record

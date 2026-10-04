@@ -19,6 +19,9 @@ export type Removal = 'redacted' | 'discarded';
  *                          from (LabelFlow). The group's status and value stay: they
  *                          are the tester's answer, like the group's note, which the
  *                          Mac-side redaction of the Met kept too.
+ *   take_ended         →  counts.frames less one, when the visit has already ended
+ *                          and the frame still had its file: the commit marker
+ *                          (D38) claims only the photos that will be sent.
  *
  * Every other line keeps its exact bytes, torn ones included. The accession
  * candidates are the union across the group's label frames, so wiping them can take
@@ -43,6 +46,9 @@ export function redactManifest(
   if (!target) return { text, file: null, found: false };
   const readForAccession =
     (target.kind === 'label' || target.kind === 'accession_crop') && target.group;
+  // Only a frame that still has its file changes the count, so running again, or
+  // finishing after a crash, never takes off a second one.
+  const removing = target.file != null;
 
   const out = lines.map((line) => {
     const r = parse(line);
@@ -76,6 +82,9 @@ export function redactManifest(
       (r.reading != null || (r.candidates?.length ?? 0) > 0)
     ) {
       return JSON.stringify({ ...r, reading: null, candidates: [] });
+    }
+    if (removing && r?.type === 'take_ended' && typeof r.counts?.frames === 'number') {
+      return JSON.stringify({ ...r, counts: { ...r.counts, frames: r.counts.frames - 1 } });
     }
     return line;
   });

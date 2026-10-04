@@ -2042,6 +2042,14 @@ afterwards. Adding a second frame of a label that won't fit in one stays a separ
 action, because the protocol asks for it on large case panels (capture-protocol, "two
 frames if it won't fit"); that split is Claude's call.
 
+**A removed photo comes off the commit marker** (Claude's call, found while building
+the retake, and fixed with it at Doug's request). D41 kept every line but the frame's
+own records byte for byte, so a visit that removed a photo before sending it still
+claimed it in `take_ended`'s frame count. `ingest` would never have called that visit
+complete. A removal now takes one off that count when the frame still had its file,
+and replay counts only frames that will be sent. A frame whose records were already
+sent is still a job for `tools/redact/`, as D43 says.
+
 **A visit with nothing sent can be deleted.** Deletion is limited to visits from which
 nothing has reached the corpus: none of the frames or records are in the upload ledger. A visit
 started while sending was off always qualifies, and so does one that never had signal.
