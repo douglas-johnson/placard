@@ -53,6 +53,8 @@ export type FaceScan = {
 };
 
 type NativeModule = {
+  /** FaceCore.swift's `faceMargin`: a pixellated region is the face grown by this on every side. */
+  faceMargin: number;
   recognize(uri: string, options?: RecognizeOptions): Promise<RecognizeResult>;
   detectFaces(uri: string): Promise<FaceScan>;
   pixellate(source: string, destination: string, boxes: FaceBox[]): Promise<void>;
@@ -62,6 +64,13 @@ const native = requireOptionalNativeModule<NativeModule>('VisionOcr');
 
 /** True when the native module is linked into this build. */
 export const isAvailable = native != null;
+
+/**
+ * The fraction of a face's size a pixellated region reaches past it on every side, as
+ * FaceCore.swift defines it. Null when the module isn't linked, and then no face is
+ * ever found either.
+ */
+export const faceMargin: number | null = native?.faceMargin ?? null;
 
 /** Recognize text in the image at a local file URI. Rejects if the module isn't linked. */
 export function recognize(uri: string, options?: RecognizeOptions): Promise<RecognizeResult> {

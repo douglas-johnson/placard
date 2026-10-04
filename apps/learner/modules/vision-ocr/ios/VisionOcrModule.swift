@@ -45,6 +45,10 @@ public class VisionOcrModule: Module {
 
     // The face pass (D49) is two calls so the policy stays in JS: which found faces
     // get pixellated is the tester's answer, and it can change without a native build.
+    // How far a pixellated region reaches past the face Vision found, so the face
+    // question can draw what pixellate covers without keeping its own copy.
+    Constant("faceMargin") { faceMargin }
+
     AsyncFunction("detectFaces") { (uri: URL) throws -> [String: Any] in
       let scan = try detectFaces(uri)
       return ["boxes": scan.boxes, "elapsedMs": scan.elapsedMs]

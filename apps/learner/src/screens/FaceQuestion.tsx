@@ -1,12 +1,13 @@
 import { useState } from 'react';
+import * as VisionOcr from '../../modules/vision-ocr';
 import { Image, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { answerFaces, faceOriginal, type FaceQuestion as Question, type Take } from '../take';
 import { type, usePalette } from '../theme';
 import { Button, H2, P } from '../ui';
 
-/** FaceCore.swift's `faceMargin`: the pixellated area is the face grown by this on every side. */
-const FACE_MARGIN = 0.35;
+/** What pixellate covers, from the module itself so the outline can't drift from the blur. */
+const FACE_MARGIN = VisionOcr.faceMargin ?? 0;
 
 /**
  * Asked when a frame has faces in it (D49). Every face was pixellated as the frame was
