@@ -79,7 +79,7 @@ export function Visit({ take, onBack }: { take: Take; onBack: () => void }) {
             day: 'numeric',
           })}{' '}
           · {take.counts.labels} {take.counts.labels === 1 ? 'label' : 'labels'} ·{' '}
-          {take.counts.frames} photos
+          {take.counts.frames} {take.counts.frames === 1 ? 'photo' : 'photos'}
         </P>
         <Button label="Share the manifest" tone="secondary" onPress={() => shareManifest(take)} />
         <Rule />

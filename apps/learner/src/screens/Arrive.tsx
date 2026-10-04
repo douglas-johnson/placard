@@ -129,7 +129,7 @@ export function Arrive({
                   { borderColor: p.rule, opacity: pressed ? 0.6 : 1 },
                 ]}
               >
-                <Text style={[type.body, { color: p.text, fontWeight: '600' }]}>
+                <Text style={[type.body, styles.name, { color: p.text, fontWeight: '600' }]}>
                   {c.venue.name}
                 </Text>
                 <Text style={[type.small, { color: p.muted }]}>{Math.round(c.distance)} m</Text>
@@ -249,4 +249,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'baseline',
   },
+  // Shrinks and wraps, so a long name never pushes the distance off the screen.
+  name: { flex: 1, marginRight: 16 },
 });
