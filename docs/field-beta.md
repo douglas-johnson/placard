@@ -156,7 +156,10 @@ recorded on the frame. Label frames go through the same pass — it is cheap, an
 label reflected in glass can have a face behind it.
 
 This alters what "raw" means for contributed frames, and §8.2 says so explicitly rather
-than leaving it to be discovered.
+than leaving it to be discovered. *(Settled as D49, with one change. Run over the corpus first, the face pass found
+eight faces, and every one belonged to an artwork, so a found face is blurred unless
+the tester says it's part of the work. That's to be re-evaluated once there are more
+examples.)*
 
 ---
 
@@ -468,7 +471,7 @@ Proposals, mine, not yet accepted. Each becomes a D-entry when Doug settles it.
    canon. This is the one that shapes everything else.
 2. **For contributed frames, "raw" means as-uploaded**, with on-device face blur as
    part of the act of capture. The blur count is recorded; the unblurred frame never
-   exists off the phone.
+   exists off the phone. *(Accepted as D49.)*
 3. **Contributors are pseudonymous by construction.** Device-generated ID, no accounts,
    the mapping to people kept off every server.
 4. **Ingest is FastAPI on Railway, with Backblaze B2 as the raw bucket** — settled as

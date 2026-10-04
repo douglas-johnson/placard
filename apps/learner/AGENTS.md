@@ -40,7 +40,8 @@ test.** What it does, and where:
 |---|---|
 | `app/` | The routes (Expo Router, D48). `_layout.tsx` starts the upload queue and location; `index.tsx` resumes a visit or opens `start.tsx` (Arrive); `visit/` is the visit in progress — the hub, `label`, `wall-text`, `signage`, `exterior`, `done` — with swipe-back off for the flows; `visits/[id].tsx` is an earlier visit; `preflight.tsx` |
 | `src/session.ts` | The visit in progress as a store, re-rendering its readers on every manifest write |
-| `src/take.ts` | A visit: frames plus an append-only NDJSON manifest under `Documents/takes/<date>-<venue>/`, replayed on launch to resume |
+| `src/take.ts` | A visit: frames plus an append-only NDJSON manifest under `Documents/takes/<date>-<venue>/`, replayed on launch to resume. Every frame goes through the face pass on its way in, and found faces are pixellated before it lands; the original waits in the cache until the tester answers (D49) |
+| `src/screens/FaceQuestion.tsx` | Over every visit screen: a frame's faces, blurred by default, each tappable to keep as part of the artwork. Not answering leaves the blur; ending the visit records that |
 | `src/screens/Arrive.tsx` | GPS fix → registry venues nearby → pick or add (a low-confidence claim) → the field log. Earlier visits, with share, live here too |
 | `src/screens/Done.tsx` | After the exterior: the manifest, and nothing else, before the take is let go |
 | `src/screens/Capture.tsx` | The viewfinder. Preview is 3:4 on purpose — expo-camera crops the still to the preview — and there is no `autofocus` prop on purpose: `"on"` means focus-once-and-lock (field-beta §6.1) |
@@ -52,7 +53,7 @@ test.** What it does, and where:
 | `src/screens/Visit.tsx` | An earlier visit, photo by photo: the manifest, and removing a photo as a redaction — the one edit a take allows (D41). A thumbnail opens the photo full screen, pinch-zoomable with the ScrollView's own zoom, so a label can be read before choosing |
 | `src/screens/DeleteVisit.tsx` | Deleting a whole visit, on an earlier visit and on the hub, only while nothing of it has been sent (D48). Renamed out of sight first, then deleted, so a crash never leaves half a visit |
 | `src/redaction.ts` | The manifest half of that removal, pure so `npm run redaction-test` checks it under Node. A retake uses the same path and is marked `discarded` instead (D48) |
-| `src/upload.ts` | The upload queue (D43): opt-in, drains on its own to `services/ingest/`, records before frames, a per-take `uploads.ndjson` ledger beside the manifest. Only visits started while sending was on. Sending never deletes anything local; `deleteUnsent` deletes a visit only while nothing of it has been sent (D48) |
+| `src/upload.ts` | The upload queue (D43): opt-in, drains on its own to `services/ingest/`, records before frames, a per-take `uploads.ndjson` ledger beside the manifest. Only visits started while sending was on. A frame with an unanswered face question waits (D49). Sending never deletes anything local; `deleteUnsent` deletes a visit only while nothing of it has been sent (D48) |
 | `src/screens/UploadPanel.tsx` | The opt-in and a quiet status line on Arrive, Home and Done — what's left to send only counts down |
 | `src/registry.ts` | `data/venues/` bundled via `metro.config.js` `watchFolders` — add a venue there **and** to the import list |
 
@@ -73,7 +74,10 @@ optimization — it shapes the data flow, so design for it from the first screen
 **OCR is on-device, via Apple Vision.** Free, fast, works with no signal. It is the
 local Expo module in `modules/vision-ocr/`, and its pipeline — `ios/OCRCore.swift` —
 is literally the file `tools/ocr/` compiles for the Mac corpus tool (D30). Change it in
-one place and both hosts change. Two settings from D3 are load-bearing:
+one place and both hosts change. The face pass is in the same module and shared the
+same way, as `ios/FaceCore.swift` (D49): `placard-ocr <dir> --faces --blur-to <dir>`
+runs it over the corpus, which is how to measure a change to it before a phone build.
+The module only finds and pixellates; which faces get blurred is decided in JS. Two settings from D3 are load-bearing:
 
 - `usesLanguageCorrection = false` — correction turns artist names and accession
   numbers into ordinary English words
@@ -126,7 +130,9 @@ npx expo start                               # Metro, for either
 Expo Go still loads the bundle but can't link the Vision module, so a label group
 reads nothing there. In the simulator the shutter produces a blank 200px frame; every
 camera screen has a **Fixture (dev)** action that hands the flow the bundled 38.447.4
-label instead, which exercises the read-back path. It's compiled out of release builds.
+label instead, which exercises the read-back path, and **Face fixture (dev)** hands it a
+statue from the Met, which raises the face question. Both are compiled out of release
+builds.
 
 **To try a branch on the phone before merging, use Expo Go**, not the Placard app.
 A TestFlight build shares the bundle ID with the development build and replaces it,
@@ -160,7 +166,9 @@ case.
 
 The preflight that used to be the whole app is now `src/screens/Preflight.tsx`, behind
 "Check this build" on the hub. It reports whether the native modules the capture path
-depends on are actually linked, and echoes the same readout to the Metro console.
+depends on are actually linked, and echoes the same readout to the Metro console. Its
+face check finds the face in the bundled statue, pixellates it, and checks the face is
+no longer found.
 
 ### Shipping to testers
 
