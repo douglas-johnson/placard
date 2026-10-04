@@ -49,8 +49,9 @@ test.** What it does, and where:
 | `src/screens/WallTextFlow.tsx` | The interpretive panel, optionally linked to the last label group |
 | `src/location.ts` | One position watcher per session; the fix is written into each JPEG's EXIF via `additionalExif` |
 | `src/screens/Visit.tsx` | An earlier visit, photo by photo: the manifest, and removing a photo as a redaction — the one edit a take allows (D41). A thumbnail opens the photo full screen, pinch-zoomable with the ScrollView's own zoom, so a label can be read before choosing |
+| `src/screens/DeleteVisit.tsx` | Deleting a whole visit, on an earlier visit and on the hub, only while nothing of it has been sent (D48). Renamed out of sight first, then deleted, so a crash never leaves half a visit |
 | `src/redaction.ts` | The manifest half of that removal, pure so `npm run redaction-test` checks it under Node. A retake uses the same path and is marked `discarded` instead (D48) |
-| `src/upload.ts` | The upload queue (D43): opt-in, drains on its own to `services/ingest/`, records before frames, a per-take `uploads.ndjson` ledger beside the manifest. Only visits started while sending was on. Never deletes anything local |
+| `src/upload.ts` | The upload queue (D43): opt-in, drains on its own to `services/ingest/`, records before frames, a per-take `uploads.ndjson` ledger beside the manifest. Only visits started while sending was on. Sending never deletes anything local; `deleteUnsent` deletes a visit only while nothing of it has been sent (D48) |
 | `src/screens/UploadPanel.tsx` | The opt-in and a quiet status line on Arrive, Home and Done — what's left to send only counts down |
 | `src/registry.ts` | `data/venues/` bundled via `metro.config.js` `watchFolders` — add a venue there **and** to the import list |
 

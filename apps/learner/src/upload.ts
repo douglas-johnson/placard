@@ -6,7 +6,7 @@
  *
  * Capture never waits on this. Nothing here runs on the capture path. The queue
  * drains on its own whenever there is signal (D43), and a failure only means it
- * tries again later. Nothing local is ever deleted: the manifest stays the app's only
+ * tries again later. Sending never deletes anything local: the manifest stays the app's only
  * state, and what has been sent is kept in a separate ledger beside it
  * (`uploads.ndjson`), so the manifest a tester shares is still exactly the one the
  * app wrote.
@@ -20,7 +20,14 @@
 import { File, Paths, UploadTask } from 'expo-file-system';
 import { useSyncExternalStore } from 'react';
 import { AppState } from 'react-native';
-import { listTakes, manifestLines, onAppend, type ManifestRecord, type Take } from './take';
+import {
+  deleteTake,
+  listTakes,
+  manifestLines,
+  onAppend,
+  type ManifestRecord,
+  type Take,
+} from './take';
 
 const INGEST_URL = (process.env.EXPO_PUBLIC_INGEST_URL ?? '').replace(/\/$/, '');
 const UPLOAD_TOKEN = process.env.EXPO_PUBLIC_UPLOAD_TOKEN ?? '';
@@ -121,6 +128,41 @@ function note(take: Take, entry: LedgerEntry): void {
   if (!f.exists) f.create();
   f.write(JSON.stringify(entry) + '\n', { append: true });
 }
+
+/**
+ * Whether anything of this visit has left the phone, or been refused, which also
+ * means the server holds something of it. A visit like that is the corpus's now and
+ * can't be deleted on the phone (D48); tools/redact is the way out of the bucket.
+ */
+export function sentAnything(take: Take): boolean {
+  const l = readLedger(take);
+  return l.records.size + l.frames.size + l.conflicts.size > 0;
+}
+
+/**
+ * Delete a visit that has sent nothing (D48). The visit is held out of every drain
+ * from the first line. If a drain already under way has it in hand, this waits for
+ * that drain to finish and then asks the ledger again, so nothing can leave between
+ * the check and the delete. False when something was sent after all.
+ */
+export async function deleteUnsent(take: Take): Promise<boolean> {
+  withheld.add(take.id);
+  try {
+    if (inHand.has(take.id)) await new Promise<void>((resolve) => afterDrain.push(resolve));
+    if (sentAnything(take)) return false;
+    deleteTake(take);
+    return true;
+  } finally {
+    withheld.delete(take.id);
+    publish(count(pending()));
+  }
+}
+
+/** Visits being deleted, which no drain may start on. */
+const withheld = new Set<string>();
+/** Visits the drain under way has something to send for. */
+let inHand = new Set<string>();
+const afterDrain: (() => void)[] = [];
 
 /**
  * Whether anything of this frame has already left the phone: the image, its frame
@@ -226,7 +268,7 @@ function eligible(take: Take): boolean {
 function pending(): Pending[] {
   // Oldest take first: a finished visit shouldn't wait behind the one in progress.
   return listTakes()
-    .filter(eligible)
+    .filter((take) => eligible(take) && !withheld.has(take.id))
     .reverse()
     .map((take) => {
       const ledger = readLedger(take);
@@ -338,6 +380,7 @@ async function drain(): Promise<void> {
   if (running || !uploadAvailable || !contributor().upload || refused) return;
   running = true;
   let ps = pending();
+  inHand = new Set(ps.filter((p) => p.lines.length + p.frames.length > 0).map((p) => p.take.id));
   publish({ state: count(ps).frames + count(ps).records > 0 ? 'sending' : 'idle', ...count(ps) });
   try {
     // Records first: they are small, and they are what make the frames interpretable.
@@ -373,6 +416,8 @@ async function drain(): Promise<void> {
     }
   } finally {
     running = false;
+    inHand = new Set();
+    afterDrain.splice(0).forEach((resolve) => resolve());
   }
 }
 

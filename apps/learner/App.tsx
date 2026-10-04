@@ -87,6 +87,7 @@ export default function App() {
       <Visit
         take={visit}
         onBack={() => (route.from === 'home' && take ? home() : setRoute({ name: 'arrive' }))}
+        onDeleted={() => (route.from === 'home' && take ? home() : setRoute({ name: 'arrive' }))}
       />
     );
   } else if (!take || route.name === 'arrive' || route.name === 'visit') {
@@ -146,6 +147,11 @@ export default function App() {
         onInput={(input) => setRoute({ name: 'flow', input })}
         onPreflight={() => setRoute({ name: 'preflight' })}
         onOpenVisit={(t) => setRoute({ name: 'visit', id: t.id, from: 'home' })}
+        onDeleted={() => {
+          stopWatching();
+          setTake(null);
+          setRoute({ name: 'arrive' });
+        }}
       />
     );
   }
