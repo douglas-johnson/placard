@@ -1170,7 +1170,7 @@ from a fresh initial commit, since the same reasoning about history applies.
 
 ## D33 — Field-beta iterations ship as JS updates on top of one native build
 
-**Date:** 2026-09-19 · **Status:** proposed by Claude, awaiting Doug · **Builds on:** D29, D30, field-beta §5
+**Date:** 2026-09-19 · **Status:** proposed by Claude, awaiting Doug · **Amended by:** D48 · **Builds on:** D29, D30, field-beta §5
 
 Build 4 — the first TestFlight build — went out with `expo-updates` configured
 (channel `testflight`, runtime version policy `appVersion`, so `0.1.0`). F0 was then
@@ -1596,7 +1596,7 @@ checklist.
 
 ## D41 — On the phone, a visit's one edit is removing a photo, as a redaction
 
-**Date:** 2026-09-27 · **Status:** accepted · **Decided by:** Doug asked for it; its
+**Date:** 2026-09-27 · **Status:** accepted · **Amended by:** D48 · **Decided by:** Doug asked for it; its
 shape is Claude's call · **Implements:** the D4 amendment and D36 on the device
 
 The Met redaction was carried out on the Mac. The phone's own copy of that visit still
@@ -2000,3 +2000,67 @@ under D33; issue #22.
 **What would reverse this:** a reachable Cooper Hewitt source for current records
 (the dataset updated, or the objects entering Open Access), which would move the
 fixtures to `catalog_api` and supersede the snapshot's claims, not delete them.
+
+---
+
+## D48 — Expo Router for the capture app; a retake deletes; an unsent visit can be deleted
+
+**Date:** 2026-10-04 · **Status:** accepted · **Decided by:** Doug (the router, the
+three scope calls, and D41's reach); Claude's calls are marked · **Amends:** D33's
+"no navigation library", D41's "one edit" · **Issues:** #25–#31
+
+Doug walked the app looking for what makes it hard to reason about and hard to use, and
+came back with four notes: venue selection should sit behind a "start a visit" button;
+the upload opt-in belongs in a settings screen and says too much; a bad photo can't be
+thrown away and retaken; and a visit can't be removed, so a visit shot only to reach
+these screens stays on the phone for good.
+
+**The router is Expo Router.** React Router and TanStack Router were the candidates
+Doug knew or wanted to learn. Neither is a React Native router today: React Router v7
+dropped `react-router-native`, and its core package under a `MemoryRouter` matches
+routes but gives no native stack, swipe-back or transitions; TanStack Router supports
+React DOM and Solid, with a React Native adapter still on a branch as of October 2026.
+Expo Router is file-based routing over React Navigation, ships with Expo, and is what
+an app like this is actually built with, so it is also the better use of the learning
+budget. The reason to have a router at all is Doug's: the screens and their states
+should be legible from the file tree, which `App.tsx`'s `Route` union and LabelFlow's
+seven-step `Step` union are not.
+
+It needs `react-native-screens` and `react-native-safe-area-context`, so it is a
+native change and rides the next native build, F1's face blur, under D33's rule that
+the app version and runtime version move together. That build is also when
+`src/insets.ts`, D33's twelve-line stand-in for safe-area-context, goes away. Until
+then the state machine stays, and the changes that don't need routes ship OTA in it
+(Claude's call on sequencing).
+
+**A retake deletes the frame.** "The label needed another frame" read as *the label
+was too big for one photo*, not as *try again*. The action that means retake says
+Retake, and the frame it replaces is actually deleted. Doug's reasoning: a blurred or
+empty label frame is worth little to the corpus, and the focus problem the Met visit
+surfaced was reported by the tester at the time, not inferred from the imagery
+afterwards. Adding a second frame of a label that won't fit in one stays a separate
+action, because the protocol asks for it on large case panels (capture-protocol, "two
+frames if it won't fit"); that split is Claude's call.
+
+**A visit with nothing sent can be deleted.** Deletion is limited to visits from which
+nothing has reached the corpus: none of the frames or records are in the upload ledger. A visit
+started while sending was off always qualifies, and so does one that never had signal.
+A visit that has sent anything still goes through `tools/redact/` (D42), because
+deleting the phone's copy would leave the bucket's copy orphaned rather than removed.
+
+**D41's "one edit" governs the corpus, not the learner.** D41 called a take
+*evidence* and allowed it one change, redaction, so that the corpus would never be
+tidier than the gallery was. That rule was written for the collector's build, and the
+machinery under it was built to protect the identity of a child whose name was on a
+label. It is not a precedent for the learner's own material. Later phases will let a
+learner remove things from their taste profile and shape how their path is built.
+That is Doug's stated direction, not yet written into PLANNING.md; it concerns §5's
+private layer and §6's curriculum. Nothing about redaction should be read as limiting it. This is the
+same distinction CLAUDE.md draws between the corpus and the private layer, applied to
+edits.
+
+**What would reverse this:** for the router, a TanStack or React Router release with
+real native-stack support would not by itself be enough, since the migration cost is
+paid once; Expo Router dropping support for the SDK would. For retakes, evidence that
+discarded frames carried signal the tester's report didn't, which would bring back
+keeping them with a `rejected` mark rather than deleting them.
