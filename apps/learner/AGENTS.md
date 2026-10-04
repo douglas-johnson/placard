@@ -38,7 +38,8 @@ test.** What it does, and where:
 
 | | |
 |---|---|
-| `App.tsx` | The router — four screens and one flow at a time, no navigation library (D33) |
+| `app/` | The routes (Expo Router, D48). `_layout.tsx` starts the upload queue and location; `index.tsx` resumes a visit or opens `start.tsx` (Arrive); `visit/` is the visit in progress — the hub, `label`, `wall-text`, `signage`, `exterior`, `done` — with swipe-back off for the flows; `visits/[id].tsx` is an earlier visit; `preflight.tsx` |
+| `src/session.ts` | The visit in progress as a store, re-rendering its readers on every manifest write |
 | `src/take.ts` | A visit: frames plus an append-only NDJSON manifest under `Documents/takes/<date>-<venue>/`, replayed on launch to resume |
 | `src/screens/Arrive.tsx` | GPS fix → registry venues nearby → pick or add (a low-confidence claim) → the field log. Earlier visits, with share, live here too |
 | `src/screens/Done.tsx` | After the exterior: the manifest, and nothing else, before the take is let go |
@@ -126,6 +127,16 @@ Expo Go still loads the bundle but can't link the Vision module, so a label grou
 reads nothing there. In the simulator the shutter produces a blank 200px frame; every
 camera screen has a **Fixture (dev)** action that hands the flow the bundled 38.447.4
 label instead, which exercises the read-back path. It's compiled out of release builds.
+
+**To try a branch on the phone before merging, use Expo Go**, not the Placard app.
+A TestFlight build shares the bundle ID with the development build and replaces it,
+so the installed Placard loads only OTA updates and never asks Metro for anything.
+Run `npx expo start --go --lan`, then open `exp://<the Mac's LAN IP>:8081` in Safari,
+which hands off to Expo Go. Its Development servers list may stay empty. The
+"placard" row under Projects is the published EAS project, not your branch. Metro's
+log shows `iOS Bundled` once the phone has connected. A local bundle has no
+`EXPO_PUBLIC_INGEST_URL`, so nothing shot while testing can upload, and Expo Go's
+storage is separate from the TestFlight app's.
 
 `npm run redaction-test` checks the manifest rewrite behind removing a photo: the
 frame and its OCR are wiped, and every other line keeps its exact bytes.

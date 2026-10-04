@@ -11,7 +11,7 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import { useInsets } from '../insets';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { shareManifest } from '../share';
 import { type FrameKind, type ManifestRecord, recordsOf, redactFrame, type Take } from '../take';
 import { dark, type, usePalette } from '../theme';
@@ -52,7 +52,7 @@ export function Visit({
   onDeleted: () => void;
 }) {
   const p = usePalette();
-  const insets = useInsets();
+  const insets = useSafeAreaInsets();
   const [frames, setFrames] = useState(() => framesOf(take));
   const [confirming, setConfirming] = useState<string | null>(null);
   const [viewing, setViewing] = useState<FrameView | null>(null);
@@ -193,7 +193,7 @@ function Viewer({
   onRemove?: () => void;
 }) {
   const { width, height } = useWindowDimensions();
-  const insets = useInsets();
+  const insets = useSafeAreaInsets();
   return (
     <Modal visible animationType="fade" presentationStyle="fullScreen" onRequestClose={onClose}>
       <StatusBar style="light" />

@@ -4,7 +4,7 @@ import { File, Paths } from 'expo-file-system';
 import { StatusBar } from 'expo-status-bar';
 import { ReactNode, useCallback, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
-import { useInsets } from '../insets';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { exifFor, latestFix, type Gps } from '../location';
 import { dark, type } from '../theme';
 import { Button } from '../ui';
@@ -38,7 +38,7 @@ export function Capture({
   actions?: { label: string; onPress: () => void; tone?: 'secondary' | 'quiet' }[];
   children?: ReactNode;
 }) {
-  const insets = useInsets();
+  const insets = useSafeAreaInsets();
   const camera = useRef<CameraView>(null);
   const [permission, requestPermission] = useCameraPermissions();
   const [ready, setReady] = useState(false);

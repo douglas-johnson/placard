@@ -1,7 +1,7 @@
 import * as MediaLibrary from 'expo-media-library';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useInsets } from '../insets';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { awaitFix, type Gps } from '../location';
 import { nearby, slugify, type Venue } from '../registry';
 import { startTake, type FieldLog, type Take, type VenueRef } from '../take';
@@ -36,7 +36,7 @@ export function Arrive({
   onOpenVisit: (take: Take) => void;
 }) {
   const p = usePalette();
-  const insets = useInsets();
+  const insets = useSafeAreaInsets();
   const [stage, setStage] = useState<Stage>('locating');
   const [fix, setFix] = useState<Gps | null>(null);
   const [candidates, setCandidates] = useState<{ venue: Venue; distance: number }[]>([]);

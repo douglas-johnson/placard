@@ -1,5 +1,5 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useInsets } from '../insets';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { shareManifest } from '../share';
 import type { Take } from '../take';
 import { type, usePalette } from '../theme';
@@ -29,7 +29,7 @@ export function Home({
   onDeleted: () => void;
 }) {
   const p = usePalette();
-  const insets = useInsets();
+  const insets = useSafeAreaInsets();
   const since = new Date(take.started).toLocaleTimeString([], {
     hour: 'numeric',
     minute: '2-digit',
