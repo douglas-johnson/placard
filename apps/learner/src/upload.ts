@@ -11,8 +11,8 @@
  * (`uploads.ndjson`), so the manifest a tester shares is still exactly the one the
  * app wrote.
  *
- * Opt-in, per phone, off by default, until F1's consent screen exists (D43). And not
- * retroactive: only visits started while sending was on are sent. Consent given today
+ * Opt-in, per phone, off by default (D43), and only once the tester has agreed to the
+ * consent screen's terms at their current version (D50). And not retroactive: only visits started while sending was on are sent. Consent given today
  * does not cover a visit shot before it, and a take already on the phone may hold
  * something that was redacted elsewhere but never on the device — as the Met take's
  * P.S. Art label did until it could be removed on the phone (D41).
@@ -39,6 +39,24 @@ export const uploadAvailable = INGEST_URL.length > 0 && UPLOAD_TOKEN.length > 0;
 // Identity and the opt-in, in one small file. The ID is the only identifier the
 // server ever sees (field-beta §3); nothing about the person goes with it.
 
+/**
+ * The terms on app/consent.tsx. Raise this whenever they change: a tester who agreed
+ * to an earlier version sends nothing more until they've seen the new one (D50).
+ */
+export const CONSENT_VERSION = 1;
+
+/**
+ * What one "Send them" agrees to: field-beta §1's three kinds, kept separate so they
+ * can be split into toggles later without asking anyone again (D50).
+ */
+export type Consent = {
+  version: number;
+  at: string;
+  'upload.label_photos': boolean;
+  'upload.artwork_photos': boolean;
+  'upload.venue_photos': boolean;
+};
+
 type Contributor = {
   v: 1;
   id: string;
@@ -46,7 +64,15 @@ type Contributor = {
   upload: boolean;
   /** Each span during which sending was on. A visit is sent only if it started inside one. */
   upload_periods: { from: string; to: string | null }[];
+  /** Absent on phones that opted in before the consent screen existed. */
+  consent?: Consent;
 };
+
+/** Whether the tester has agreed to the terms as they stand now. */
+export function consented(): boolean {
+  const c = contributor().consent;
+  return c != null && c.version === CONSENT_VERSION;
+}
 
 const contributorFile = () => new File(Paths.document, 'contributor.json');
 
@@ -81,6 +107,21 @@ export function contributor(): Contributor {
   return c;
 }
 
+/** The consent screen's "Send them": records what was agreed to, then turns sending on. */
+export function agreeAndSend(): void {
+  const c = contributor();
+  const consent: Consent = {
+    version: CONSENT_VERSION,
+    at: new Date().toISOString(),
+    'upload.label_photos': true,
+    'upload.artwork_photos': true,
+    'upload.venue_photos': true,
+  };
+  contributorFile().write(JSON.stringify({ ...c, consent }));
+  setUploading(true);
+}
+
+/** Turning sending on goes through agreeAndSend; this is for turning it off. */
 export function setUploading(on: boolean): void {
   const c = contributor();
   const now = new Date().toISOString();
@@ -190,7 +231,9 @@ export function sentToCorpus(take: Take, frame: string): boolean {
 // ---------------------------------------------------------------------------
 // Status, for the screens.
 
-export type UploadState = 'unavailable' | 'off' | 'idle' | 'sending' | 'waiting' | 'refused';
+/** `consent`: sending is on, but the terms haven't been agreed at their current version (D50). */
+export type UploadState =
+  'unavailable' | 'off' | 'consent' | 'idle' | 'sending' | 'waiting' | 'refused';
 
 export type UploadStatus = {
   state: UploadState;
@@ -213,8 +256,9 @@ function publish(patch: Partial<UploadStatus> = {}): void {
   status = { ...status, ...patch };
   if (!uploadAvailable) status.state = 'unavailable';
   else if (!contributor().upload) status.state = 'off';
+  else if (!consented()) status.state = 'consent';
   else if (refused) status.state = 'refused';
-  else if (status.state === 'off' || status.state === 'unavailable' || status.state === 'refused')
+  else if (['off', 'unavailable', 'consent', 'refused'].includes(status.state))
     status.state = 'idle';
   listeners.forEach((l) => l(status));
 }
@@ -387,7 +431,7 @@ let failures = 0;
 let timer: ReturnType<typeof setTimeout> | null = null;
 
 async function drain(): Promise<void> {
-  if (running || !uploadAvailable || !contributor().upload || refused) return;
+  if (running || !uploadAvailable || !contributor().upload || !consented() || refused) return;
   running = true;
   let ps = pending();
   inHand = new Set(ps.filter((p) => p.lines.length + p.frames.length > 0).map((p) => p.take.id));

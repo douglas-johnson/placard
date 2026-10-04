@@ -21,7 +21,7 @@ export default function Hub() {
     <Home
       take={take}
       onInput={(input) => router.push(ROUTE[input])}
-      onPreflight={() => router.push('/preflight')}
+      onSettings={() => router.push('/settings')}
       onOpenVisit={(t) => router.push({ pathname: '/visits/[id]', params: { id: t.id } })}
       onDeleted={() => {
         // Back to the landing, beneath the visit or swapped in if the visit was
