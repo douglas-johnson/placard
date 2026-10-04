@@ -54,8 +54,13 @@ def main(take_dir: str) -> int:
     frames = [r for r in records if r["type"] == "frame"]
     times = exif_times(take)
 
-    bound, unbound, redacted, used = [], [], [], set()
+    bound, unbound, redacted, discarded, used = [], [], [], [], set()
     for f in frames:
+        if f.get("discarded"):
+            # A retake (D48): the tester threw the frame away on the phone. Its
+            # camera-roll copy may still turn up below, as not in the manifest.
+            discarded.append({"frame": f["frame"], "kind": f["kind"], "group": f.get("group")})
+            continue
         if f.get("redacted"):
             # The one edit ever made to a raw take: a frame removed because it named a
             # minor (data/README.md, "Minors"). Nothing to bind, nothing wrong.
@@ -123,12 +128,14 @@ def main(take_dir: str) -> int:
         "bound": bound,
         "unbound": unbound,
         "redacted": redacted,
+        "discarded": discarded,
         "not_in_manifest": extras,
     }
     dest = ROOT / "data/labels/derived" / f"{take.name}-frames.json"
     dest.write_text(json.dumps(out, indent=2) + "\n")
     print(
         f"{len(bound)} bound, {len(unbound)} unbound, {len(redacted)} redacted, "
+        f"{len(discarded)} discarded, "
         f"{len(extras)} not in manifest → {dest.relative_to(ROOT)}"
     )
     return 0 if not unbound else 2

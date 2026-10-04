@@ -107,15 +107,20 @@ export type ManifestRecord =
   | (Base & {
       type: 'frame';
       frame: string;
-      /** Null only when the frame was redacted after the fact (D4 amendment). */
+      /** Null only when the frame was redacted or discarded after the fact. */
       file: string | null;
       /**
-       * Set by hand on the Mac, never by the app: the frame identified a minor and was
-       * deleted from raw/ (D4 amendment, data/README.md "Minors"). The record stays so
+       * Set on the Mac (D4 amendment) or on the phone (D41): the frame identified a minor
+       * and was deleted (data/README.md "Minors"). The record stays so
        * replay and sequence numbers hold; tools/manifest/bind-frames.py reports it
        * rather than binding it.
        */
       redacted?: string;
+      /**
+       * Set by a retake (D48): the tester threw this frame away and shot it again. The
+       * record stays so sequence numbers hold, but the frame isn't counted and isn't sent.
+       */
+      discarded?: string;
       kind: FrameKind;
       group: string | null;
       sign_kind?: VenueSignKind;
@@ -259,7 +264,10 @@ function replay(id: string, dir: Directory, lines: ManifestRecord[]): Take | nul
         break;
       case 'frame':
         take.nextFrame = Math.max(take.nextFrame, Number(r.frame.slice(1)) + 1);
-        take.counts.frames += 1;
+        if (r.discarded) break; // a retake: not a photo the visit claims to have
+        // A redacted photo was still taken, so its kind counts, but it will never be
+        // sent, and the frame count is what the commit marker claims (D38).
+        if (r.file != null) take.counts.frames += 1;
         if (r.kind === 'work') take.counts.works += 1;
         if (r.kind === 'venue_sign' || r.kind === 'exterior') take.counts.venue_signs += 1;
         if (r.kind === 'wall_text') take.counts.wall_texts += 1;
@@ -571,6 +579,27 @@ export function redactFrame(take: Take, frame: string, why: string): void {
   const day = new Date().toISOString().slice(0, 10);
   if (!redact(redactionFs(take.dir), frame, why, day).found)
     throw new Error(`no frame ${frame} in ${take.id}`);
+  recount(take);
+}
+
+/** Counts again from the manifest after a removal, for whoever holds this take. */
+function recount(take: Take): void {
+  const fresh = replay(take.id, take.dir, readManifest(take.dir));
+  if (fresh) take.counts = fresh.counts;
+}
+
+/**
+ * Throw a frame away so it can be shot again (D48). It goes the same way a redaction
+ * does, through the same crash-safe sequence, but is marked `discarded`, not
+ * `redacted`: the image is deleted, its OCR is wiped, and its record stays so
+ * sequence numbers hold. Unlike a redacted frame it stops counting as a photo of its
+ * kind as well as a frame. The camera-roll copy can't be reached, as with redactFrame.
+ */
+export function discardFrame(take: Take, frame: string): void {
+  const day = new Date().toISOString().slice(0, 10);
+  if (!redact(redactionFs(take.dir), frame, 'retake', day, 'discarded').found)
+    throw new Error(`no frame ${frame} in ${take.id}`);
+  recount(take);
 }
 
 /** The manifest file, for the share sheet. */

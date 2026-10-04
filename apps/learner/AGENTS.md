@@ -43,13 +43,13 @@ test.** What it does, and where:
 | `src/screens/Arrive.tsx` | GPS fix → registry venues nearby → pick or add (a low-confidence claim) → the field log. Earlier visits, with share, live here too |
 | `src/screens/Done.tsx` | After the exterior: the manifest, and nothing else, before the take is let go |
 | `src/screens/Capture.tsx` | The viewfinder. Preview is 3:4 on purpose — expo-camera crops the still to the preview — and there is no `autofocus` prop on purpose: `"on"` means focus-once-and-lock (field-beta §6.1) |
-| `src/screens/LabelFlow.tsx` | A label → on-device read → accession shown back → C only if nothing read → B enforced, or a stated reason → flags and hard cases |
+| `src/screens/LabelFlow.tsx` | A label → on-device read → accession shown back → C only if nothing read → B enforced, or a stated reason → flags and hard cases. Retake deletes the frame on screen; "add a frame" keeps it, for a label too big for one (D48) |
 | `src/accession.ts` | Finds and ranks accession-shaped lines; locates, never validates (D11). `npm run locator-eval` scores it against every reading in the corpus — device manifests and Mac OCR — 40/43 first-candidate correct after Cooper Hewitt |
 | `src/screens/VenueFlow.tsx` | Arrival signage in the protocol's order; the exterior on leaving, which ends the take |
 | `src/screens/WallTextFlow.tsx` | The interpretive panel, optionally linked to the last label group |
 | `src/location.ts` | One position watcher per session; the fix is written into each JPEG's EXIF via `additionalExif` |
 | `src/screens/Visit.tsx` | An earlier visit, photo by photo: the manifest, and removing a photo as a redaction — the one edit a take allows (D41). A thumbnail opens the photo full screen, pinch-zoomable with the ScrollView's own zoom, so a label can be read before choosing |
-| `src/redaction.ts` | The manifest half of that removal, pure so `npm run redaction-test` checks it under Node |
+| `src/redaction.ts` | The manifest half of that removal, pure so `npm run redaction-test` checks it under Node. A retake uses the same path and is marked `discarded` instead (D48) |
 | `src/upload.ts` | The upload queue (D43): opt-in, drains on its own to `services/ingest/`, records before frames, a per-take `uploads.ndjson` ledger beside the manifest. Only visits started while sending was on. Never deletes anything local |
 | `src/screens/UploadPanel.tsx` | The opt-in and a quiet status line on Arrive, Home and Done — what's left to send only counts down |
 | `src/registry.ts` | `data/venues/` bundled via `metro.config.js` `watchFolders` — add a venue there **and** to the import list |

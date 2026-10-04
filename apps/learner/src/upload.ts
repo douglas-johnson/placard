@@ -20,7 +20,7 @@
 import { File, Paths, UploadTask } from 'expo-file-system';
 import { useSyncExternalStore } from 'react';
 import { AppState } from 'react-native';
-import { listTakes, manifestLines, onAppend, type Take } from './take';
+import { listTakes, manifestLines, onAppend, type ManifestRecord, type Take } from './take';
 
 const INGEST_URL = (process.env.EXPO_PUBLIC_INGEST_URL ?? '').replace(/\/$/, '');
 const UPLOAD_TOKEN = process.env.EXPO_PUBLIC_UPLOAD_TOKEN ?? '';
@@ -230,7 +230,12 @@ function pending(): Pending[] {
     .reverse()
     .map((take) => {
       const ledger = readLedger(take);
-      const all = manifestLines(take);
+      // A label group still being shot stays on the phone until it closes. A retake
+      // (D48) rewrites the discarded frame's records, and the bucket refuses a record
+      // that differs from the one it already holds, so they mustn't have left yet.
+      const open = take.ended ? null : take.openGroup;
+      const held = (r: ManifestRecord) => open != null && 'group' in r && r.group === open;
+      const all = manifestLines(take).filter((l) => !held(l.record));
       const lines = all.filter(
         (l) => !ledger.records.has(l.seq) && !ledger.conflicts.has(`r${l.seq}`),
       );
