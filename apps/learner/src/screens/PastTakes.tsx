@@ -33,7 +33,13 @@ export function PastTakes({ except, onOpen }: { except?: string; onOpen: (take: 
             >
               <Text style={[type.body, { color: p.text }]}>{t.venue.name}</Text>
               <Text style={[type.small, { color: p.muted }]}>
-                {t.id} · {t.counts.labels} labels · {t.counts.frames} frames · tap to open
+                {new Date(t.started).toLocaleDateString([], {
+                  weekday: 'long',
+                  month: 'long',
+                  day: 'numeric',
+                })}{' '}
+                · {t.counts.labels} {t.counts.labels === 1 ? 'label' : 'labels'} · {t.counts.frames}{' '}
+                {t.counts.frames === 1 ? 'photo' : 'photos'}
               </Text>
             </Pressable>
           ))
