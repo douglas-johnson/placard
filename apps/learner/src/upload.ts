@@ -105,6 +105,9 @@ type Ledger = { records: Set<number>; frames: Set<string>; conflicts: Map<string
 
 const ledgerOf = (take: Take) => new File(take.dir, 'uploads.ndjson');
 
+/** The conflict reason the phone records on its own, without the server (sendFrame). */
+const MISSING_ON_PHONE = 'file missing on the phone';
+
 function readLedger(take: Take): Ledger {
   const l: Ledger = { records: new Set(), frames: new Set(), conflicts: new Map() };
   const f = ledgerOf(take);
@@ -133,10 +136,13 @@ function note(take: Take, entry: LedgerEntry): void {
  * Whether anything of this visit has left the phone, or been refused, which also
  * means the server holds something of it. A visit like that is the corpus's now and
  * can't be deleted on the phone (D48); tools/redact is the way out of the bucket.
+ * The one conflict the phone writes without asking the server, a frame whose file
+ * is gone, says nothing about the bucket and doesn't count.
  */
 export function sentAnything(take: Take): boolean {
   const l = readLedger(take);
-  return l.records.size + l.frames.size + l.conflicts.size > 0;
+  const refused = [...l.conflicts.values()].filter((reason) => reason !== MISSING_ON_PHONE);
+  return l.records.size + l.frames.size + refused.length > 0;
 }
 
 /**
@@ -333,7 +339,7 @@ async function sendFrame(take: Take, f: { frame: string; file: string }): Promis
   const file = new File(take.dir, f.file);
   if (!file.exists) {
     // Only a redaction removes a frame (D4 amendment), and it isn't coming back.
-    note(take, { conflict: f.frame, reason: 'file missing on the phone' });
+    note(take, { conflict: f.frame, reason: MISSING_ON_PHONE });
     return;
   }
   const info = file.info({ md5: true });
