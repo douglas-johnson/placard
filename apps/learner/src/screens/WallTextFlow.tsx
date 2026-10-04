@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import { useInsets } from '../insets';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { saveFrame, type Take } from '../take';
 import { Button, H2, P, Screen } from '../ui';
 import { Capture, type Picture } from './Capture';
@@ -19,7 +19,7 @@ export function WallTextFlow({
   onDone: () => void;
   onCancel: () => void;
 }) {
-  const insets = useInsets();
+  const insets = useSafeAreaInsets();
   const [linked, setLinked] = useState<string | null | undefined>(
     take.lastClosedGroup ? undefined : null,
   );

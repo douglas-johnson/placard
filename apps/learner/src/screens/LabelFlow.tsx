@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import * as VisionOcr from '../../modules/vision-ocr';
 import { findAccessionCandidates, type Candidate } from '../accession';
-import { useInsets } from '../insets';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { bySlug } from '../registry';
 import {
   closeGroup,
@@ -80,7 +80,7 @@ export function LabelFlow({
   devPreset?: 'readback' | 'flags';
 }) {
   const p = usePalette();
-  const insets = useInsets();
+  const insets = useSafeAreaInsets();
   const [step, setStep] = useState<Step>(__DEV__ && devPreset ? devPreset : 'label');
   const [group, setGroup] = useState<string | null>(null);
   const [labelFrames, setLabelFrames] = useState<SavedFrame[]>([]);

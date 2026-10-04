@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useInsets } from '../insets';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { shareManifest } from '../share';
 import type { Take } from '../take';
 import { type, usePalette } from '../theme';
@@ -14,7 +14,7 @@ import { UploadPanel } from './UploadPanel';
  */
 export function Done({ take, onClose }: { take: Take; onClose: () => void }) {
   const p = usePalette();
-  const insets = useInsets();
+  const insets = useSafeAreaInsets();
   const c = take.counts;
   const sending = useUploadStatus().state;
   const uploading = sending !== 'off' && sending !== 'unavailable';

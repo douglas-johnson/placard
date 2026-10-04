@@ -13,7 +13,7 @@ import { useCameraPermissions } from 'expo-camera';
 import * as Location from 'expo-location';
 import { Asset } from 'expo-asset';
 import * as VisionOcr from '../../modules/vision-ocr';
-import { useInsets } from '../insets';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 /**
  * Preflight — the A1 starting point, now a diagnostics screen behind the hub.
@@ -53,7 +53,7 @@ const GLYPH: Record<CheckState, string> = {
 export function Preflight({ onBack }: { onBack: () => void }) {
   const scheme = useColorScheme();
   const t = scheme === 'dark' ? dark : light;
-  const insets = useInsets();
+  const insets = useSafeAreaInsets();
 
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const [locationState, setLocationState] = useState<Check>({

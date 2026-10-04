@@ -361,7 +361,10 @@ export function manifestLines(take: Take): { seq: number; line: string; record: 
 
 const appendListeners = new Set<() => void>();
 
-/** Told after every manifest write — the upload queue's cue that there is something new. */
+/**
+ * Told after every manifest write, appends and removals alike: the upload queue's cue
+ * that there is something new, and the visit store's cue to re-render (session.ts).
+ */
 export function onAppend(listener: () => void): () => void {
   appendListeners.add(listener);
   return () => appendListeners.delete(listener);
@@ -598,6 +601,7 @@ export function redactFrame(take: Take, frame: string, why: string): void {
 function recount(take: Take): void {
   const fresh = replay(take.id, take.dir, readManifest(take.dir));
   if (fresh) take.counts = fresh.counts;
+  appendListeners.forEach((l) => l());
 }
 
 /**
