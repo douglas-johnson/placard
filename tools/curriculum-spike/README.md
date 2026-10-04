@@ -90,6 +90,37 @@ the Met too, on a 1780 Massachusetts banknote, but that record has no Wikidata l
 join would be entity resolution by name. Five of sixteen named makers have no Wikidata item
 at all.
 
+**But these encounters were never one learner's interests.** Doug pointed out that the
+three visits were chosen for instructive labels, not out of a taste or a line of inquiry,
+so "the visits share nothing" is the truth about the corpus rather than a failure of the
+ranking. A real learner may hold several interests at once, and a capture is not always a
+sign of one. So `--only` narrows the learner to a single thread (§6.3), and `--subject`
+attaches what a label's text says a work is about, linked to Wikidata by hand and recorded
+as an inferred claim. The one Revolutionary War capture from MCNY, Dawkins's *Liberty
+Triumphant* (ca. 1774), run as a thread of its own:
+
+```sh
+python3 tools/curriculum-spike/spike.py --only mcny-38.447.4
+python3 tools/curriculum-spike/spike.py --only mcny-38.447.4 \
+  --subject "mcny-38.447.4=Q192769:American Revolution"
+```
+
+- *As the label reads* — a maker and "engraving" — nothing. Twelve engravings were in a
+  gallery in the 2023 data; the live API says none of them is today, because works on
+  paper rotate (§13's decay half-life, measured). The Met's one Dawkins, a 1780
+  Massachusetts banknote, joins only by name. Wikidata knows him as an engraver and
+  nothing else.
+- *With the subject the label's text names* — the American Revolution, which the
+  fixture's `expected_relationships` had already drafted from the extended label (§4.6) —
+  *Washington Crossing the Delaware* in gallery 760 and Trumbull's *George Washington
+  before the Battle of Trenton* in 719, both confirmed on view. The right suggestions,
+  from one inferred edge.
+- *Either way, no closure.* A thread of one has no two things to connect, so §6.1 has
+  nothing to rank by; it can only open outward. A thread's first suggestions are a
+  different problem from its later ones, and they rank by relevance to the thread's
+  subject, not by how they densify a map — the cold-start question (§13) at the scale of a
+  thread, which comes up every time a learner starts something new.
+
 **What this suggests for §13 — proposals, not decisions:**
 
 - *Seed source:* museum catalogs for canonical facts; Wikidata identifiers as the identity

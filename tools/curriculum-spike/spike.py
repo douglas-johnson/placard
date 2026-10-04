@@ -520,7 +520,9 @@ def phrase(key: str, label: str) -> str:
         "period": f"from the same {label} period",
         "type": f"another {label}",
         "material": f"also {label}",
-        "subject": f"it shows {label.lower()} too",
+        # The Met's tags mix common nouns ("Birds") and names ("George Washington"); one
+        # form that's grammatical for both. Real phrasing needs to know which is which.
+        "subject": f"{label} again",
         "agent": f"also by {label}",
     }.get(facet_kind(key), label)
 
@@ -564,6 +566,19 @@ def main() -> int:
     ap.add_argument("--refresh", action="store_true", help="refetch instead of using cache/")
     ap.add_argument("--claims", type=Path, help="write every claim as NDJSON here")
     ap.add_argument("--top", type=int, default=10)
+    ap.add_argument(
+        "--only",
+        nargs="+",
+        metavar="FIXTURE",
+        help="one thread instead of every encounter: fixture ids, e.g. mcny-38.447.4",
+    )
+    ap.add_argument(
+        "--subject",
+        action="append",
+        default=[],
+        metavar="FIXTURE=QID:LABEL",
+        help="a subject the label's text names, linked by hand; recorded as inferred",
+    )
     args = ap.parse_args()
 
     fx = Fetcher(args.refresh)
@@ -571,6 +586,25 @@ def main() -> int:
     log = lambda m: print(m, file=sys.stderr)  # noqa: E731
 
     learner = load_learner(fx, claims)
+    if args.only:
+        learner = [w for w in learner if w.id[5:] in args.only]
+        if not learner:
+            sys.exit(f"no fixture matches {args.only}")
+        kept = {w.id for w in learner}
+        claims.rows = [r for r in claims.rows if not r["s"].startswith("work:") or r["s"] in kept]
+    for spec in args.subject:
+        # What the extended label says a work is about, linked to Wikidata by hand. It is
+        # an inferred claim (§4.8): the label says it, the catalog doesn't.
+        fixture, _, rest = spec.partition("=")
+        qid, _, label = rest.partition(":")
+        for w in learner:
+            if w.id[5:] == fixture:
+                w.facets[f"subject:{qid}"] = label
+                claims.add(
+                    w.id, "subject", f"subject:{qid}", source="hand, from the label text",
+                    record=f"data/labels/fixtures/{fixture}.json", retrieved="2026-10-04",
+                    confidence="inferred",
+                )  # fmt: skip
     by_id = {w.id: w for w in learner}
     log(f"learner: {len(learner)} encounters over {len({w.visit for w in learner})} visits")
 
