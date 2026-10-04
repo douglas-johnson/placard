@@ -9,8 +9,8 @@ import { usePalette } from '../../src/theme';
  * swipe out of the label flow would leave its group open. Done is the end of the
  * visit and has nothing to go back to.
  */
-// Opening any screen under visit/ directly, as Start does with signage, puts the hub
-// beneath it, so Back from that screen lands on the hub.
+// The hub beneath any screen under visit/ that's opened directly, so Back from it lands
+// on the hub. A deep link gets this on its own; a router call needs `withAnchor`.
 export const unstable_settings = { initialRouteName: 'index' };
 
 export default function VisitLayout() {

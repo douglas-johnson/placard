@@ -41,7 +41,8 @@ export default function RootLayout() {
       const [input, preset] = routeMarker.textSync().trim().split(':');
       routeMarker.delete();
       const path = { label: 'label', wall_text: 'wall-text', venue: 'signage' }[input];
-      if (take && path) router.push(`/visit/${path}${preset ? `?preset=${preset}` : ''}`);
+      if (take && path)
+        router.push(`/visit/${path}${preset ? `?preset=${preset}` : ''}`, { withAnchor: true });
     }
     const marker = new File(Paths.document, 'selftest');
     if (!marker.exists) return;

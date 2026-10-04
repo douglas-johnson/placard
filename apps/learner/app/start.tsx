@@ -9,8 +9,9 @@ export default function Start() {
       onStarted={(take) => {
         setCurrentTake(take);
         // Replaced, so nothing goes back to the venue picker. Signage opens with the
-        // hub beneath it (unstable_settings in visit/_layout.tsx), as it always has.
-        router.replace('/visit/signage');
+        // hub beneath it, as it always has: `withAnchor` is what makes the visit
+        // layout's initialRouteName apply to a navigation call and not only to a deep link.
+        router.replace('/visit/signage', { withAnchor: true });
       }}
       onOpenVisit={(take) => router.push({ pathname: '/visits/[id]', params: { id: take.id } })}
     />
