@@ -1,10 +1,19 @@
 /**
- * The manifest half of removing a frame (take.ts redactFrame), kept free of Expo
- * imports so `npm run redaction-test` can check it under Node. Pure: text in, text
- * out. What the app read from the frame goes; what the tester said stays.
+ * Why a frame was removed, which is also the field its record carries. `redacted` is
+ * D41's: the frame identified someone and is gone for that reason alone. `discarded`
+ * is a retake (D48): the tester threw the frame away and shot it again. They share
+ * every step below, but tools downstream treat them differently, so they never share
+ * a field.
+ */
+export type Removal = 'redacted' | 'discarded';
+
+/**
+ * The manifest half of removing a frame (take.ts redactFrame, discardFrame), kept
+ * free of Expo imports so `npm run redaction-test` can check it under Node. Pure:
+ * text in, text out. What the app read from the frame goes; what the tester said stays.
  *
- *   frame record       →  file: null, redacted: <why and when>
- *   ocr records        →  lines: [], candidates: [], warnings: [REDACTED …]
+ *   frame record       →  file: null, <removal>: <why and when>
+ *   ocr records        →  lines: [], candidates: [], warnings: [REDACTED/DISCARDED …]
  *   accession records  →  reading: null, candidates: []  — only when the frame is a
  *                          label or accession crop, whose OCR the locator read them
  *                          from (LabelFlow). The group's status and value stay: they
@@ -20,6 +29,7 @@ export function redactManifest(
   frame: string,
   why: string,
   day: string,
+  removal: Removal = 'redacted',
 ): { text: string; file: string | null; found: boolean } {
   const parse = (line: string): any => {
     try {
@@ -37,11 +47,12 @@ export function redactManifest(
   const out = lines.map((line) => {
     const r = parse(line);
     if (r?.type === 'frame' && r.frame === frame) {
-      if (r.redacted && r.file == null) return line; // already done, here or on the Mac
+      // Already done, here or on the Mac, for either reason.
+      if (r.file == null && (r.redacted || r.discarded)) return line;
       return JSON.stringify({
         ...r,
         file: null,
-        redacted: r.redacted ?? `${why} — removed on the phone ${day}`,
+        [removal]: r[removal] ?? `${why} — removed on the phone ${day}`,
       });
     }
     if (
@@ -53,7 +64,9 @@ export function redactManifest(
         ...r,
         lines: [],
         candidates: [],
-        warnings: [`REDACTED ${day}: ${why}. Lines removed on the phone with the frame.`],
+        warnings: [
+          `${removal.toUpperCase()} ${day}: ${why}. Lines removed on the phone with the frame.`,
+        ],
       });
     }
     if (
@@ -111,11 +124,12 @@ export function redact(
   frame: string,
   why: string,
   day: string,
+  removal: Removal = 'redacted',
 ): { found: boolean } {
   settle(fs);
-  if (!redactManifest(fs.read(MANIFEST), frame, why, day).found) return { found: false };
-  fs.write(INTENT, JSON.stringify({ frame, why, day }));
-  apply(fs, frame, why, day);
+  if (!redactManifest(fs.read(MANIFEST), frame, why, day, removal).found) return { found: false };
+  fs.write(INTENT, JSON.stringify({ frame, why, day, removal }));
+  apply(fs, frame, why, day, removal);
   fs.remove(INTENT);
   return { found: true };
 }
@@ -128,20 +142,21 @@ export function settle(fs: RedactionFs): void {
     fs.remove(SIDE); // torn, or never finished: the intent below redoes it
   }
   if (!fs.exists(INTENT)) return;
-  let intent: { frame: string; why: string; day: string };
+  // An intent written before retakes existed has no `removal`; it was a redaction.
+  let intent: { frame: string; why: string; day: string; removal?: Removal };
   try {
     intent = JSON.parse(fs.read(INTENT));
   } catch {
     fs.remove(INTENT); // torn at step 1: nothing had been removed yet
     return;
   }
-  apply(fs, intent.frame, intent.why, intent.day);
+  apply(fs, intent.frame, intent.why, intent.day, intent.removal ?? 'redacted');
   fs.remove(INTENT);
 }
 
-function apply(fs: RedactionFs, frame: string, why: string, day: string): void {
+function apply(fs: RedactionFs, frame: string, why: string, day: string, removal: Removal): void {
   const before = fs.read(MANIFEST);
-  const result = redactManifest(before, frame, why, day);
+  const result = redactManifest(before, frame, why, day, removal);
   if (result.file && fs.exists(result.file)) fs.remove(result.file);
   if (result.text === before) return;
   if (fs.exists(SIDE)) fs.remove(SIDE);

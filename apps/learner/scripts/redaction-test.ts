@@ -4,7 +4,7 @@
  * script. The file operations around it are in take.ts redactFrame.
  */
 import assert from 'node:assert/strict';
-import { redact, type RedactionFs, redactManifest, settle } from '../src/redaction';
+import { redact, type RedactionFs, redactManifest, type Removal, settle } from '../src/redaction';
 
 const take = '2026-09-20-the-metropolitan-museum-of-art';
 const rec = (o: object) => JSON.stringify({ v: 1, ts: '2026-09-20T19:30:20.000Z', take, ...o });
@@ -103,6 +103,21 @@ assert.equal(redactManifest(mac, 'f0035', 'identifies a minor', '2026-09-27').te
 
 assert.equal(redactManifest(text, 'f9999', 'x', '2026-09-27').found, false);
 
+// A retake (D48) goes the same way under its own field, so tools downstream can tell a
+// thrown-away frame from one that identified a minor.
+const d = redactManifest(text, 'f0035', 'retake', '2026-10-04', 'discarded');
+const dOut = d.text.split('\n');
+const dFrame = JSON.parse(dOut[1]);
+assert.equal(dFrame.file, null);
+assert.equal(dFrame.discarded, 'retake — removed on the phone 2026-10-04');
+assert.equal(dFrame.redacted, undefined, 'a retake is not a redaction');
+assert.match(JSON.parse(dOut[2]).warnings[0], /^DISCARDED 2026-10-04: retake/);
+assert.equal(JSON.parse(dOut[3]).reading, null, 'the reading from the frame goes with it');
+for (const i of [0, 4, 5, 6, 7]) assert.equal(dOut[i], lines[i], `line ${i} keeps its exact bytes`);
+// Either removal finds the other already done and leaves it alone.
+assert.equal(redactManifest(d.text, 'f0035', 'identifies a minor', '2026-10-05').text, d.text);
+assert.equal(redactManifest(r.text, 'f0035', 'retake', '2026-10-05', 'discarded').text, r.text);
+
 // ---------------------------------------------------------------------------
 // Crashes. A file system that dies at operation N, leaving a half-written file when
 // N is a write, the way a torn write looks after a crash. For every N in the
@@ -148,56 +163,75 @@ function memoryFs(files: Map<string, string>, dieAt = Infinity): RedactionFs & {
   return fs;
 }
 
-const start = () =>
-  new Map([
-    ['manifest.ndjson', text],
-    ['f0035-label.jpg', '<jpeg>'],
-    ['f0036-work.jpg', '<jpeg>'],
-  ]);
+function crashes(removal: Removal, why: string): void {
+  const start = () =>
+    new Map([
+      ['manifest.ndjson', text],
+      ['f0035-label.jpg', '<jpeg>'],
+      ['f0036-work.jpg', '<jpeg>'],
+    ]);
 
-const clean = start();
-const total = memoryFs(clean);
-redact(total, 'f0035', 'identifies a minor', '2026-09-27');
-const want = [...clean.entries()].sort();
-const untouched = [...start().entries()].sort();
-assert.ok(!clean.has('f0035-label.jpg') && clean.has('f0036-work.jpg'));
-assert.equal(clean.get('manifest.ndjson'), r.text);
-
-let cases = 0;
-for (let n = 1; n <= total.ops; n += 1) {
-  const files = start();
-  assert.throws(
-    () => redact(memoryFs(files, n), 'f0035', 'identifies a minor', '2026-09-27'),
-    Crash,
+  const clean = start();
+  const total = memoryFs(clean);
+  redact(total, 'f0035', why, '2026-09-27', removal);
+  const want = [...clean.entries()].sort();
+  const untouched = [...start().entries()].sort();
+  assert.ok(!clean.has('f0035-label.jpg') && clean.has('f0036-work.jpg'));
+  assert.equal(
+    clean.get('manifest.ndjson'),
+    redactManifest(text, 'f0035', why, '2026-09-27', removal).text,
   );
-  const afterFirst = new Map(files);
-  // …and a second crash anywhere in the recovery.
-  for (let m = 1; ; m += 1) {
-    const again = new Map(afterFirst);
-    let recovered = true;
-    try {
-      settle(memoryFs(again, m));
-    } catch (e) {
-      if (!(e instanceof Crash)) throw e;
-      recovered = false;
+
+  let cases = 0;
+  for (let n = 1; n <= total.ops; n += 1) {
+    const files = start();
+    assert.throws(() => redact(memoryFs(files, n), 'f0035', why, '2026-09-27', removal), Crash);
+    const afterFirst = new Map(files);
+    // …and a second crash anywhere in the recovery.
+    for (let m = 1; ; m += 1) {
+      const again = new Map(afterFirst);
+      let recovered = true;
+      try {
+        settle(memoryFs(again, m));
+      } catch (e) {
+        if (!(e instanceof Crash)) throw e;
+        recovered = false;
+      }
+      settle(memoryFs(again));
+      const got = JSON.stringify([...again.entries()].sort());
+      const outcome =
+        got === JSON.stringify(want)
+          ? 'redacted'
+          : got === JSON.stringify(untouched)
+            ? 'untouched'
+            : null;
+      assert.ok(outcome, `crash at redaction step ${n}, recovery step ${m}: ${got.slice(0, 300)}`);
+      if (outcome === 'untouched')
+        assert.ok(
+          n <= 1,
+          `only a crash before the intent is written may leave it untouched (step ${n})`,
+        );
+      cases += 1;
+      if (recovered) break;
     }
-    settle(memoryFs(again));
-    const got = JSON.stringify([...again.entries()].sort());
-    const outcome =
-      got === JSON.stringify(want)
-        ? 'redacted'
-        : got === JSON.stringify(untouched)
-          ? 'untouched'
-          : null;
-    assert.ok(outcome, `crash at redaction step ${n}, recovery step ${m}: ${got.slice(0, 300)}`);
-    if (outcome === 'untouched')
-      assert.ok(
-        n <= 1,
-        `only a crash before the intent is written may leave it untouched (step ${n})`,
-      );
-    cases += 1;
-    if (recovered) break;
   }
+  console.log(`${removal}: ${total.ops} steps, ${cases} crash combinations, every one recovers`);
 }
-console.log(`redaction: ${total.ops} steps, ${cases} crash combinations, every one recovers`);
+
+crashes('redacted', 'identifies a minor');
+crashes('discarded', 'retake');
+
+// An intent left by a build from before retakes carries no `removal`: it was a redaction.
+const legacy = new Map([
+  ['manifest.ndjson', text],
+  ['f0035-label.jpg', '<jpeg>'],
+  [
+    'redacting.json',
+    JSON.stringify({ frame: 'f0035', why: 'identifies a minor', day: '2026-09-27' }),
+  ],
+]);
+settle(memoryFs(legacy));
+assert.equal(legacy.get('manifest.ndjson'), r.text);
+assert.ok(!legacy.has('f0035-label.jpg') && !legacy.has('redacting.json'));
+
 console.log('redaction: all checks passed');

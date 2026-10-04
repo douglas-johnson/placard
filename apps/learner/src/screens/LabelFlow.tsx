@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import * as VisionOcr from '../../modules/vision-ocr';
 import { findAccessionCandidates, type Candidate } from '../accession';
@@ -6,6 +6,7 @@ import { useInsets } from '../insets';
 import { bySlug } from '../registry';
 import {
   closeGroup,
+  discardFrame,
   HARD_CASES,
   openGroup,
   recordAccession,
@@ -83,14 +84,25 @@ export function LabelFlow({
   const [step, setStep] = useState<Step>(__DEV__ && devPreset ? devPreset : 'label');
   const [group, setGroup] = useState<string | null>(null);
   const [labelFrames, setLabelFrames] = useState<SavedFrame[]>([]);
-  const [candidates, setCandidates] = useState<Candidate[]>(
+  // What the locator found in each label frame, by frame, so a retake can take one
+  // frame's readings out again (D48). The read-back offers their union, best first.
+  const [readings, setReadings] = useState<Record<string, Candidate[]>>(
     __DEV__ && devPreset === 'readback'
-      ? [
-          { value: '38.447.4', line: 7, contested: true, score: 3, disqualified: false },
-          { value: '38.447-4', line: 7, contested: true, score: 0.2, disqualified: false },
-        ]
-      : [],
+      ? {
+          dev: [
+            { value: '38.447.4', line: 7, contested: true, score: 3, disqualified: false },
+            { value: '38.447-4', line: 7, contested: true, score: 0.2, disqualified: false },
+          ],
+        }
+      : {},
   );
+  const candidates = useMemo(() => {
+    const all = new Map<string, Candidate>();
+    for (const found of Object.values(readings))
+      for (const c of found)
+        if (!all.has(c.value) || all.get(c.value)!.score < c.score) all.set(c.value, c);
+    return [...all.values()].sort((a, b) => b.score - a.score).slice(0, 3);
+  }, [readings]);
   const [ocrNote, setOcrNote] = useState<string | null>(null);
   // The last label frame read as nothing at all — a floor, a plinth, a frame that
   // never focused (Met f0030, field-beta §6.1). Offer the retake before any confirm.
@@ -148,13 +160,7 @@ export function LabelFlow({
           warnings: result.warnings,
           candidates: found.map((c) => c.value),
         });
-        // Union with earlier label frames of the same group, best first.
-        setCandidates((prev) => {
-          const all = new Map(prev.map((c) => [c.value, c]));
-          for (const c of found)
-            if (!all.has(c.value) || all.get(c.value)!.score < c.score) all.set(c.value, c);
-          return [...all.values()].sort((a, b) => b.score - a.score).slice(0, 3);
-        });
+        setReadings((r) => ({ ...r, [saved.id]: found }));
         setLastEmpty(result.observations.length === 0);
         setOcrNote(
           result.observations.length === 0
@@ -170,6 +176,27 @@ export function LabelFlow({
     },
     [ensureGroup, take],
   );
+
+  // Retake: the frame on screen is thrown away, file and reading both, and the
+  // camera comes back (D48). A label that won't fit in one frame is the other button,
+  // which keeps what's there.
+  const retake = useCallback(() => {
+    const last = labelFrames[labelFrames.length - 1];
+    if (last) {
+      try {
+        discardFrame(take, last.id);
+      } catch (e) {
+        setOcrNote(e instanceof Error ? e.message : "Couldn't discard that frame");
+        return;
+      }
+      setLabelFrames((f) => f.slice(0, -1));
+      setReadings(({ [last.id]: _gone, ...rest }) => rest);
+    }
+    setLastEmpty(false);
+    setOcrNote(null);
+    setTyping(false);
+    setStep('label');
+  }, [labelFrames, take]);
 
   const settle = useCallback(
     (status: AccessionStatus, value: string | null) => {
@@ -286,22 +313,22 @@ export function LabelFlow({
             { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 24 },
           ]}
         >
-          {last ? <Image source={{ uri: last.file.uri }} style={styles.thumbSmall} /> : null}
+          {last ? (
+            <View style={styles.shot}>
+              <Image source={{ uri: last.file.uri }} style={styles.thumbSmall} />
+              {!lastEmpty ? (
+                <Button label="Retake" tone="secondary" onPress={retake} style={styles.retake} />
+              ) : null}
+            </View>
+          ) : null}
           {lastEmpty && !typing ? (
             <>
               <H2>Nothing read in that frame</H2>
               <P muted>
                 Not a single line — usually the camera hadn't focused, or the label isn't in the
-                shot. The frame is kept either way. Another go?
+                shot. Another go?
               </P>
-              <Button
-                label="Retake the label"
-                onPress={() => {
-                  setLastEmpty(false);
-                  setStep('label');
-                }}
-                style={{ marginTop: 20 }}
-              />
+              <Button label="Retake" onPress={retake} style={{ marginTop: 20 }} />
               <Button
                 label="Carry on with this frame"
                 tone="quiet"
@@ -402,7 +429,7 @@ export function LabelFlow({
           )}
           <Rule />
           <Button
-            label="The label needed another frame"
+            label="The label didn't fit — add a frame"
             tone="quiet"
             onPress={() => setStep('label')}
           />
@@ -552,7 +579,9 @@ export function LabelFlow({
 const styles = StyleSheet.create({
   sheet: { paddingHorizontal: 28 },
   thumb: { width: 220, height: 220, borderRadius: 8 },
-  thumbSmall: { width: 96, height: 96, borderRadius: 6, marginBottom: 16 },
+  thumbSmall: { width: 96, height: 96, borderRadius: 6 },
+  shot: { flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 16 },
+  retake: { marginTop: 0, paddingHorizontal: 20 },
   badge: {
     position: 'absolute',
     top: 150,

@@ -230,6 +230,7 @@ function Viewer({
 function framesOf(take: Take): FrameView[] {
   return recordsOf(take)
     .filter((r): r is FrameRecord => r.type === 'frame')
+    .filter((r) => !r.discarded) // a retake (D48): thrown away, not part of the visit
     .map((r) => {
       const file = r.file ? new File(take.dir, r.file) : null;
       return { ...r, uri: file?.uri ?? '', exists: file?.exists ?? false };
