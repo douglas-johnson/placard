@@ -24,9 +24,10 @@ export default function Hub() {
       onPreflight={() => router.push('/preflight')}
       onOpenVisit={(t) => router.push({ pathname: '/visits/[id]', params: { id: t.id } })}
       onDeleted={() => {
-        // Leave first: with no visit, visit/_layout.tsx would redirect on its own.
-        router.replace('/start');
+        // Back to the landing, beneath the visit or swapped in if the visit was
+        // resumed at launch. See visit/_layout.tsx.
         setCurrentTake(null);
+        router.dismissTo('/');
       }}
     />
   );

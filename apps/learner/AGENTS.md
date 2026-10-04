@@ -38,11 +38,10 @@ test.** What it does, and where:
 
 | | |
 |---|---|
-| `app/` | The routes (Expo Router, D48). `_layout.tsx` starts the upload queue and location; `index.tsx` resumes a visit or opens `start.tsx` (Arrive); `visit/` is the visit in progress — the hub, `label`, `wall-text`, `signage`, `exterior`, `done` — with swipe-back off for the flows; `visits/[id].tsx` is an earlier visit; `preflight.tsx` |
+| `app/` | The routes (Expo Router, D48). `_layout.tsx` starts the upload queue and location; `index.tsx` resumes a visit, or is the landing: "Start a visit" and the earlier visits (#29); `start/` is starting one — `index` locates and offers venues nearby, `add` is somewhere else, `log` is the field log — over shared state in `src/arrival.tsx`; `visit/` is the visit in progress — the hub, `label`, `wall-text`, `signage`, `exterior`, `done` — with swipe-back off for the flows; `visits/[id].tsx` is an earlier visit; `preflight.tsx` |
 | `src/session.ts` | The visit in progress as a store, re-rendering its readers on every manifest write |
 | `src/take.ts` | A visit: frames plus an append-only NDJSON manifest under `Documents/takes/<date>-<venue>/`, replayed on launch to resume. Every frame goes through the face pass on its way in, and found faces are pixellated before it lands; the original waits in the cache until the tester answers (D49) |
 | `src/screens/FaceQuestion.tsx` | Over every visit screen: a frame's faces, blurred by default, each tappable to keep as part of the artwork. Not answering leaves the blur; ending the visit records that |
-| `src/screens/Arrive.tsx` | GPS fix → registry venues nearby → pick or add (a low-confidence claim) → the field log. Earlier visits, with share, live here too |
 | `src/screens/Done.tsx` | After the exterior: the manifest, and nothing else, before the take is let go |
 | `src/screens/Capture.tsx` | The viewfinder. Preview is 3:4 on purpose — expo-camera crops the still to the preview — and there is no `autofocus` prop on purpose: `"on"` means focus-once-and-lock (field-beta §6.1) |
 | `src/screens/LabelFlow.tsx` | A label → on-device read → accession shown back → C only if nothing read → B enforced, or a stated reason → flags and hard cases. Retake deletes the frame on screen; "add a frame" keeps it, for a label too big for one (D48) |
@@ -54,7 +53,7 @@ test.** What it does, and where:
 | `src/screens/DeleteVisit.tsx` | Deleting a whole visit, on an earlier visit and on the hub, only while nothing of it has been sent (D48). Renamed out of sight first, then deleted, so a crash never leaves half a visit |
 | `src/redaction.ts` | The manifest half of that removal, pure so `npm run redaction-test` checks it under Node. A retake uses the same path and is marked `discarded` instead (D48) |
 | `src/upload.ts` | The upload queue (D43): opt-in, drains on its own to `services/ingest/`, records before frames, a per-take `uploads.ndjson` ledger beside the manifest. Only visits started while sending was on. A frame with an unanswered face question waits (D49). Sending never deletes anything local; `deleteUnsent` deletes a visit only while nothing of it has been sent (D48) |
-| `src/screens/UploadPanel.tsx` | The opt-in and a quiet status line on Arrive, Home and Done — what's left to send only counts down |
+| `src/screens/UploadPanel.tsx` | The opt-in and a quiet status line on the landing, the hub and Done — what's left to send only counts down |
 | `src/registry.ts` | `data/venues/` bundled via `metro.config.js` `watchFolders` — add a venue there **and** to the import list |
 
 Frames also go to the camera roll, so the USB path in the protocol still works. The

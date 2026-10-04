@@ -1,4 +1,4 @@
-import { Redirect, Stack } from 'expo-router';
+import { Stack } from 'expo-router';
 import { FaceQuestion } from '../../src/screens/FaceQuestion';
 import { useCurrentTake } from '../../src/session';
 import { usePalette } from '../../src/theme';
@@ -10,9 +10,11 @@ import { usePalette } from '../../src/theme';
  * swipe out of the label flow would leave its group open. Done is the end of the
  * visit and has nothing to go back to.
  *
- * Done's Close and the hub's Delete clear the visit after navigating away, but a
- * native stack keeps the outgoing screens mounted through their exit transition, so
- * every route under here renders nothing when there's no visit, whatever the order.
+ * Done's Close and the hub's Delete clear the visit and then pop back to the landing.
+ * A native stack keeps the outgoing screens mounted through their exit transition, so
+ * every route under here, and this layout, renders nothing when there's no visit.
+ * Nothing redirects from here: the landing is the one place that decides between a
+ * visit and the door, so leaving is a single navigation.
  *
  * The face question (D49) sits over all of them: whichever flow saved a frame with a
  * face in it, the tester is asked before going on.
@@ -24,7 +26,7 @@ export const unstable_settings = { initialRouteName: 'index' };
 export default function VisitLayout() {
   const p = usePalette();
   const take = useCurrentTake();
-  if (!take) return <Redirect href="/start" />;
+  if (!take) return null;
   const flow = { gestureEnabled: false };
   return (
     <>

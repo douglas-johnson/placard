@@ -32,6 +32,11 @@ export function useCurrentTake(): Take | null {
   return useSyncExternalStore(subscribe, () => snapshot).take;
 }
 
+/** The same, outside React. */
+export function currentTake(): Take | null {
+  return snapshot.take;
+}
+
 /** A visit started, ended and let go, or deleted. */
 export function setCurrentTake(take: Take | null): void {
   snapshot = { take };

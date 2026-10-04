@@ -7,12 +7,21 @@ import { P } from '../ui';
 /**
  * Earlier visits on this phone, each a tap from its own screen — the manifest, and
  * removing a photo that should never have been kept (Visit). Shown on the hub and on
- * Arrive: after the Met (field-beta §6.1) the list lived only on the hub, which needs
- * an open take, so a finished visit had no door until the next visit began.
+ * the landing: after the Met (field-beta §6.1) the list lived only on the hub, which
+ * needs an open take, so a finished visit had no door until the next visit began.
+ * Open from the start on the landing, where it's most of what there is to see.
  */
-export function PastTakes({ except, onOpen }: { except?: string; onOpen: (take: Take) => void }) {
+export function PastTakes({
+  except,
+  startOpen = false,
+  onOpen,
+}: {
+  except?: string;
+  startOpen?: boolean;
+  onOpen: (take: Take) => void;
+}) {
   const p = usePalette();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(startOpen);
   const past = open ? listTakes().filter((t) => t.id !== except) : [];
   return (
     <>
