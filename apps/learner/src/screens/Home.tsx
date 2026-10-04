@@ -18,13 +18,13 @@ export type Input = 'venue' | 'label' | 'wall_text' | 'exterior';
 export function Home({
   take,
   onInput,
-  onPreflight,
+  onSettings,
   onOpenVisit,
   onDeleted,
 }: {
   take: Take;
   onInput: (input: Input) => void;
-  onPreflight: () => void;
+  onSettings: () => void;
   onOpenVisit: (take: Take) => void;
   onDeleted: () => void;
 }) {
@@ -89,8 +89,8 @@ export function Home({
         <Rule />
         <PastTakes except={take.id} onOpen={onOpenVisit} />
         <DeleteVisit take={take} onDeleted={onDeleted} />
-        <Pressable onPress={onPreflight} hitSlop={8} style={{ marginTop: 20 }}>
-          <Text style={[type.small, { color: p.muted }]}>Check this build</Text>
+        <Pressable onPress={onSettings} hitSlop={8} style={{ marginTop: 20 }}>
+          <Text style={[type.small, { color: p.muted }]}>Settings</Text>
         </Pressable>
         <Text style={[type.small, { color: p.pending, marginTop: 12 }]}>{take.id}</Text>
       </ScrollView>

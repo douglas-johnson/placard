@@ -40,8 +40,11 @@ export default function RootLayout() {
     if (!__DEV__) return;
     const routeMarker = new File(Paths.document, 'devroute');
     if (routeMarker.exists) {
-      const [input, preset] = routeMarker.textSync().trim().split(':');
+      const text = routeMarker.textSync().trim();
       routeMarker.delete();
+      // A path opens as is, to look at a screen the simulator can't be tapped to.
+      if (text.startsWith('/')) router.push(text as never);
+      const [input, preset] = text.split(':');
       const path = {
         label: 'label',
         wall_text: 'wall-text',
