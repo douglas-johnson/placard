@@ -7,12 +7,13 @@
 // measured against real frames before it reaches a phone. Its own file rather than a
 // part of OCRCore because nothing in it is about reading text.
 //
-// Same rule as OCRCore: Foundation, Vision, Core Image, ImageIO and UTType only — no AppKit,
+// Same rule as OCRCore: Foundation, Vision, Core Image, Core ML, ImageIO and UTType only — no AppKit,
 // no UIKit, no ExpoModulesCore.
 
 import Foundation
 import Vision
 import CoreImage
+import CoreML
 import ImageIO
 import UniformTypeIdentifiers
 
@@ -48,6 +49,19 @@ let blocksPerFace = 8.0
 /// Faces in the image, normalized to the upright image (origin bottom-left).
 func detectFaces(_ image: CGImage, orientation: CGImagePropertyOrientation) throws -> [CGRect] {
     let request = VNDetectFaceRectanglesRequest()
+    #if targetEnvironment(simulator)
+    // The iOS simulator has no device the face detector can run its model on, and the
+    // request fails with "Could not create inference context" (seen on the Intel Mac,
+    // 2026-10-04). Text recognition doesn't hit this. The CPU always works.
+    if #available(iOS 17.0, *),
+       let cpu = MLComputeDevice.allComputeDevices.first(where: {
+           if case .cpu = $0 { return true } else { return false }
+       }) {
+        for stage in try request.supportedComputeStageDevices.keys {
+            try request.setComputeDevice(cpu, for: stage)
+        }
+    }
+    #endif
     let handler = VNImageRequestHandler(cgImage: image, orientation: orientation, options: [:])
     try handler.perform([request])
     return (request.results ?? []).map(\.boundingBox)
