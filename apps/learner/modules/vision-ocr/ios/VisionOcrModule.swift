@@ -1,7 +1,7 @@
-// VisionOcr — the phone-side host for OCRCore.swift (§4.4, D3).
+// VisionOcr — the phone-side host for OCRCore.swift (§4.4, D3) and FaceCore.swift (D49).
 //
-// Deliberately thin. Everything that knows anything about labels is in OCRCore,
-// which the Mac corpus tool compiles too; this file only converts between the
+// Deliberately thin. Everything that knows anything about labels is in OCRCore, and
+// everything about faces in FaceCore, both of which the Mac corpus tool compiles too; this file only converts between the
 // Expo bridge and that code. Recognition runs off the main thread — AsyncFunction
 // does that by default — because three Vision passes on a 12-megapixel frame take
 // a second or more, and the capture screen must not freeze while they do.
@@ -41,6 +41,21 @@ public class VisionOcrModule: Module {
         "warnings": qualityWarnings(observations),
         "elapsedMs": elapsedMs,
       ]
+    }
+
+    // The face pass (D49) is two calls so the policy stays in JS: which found faces
+    // get pixellated is the tester's answer, and it can change without a native build.
+    // How far a pixellated region reaches past the face Vision found, so the face
+    // question can draw what pixellate covers without keeping its own copy.
+    Constant("faceMargin") { faceMargin }
+
+    AsyncFunction("detectFaces") { (uri: URL) throws -> [String: Any] in
+      let scan = try detectFaces(uri)
+      return ["boxes": scan.boxes, "elapsedMs": scan.elapsedMs]
+    }
+
+    AsyncFunction("pixellate") { (source: URL, destination: URL, boxes: [[Double]]) throws in
+      try pixellate(source: source, destination: destination, boxes: boxes)
     }
   }
 }

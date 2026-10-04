@@ -14,7 +14,8 @@ import { Directory, File, Paths } from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
 import * as Updates from 'expo-updates';
 import { Platform } from 'react-native';
-import type { Observation } from '../modules/vision-ocr';
+import * as VisionOcr from '../modules/vision-ocr';
+import type { FaceBox, Observation } from '../modules/vision-ocr';
 import type { Gps } from './location';
 import { redact, type RedactionFs, settle as settleRedaction } from './redaction';
 import { slugify } from './registry';
@@ -80,6 +81,14 @@ export type AccessionStatus =
 
 type Base = { v: 1; ts: string; take: string; seq: number };
 
+/**
+ * The face pass as the frame was saved (D49): every face found was pixellated before
+ * the frame reached the take. `error` when the pass couldn't run — Expo Go, or a
+ * failure — in which case the frame was saved as shot.
+ */
+export type FacePass =
+  { blurred: number; boxes: FaceBox[]; elapsed_ms: number } | { error: string };
+
 export type ManifestRecord =
   | (Base & {
       type: 'take_started';
@@ -130,6 +139,18 @@ export type ManifestRecord =
       height: number;
       gps: Gps | null;
       camera_roll: boolean;
+      /** Absent on frames saved before the face pass existed. */
+      faces?: FacePass;
+    })
+  | (Base & {
+      type: 'faces';
+      frame: string;
+      /** Faces the tester says belong to the artwork, left unblurred: their claim (D49). */
+      kept: { box: FaceBox; why: 'artwork' }[];
+      /** Faces that stay pixellated. */
+      blurred: number;
+      /** `visit_ended`: nobody answered, and the blur stood. */
+      by: 'tester' | 'visit_ended';
     })
   | (Base & {
       type: 'ocr';
@@ -182,6 +203,15 @@ export type Counts = {
   frames: number;
 };
 
+/** A frame with faces in it, waiting for the tester to say whether any belong to the work. */
+export type FaceQuestion = {
+  frame: string;
+  file: string;
+  boxes: FaceBox[];
+  width: number;
+  height: number;
+};
+
 export type Take = {
   id: string;
   dir: Directory;
@@ -194,6 +224,8 @@ export type Take = {
   openGroup: string | null;
   lastClosedGroup: string | null;
   counts: Counts;
+  /** Oldest first. Their files stay on the phone until answered (upload.ts). */
+  unanswered: FaceQuestion[];
 };
 
 const takesDir = () => new Directory(Paths.document, 'takes');
@@ -247,6 +279,7 @@ function replay(id: string, dir: Directory, lines: ManifestRecord[]): Take | nul
         openGroup: null,
         lastClosedGroup: null,
         counts: emptyCounts(),
+        unanswered: [],
       };
       continue;
     }
@@ -271,6 +304,13 @@ function replay(id: string, dir: Directory, lines: ManifestRecord[]): Take | nul
         if (r.kind === 'work') take.counts.works += 1;
         if (r.kind === 'venue_sign' || r.kind === 'exterior') take.counts.venue_signs += 1;
         if (r.kind === 'wall_text') take.counts.wall_texts += 1;
+        if (r.file != null && r.faces && 'blurred' in r.faces && r.faces.blurred > 0) {
+          const { frame, file, width, height } = r;
+          take.unanswered.push({ frame, file, boxes: r.faces.boxes, width, height });
+        }
+        break;
+      case 'faces':
+        take.unanswered = take.unanswered.filter((q) => q.frame !== r.frame);
         break;
       case 'take_ended':
         take.ended = r.ts;
@@ -332,6 +372,14 @@ export function resumeTake(): Take | null {
     const f = manifestOf(take.dir);
     const text = f.exists ? f.textSync() : '';
     if (text.length > 0 && !text.endsWith('\n')) f.write('\n', { append: true });
+  }
+  // Only the visit in progress can have a question open. Any other original is left
+  // over from a deleted visit or a crash, and is the one copy of a face to clear.
+  const keep = new Set(take?.unanswered.map((q) => originalOf(take, q.frame).uri) ?? []);
+  if (originalsDir().exists) {
+    for (const f of originalsDir().list()) {
+      if (f instanceof File && !keep.has(f.uri)) f.delete();
+    }
   }
   return take;
 }
@@ -425,6 +473,7 @@ export function startTake(input: {
     openGroup: null,
     lastClosedGroup: null,
     counts: emptyCounts(),
+    unanswered: [],
   };
   append(take, {
     type: 'take_started',
@@ -453,7 +502,9 @@ export function startTake(input: {
   return take;
 }
 
-export function endTake(take: Take): void {
+/** Ends the visit. A face nobody answered for stays blurred (D49). */
+export async function endTake(take: Take): Promise<void> {
+  for (const q of [...take.unanswered]) await answerFaces(take, q.frame, [], 'visit_ended');
   append(take, { type: 'take_ended', counts: { ...take.counts } });
   take.ended = new Date().toISOString();
 }
@@ -490,6 +541,12 @@ export type SavedFrame = { id: string; file: File; width: number; height: number
  * Move a just-taken picture into the take and record it. The camera-roll copy is a
  * courtesy to the tester and a fallback for Doug's USB path (field-beta §4); if it
  * fails, the frame is still safe in the take and the manifest says so.
+ *
+ * Every frame goes through the face pass on the way in (D49), and any face found is
+ * pixellated before the frame reaches the take, so the take never holds an unblurred
+ * face. The original waits in the cache until the tester answers whether a face
+ * belongs to the artwork. The camera roll gets the blurred copy, since iCloud Photos
+ * would otherwise carry the face off the phone.
  */
 export async function saveFrame(
   take: Take,
@@ -506,7 +563,7 @@ export async function saveFrame(
   take.nextFrame += 1;
   const name = `${id}-${meta.kind}.jpg`;
   const dest = new File(take.dir, name);
-  await new File(picture.uri).move(dest);
+  const faces = await facePass(take, id, new File(picture.uri), dest);
 
   let cameraRoll = false;
   try {
@@ -522,6 +579,16 @@ export async function saveFrame(
     console.warn('[take] camera roll save failed', e);
   }
 
+  // Before the record, so whoever re-renders on it already sees the question.
+  if ('blurred' in faces && faces.blurred > 0) {
+    take.unanswered.push({
+      frame: id,
+      file: name,
+      boxes: faces.boxes,
+      width: picture.width,
+      height: picture.height,
+    });
+  }
   append(take, {
     type: 'frame',
     frame: id,
@@ -534,12 +601,95 @@ export async function saveFrame(
     height: picture.height,
     gps: meta.gps,
     camera_roll: cameraRoll,
+    faces,
   });
   take.counts.frames += 1;
   if (meta.kind === 'work') take.counts.works += 1;
   if (meta.kind === 'venue_sign' || meta.kind === 'exterior') take.counts.venue_signs += 1;
   if (meta.kind === 'wall_text') take.counts.wall_texts += 1;
   return { id, file: dest, width: picture.width, height: picture.height };
+}
+
+const originalsDir = () => new Directory(Paths.cache, 'faces-unanswered');
+
+/**
+ * Where a frame's unblurred original waits for an answer. The cache, because device
+ * backups leave it out; if iOS clears it first, the blur simply stands.
+ */
+function originalOf(take: Take, frame: string): File {
+  return new File(originalsDir(), `${take.id}-${frame}.jpg`);
+}
+
+async function facePass(take: Take, frame: string, shot: File, dest: File): Promise<FacePass> {
+  if (!VisionOcr.isAvailable) {
+    shot.move(dest);
+    return { error: 'the face pass is not linked into this build' };
+  }
+  try {
+    const scan = await VisionOcr.detectFaces(shot.uri);
+    if (scan.boxes.length === 0) {
+      shot.move(dest);
+    } else {
+      if (!originalsDir().exists) originalsDir().create({ intermediates: true });
+      const original = originalOf(take, frame);
+      if (original.exists) original.delete();
+      shot.move(original);
+      await VisionOcr.pixellate(original.uri, dest.uri, scan.boxes);
+    }
+    return { blurred: scan.boxes.length, boxes: scan.boxes, elapsed_ms: scan.elapsedMs };
+  } catch (e) {
+    // Capture never fails (§3). The frame is kept as shot and the record says why.
+    console.warn('[take] face pass failed', e);
+    const original = originalOf(take, frame);
+    if (!dest.exists) (original.exists ? original : shot).move(dest);
+    return { error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+/** The frame as shot, for the face question; null once answered or if iOS cleared it. */
+export function faceOriginal(take: Take, frame: string): File | null {
+  const f = originalOf(take, frame);
+  return f.exists ? f : null;
+}
+
+/**
+ * Answer a frame's face question (D49): the faces at `kept` belong to the artwork and
+ * stay unblurred; every other one is pixellated. The frame is always rewritten from
+ * the original when there is one, whatever the answer, so a crash between rewriting
+ * and recording can't leave a face unblurred under an answer that says otherwise.
+ */
+export async function answerFaces(
+  take: Take,
+  frame: string,
+  kept: number[],
+  by: 'tester' | 'visit_ended' = 'tester',
+): Promise<void> {
+  const q = take.unanswered.find((x) => x.frame === frame);
+  if (!q) return;
+  const original = originalOf(take, frame);
+  if (!original.exists && kept.length > 0)
+    throw new Error('The photo as shot is gone, so its faces stay blurred.');
+  if (original.exists) {
+    const blur = q.boxes.filter((_, i) => !kept.includes(i));
+    try {
+      await VisionOcr.pixellate(original.uri, new File(take.dir, q.file).uri, blur);
+    } catch (e) {
+      // Keeping a face needs the rewrite. Keeping none doesn't: the frame has had every
+      // face blurred since it was saved, and a visit mustn't be kept from ending.
+      if (kept.length > 0) throw e;
+      console.warn('[take] face rewrite failed; the blur from saving stands', e);
+    }
+  }
+  append(take, {
+    type: 'faces',
+    frame,
+    kept: kept.map((i) => ({ box: q.boxes[i], why: 'artwork' as const })),
+    blurred: q.boxes.length - kept.length,
+    by,
+  });
+  take.unanswered = take.unanswered.filter((x) => x.frame !== frame);
+  if (original.exists) original.delete();
+  appendListeners.forEach((l) => l());
 }
 
 export function recordOcr(
@@ -594,13 +744,18 @@ export function redactFrame(take: Take, frame: string, why: string): void {
   const day = new Date().toISOString().slice(0, 10);
   if (!redact(redactionFs(take.dir), frame, why, day).found)
     throw new Error(`no frame ${frame} in ${take.id}`);
-  recount(take);
+  recount(take, frame);
 }
 
 /** Counts again from the manifest after a removal, for whoever holds this take. */
-function recount(take: Take): void {
+function recount(take: Take, removed: string): void {
   const fresh = replay(take.id, take.dir, readManifest(take.dir));
-  if (fresh) take.counts = fresh.counts;
+  if (fresh) {
+    take.counts = fresh.counts;
+    take.unanswered = fresh.unanswered;
+  }
+  const original = originalOf(take, removed);
+  if (original.exists) original.delete();
   appendListeners.forEach((l) => l());
 }
 
@@ -615,7 +770,7 @@ export function discardFrame(take: Take, frame: string): void {
   const day = new Date().toISOString().slice(0, 10);
   if (!redact(redactionFs(take.dir), frame, 'retake', day, 'discarded').found)
     throw new Error(`no frame ${frame} in ${take.id}`);
-  recount(take);
+  recount(take, frame);
 }
 
 /**
@@ -630,6 +785,10 @@ export function deleteTake(take: Take): void {
   const name = `${DELETING}${take.id}`;
   take.dir.rename(name);
   new Directory(takesDir(), name).delete();
+  for (const q of take.unanswered) {
+    const original = originalOf(take, q.frame);
+    if (original.exists) original.delete();
+  }
 }
 
 /** The manifest file, for the share sheet. */

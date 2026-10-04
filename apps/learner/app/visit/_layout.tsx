@@ -1,4 +1,5 @@
 import { Redirect, Stack } from 'expo-router';
+import { FaceQuestion } from '../../src/screens/FaceQuestion';
 import { useCurrentTake } from '../../src/session';
 import { usePalette } from '../../src/theme';
 
@@ -12,6 +13,9 @@ import { usePalette } from '../../src/theme';
  * Done's Close and the hub's Delete clear the visit after navigating away, but a
  * native stack keeps the outgoing screens mounted through their exit transition, so
  * every route under here renders nothing when there's no visit, whatever the order.
+ *
+ * The face question (D49) sits over all of them: whichever flow saved a frame with a
+ * face in it, the tester is asked before going on.
  */
 // The hub beneath any screen under visit/ that's opened directly, so Back from it lands
 // on the hub. A deep link gets this on its own; a router call needs `withAnchor`.
@@ -23,12 +27,15 @@ export default function VisitLayout() {
   if (!take) return <Redirect href="/start" />;
   const flow = { gestureEnabled: false };
   return (
-    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: p.bg } }}>
-      <Stack.Screen name="label" options={flow} />
-      <Stack.Screen name="wall-text" options={flow} />
-      <Stack.Screen name="signage" options={flow} />
-      <Stack.Screen name="exterior" options={flow} />
-      <Stack.Screen name="done" options={flow} />
-    </Stack>
+    <>
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: p.bg } }}>
+        <Stack.Screen name="label" options={flow} />
+        <Stack.Screen name="wall-text" options={flow} />
+        <Stack.Screen name="signage" options={flow} />
+        <Stack.Screen name="exterior" options={flow} />
+        <Stack.Screen name="done" options={flow} />
+      </Stack>
+      <FaceQuestion take={take} />
+    </>
   );
 }

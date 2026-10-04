@@ -35,6 +35,12 @@ the latter is `{key, sha256, bytes}` per frame, where `key` is the full bucket k
 by USB before the bucket existed stay at `raw/<take>/` until the fixture rebinding
 (infrastructure.md §9) moves them.
 
+**"As it came off the phone" means as uploaded, for a contributed frame** (D49). The
+phone pixellates faces before a frame reaches the take, and the unblurred frame never
+leaves it. The frame record's `faces` says how many were found and where; a `faces`
+record after it says which ones the tester kept as part of the artwork, and the file
+is pixellated everywhere else. A frame from before the face pass has no `faces` at all.
+
 ## labels/fixtures/ — the asset
 
 One JSON per photographed label: the file it came from, and the **verified correct**

@@ -2072,3 +2072,71 @@ real native-stack support would not by itself be enough, since the migration cos
 paid once; Expo Router dropping support for the SDK would. For retakes, evidence that
 discarded frames carried signal the tester's report didn't, which would bring back
 keeping them with a `rejected` mark rather than deleting them.
+
+---
+
+## D49 — A found face is blurred unless the tester says it belongs to the artwork
+
+**Date:** 2026-10-04 · **Status:** accepted, to be re-evaluated on more examples ·
+**Decided by:** Doug (the policy, and its re-evaluation); Claude's calls are marked ·
+**Settles:** field-beta §3's face blur and §8 proposal 2 · **Issue:** #35
+
+Field-beta §3 planned to detect faces on the phone and pixellate every one before a frame
+is kept, under D28's rule that a frame is blurred before it leaves the phone, since
+blurring on the server means the unblurred frame was already sent. Before building
+that, the face pass ran over the whole corpus on the Mac: 100 frames from MCNY, the Met
+and Cooper Hewitt, the same Vision request the phone will make. It found eight faces,
+and every one was part of the work: the seated marble goddess and the Egyptian figure at
+the Met, the pharaoh in the facsimile painting, Alice in the MCNY mural, and sitters in
+framed photographs. It found no visitor. The one frame with visitors in it, behind the
+Egyptian figure, shows them out of focus, one cut off at the frame's edge and one
+with a phone in front of their face; the pass left them alone, and a person detector
+(Vision's human rectangles) found both, and the statue twice. No label or wall-text
+frame had a detection, so blurring before OCR cost no reading.
+
+Blurring every face would have pixellated the subject of every portrait and statue in
+the corpus and protected nobody. So a found face is **pixellated by default, and the
+tester can keep one that belongs to the artwork**. When a frame has faces, the app
+shows it with each one marked; tapping a face keeps it, and that is recorded in the
+manifest as the tester's claim (`kept`, `why: "artwork"`), the same standing as any
+other claim. Skipping the step, closing the app, or ending the visit leaves the blur in
+place. This is a step on the frames that have a face, which was 8 in 100 here.
+
+**This is provisional by design.** Eight detections from three venues is enough to
+show the problem, not to size it. Doug will collect frames with faces in them, real
+visitors among them, on the next visit, and the policy is re-evaluated against them.
+The policy lives in the app's JavaScript and the native module only finds and
+pixellates (Claude's call). That means the re-evaluation can ship as an update, not a
+native build.
+
+**How it's built** (Claude's calls):
+
+- **The face pass is its own shared file, `FaceCore.swift`, beside `OCRCore.swift`**,
+  compiled into the same two hosts (D30). It's not part of OCRCore because it doesn't read
+  text, and it's shared so the Mac can measure a change to it against the corpus, as it
+  did above, before a phone build.
+- **Every frame kind goes through it**, as §3 said. Labels had no detections, and a label
+  in glass can reflect a face.
+- **The visit's directory never holds an unblurred frame.** The frame is pixellated
+  as it moves into the take. The unblurred original waits in the app's cache, which
+  device backups exclude, only until the tester answers, and is deleted then. The
+  camera-roll copy is the default-blurred one, written at save time. iCloud Photos
+  would otherwise carry an unblurred copy off the phone. As a result, a kept face is
+  blurred in the camera roll but not in the corpus.
+- **Uploads hold a frame with faces until it has an answer.** The answer is a `faces`
+  record after the frame's own. Ending the visit writes one for every unanswered
+  frame, keeping nothing.
+- **Faces only, not bodies.** A turned or out-of-focus face isn't found, and isn't
+  identifying as a face. Clothing and build can identify someone too, but blurring
+  every body would also blur every statue. That question waits for the examples.
+
+**What "raw" means for a contributed frame**, field-beta §8 proposal 2, follows from
+this. The frame that reaches `placard-raw` is the one the phone kept, with faces
+pixellated except those the tester kept, and the unblurred frame never leaves the
+phone. The blur count is in the frame record, and the kept faces are in the `faces`
+record that follows it.
+
+**What would reverse this:** examples where testers keep visitors' faces, by mistake
+or carelessly, would argue for blurring every face. So would a corpus in which artwork
+faces turn out rare. Visitors found by the person detector whose faces the face pass
+misses would argue for adding bodies.

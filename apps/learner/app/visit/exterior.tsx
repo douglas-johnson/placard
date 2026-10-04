@@ -14,8 +14,8 @@ export default function Exterior() {
       take={take}
       mode="exterior"
       onCancel={() => router.back()}
-      onDone={() => {
-        endTake(take);
+      onDone={async () => {
+        await endTake(take);
         stopWatching();
         router.replace('/visit/done');
       }}

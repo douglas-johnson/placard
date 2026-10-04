@@ -12,7 +12,9 @@ import { findAccessionCandidates } from './accession';
 import { latestFix } from './location';
 import { bySlug } from './registry';
 import {
+  answerFaces,
   closeGroup,
+  faceOriginal,
   manifestFile,
   openGroup,
   recordAccession,
@@ -31,6 +33,52 @@ async function fixturePicture() {
   );
   new File(asset.localUri!).copySync(copy);
   return { uri: copy.uri, width: 1200, height: 1200, gps: latestFix() };
+}
+
+/** The Met statue, stored sideways with an orientation tag; the size is upright. */
+async function faceFixturePicture() {
+  const asset = Asset.fromModule(require('../assets/fixtures/met-statue-face.jpg'));
+  await asset.downloadAsync();
+  const copy = new File(Paths.cache, `selftest-face-${Date.now()}.jpg`);
+  new File(asset.localUri!).copySync(copy);
+  return { uri: copy.uri, width: 465, height: 1008, gps: latestFix() };
+}
+
+/**
+ * The face pass (D49), end to end: a frame with a face is saved blurred with its
+ * original held aside; an answer that keeps the face rewrites it unblurred and records
+ * the claim; and a second frame is left unanswered, so the question is on screen when
+ * the self-test lands on the hub.
+ */
+async function faceSelfTest(take: Take, log: (m: string) => void): Promise<void> {
+  if (!VisionOcr.isAvailable) {
+    log('faces: the pass is unavailable in this host');
+    return;
+  }
+  const kept = await saveFrame(take, await faceFixturePicture(), {
+    kind: 'venue_sign',
+    group: null,
+    gps: latestFix(),
+    sign_kind: 'other',
+  });
+  const saved = await VisionOcr.detectFaces(kept.file.uri);
+  log(
+    `faces: ${kept.id} saved with ${saved.boxes.length} face(s) still findable (want 0), ` +
+      `original held: ${faceOriginal(take, kept.id) != null}, asked: ${take.unanswered.length}`,
+  );
+  await answerFaces(take, kept.id, [0]);
+  const after = await VisionOcr.detectFaces(kept.file.uri);
+  log(
+    `faces: ${kept.id} after keeping the face: ${after.boxes.length} findable (want 1), ` +
+      `original held: ${faceOriginal(take, kept.id) != null} (want false), asked: ${take.unanswered.length}`,
+  );
+  const open = await saveFrame(take, await faceFixturePicture(), {
+    kind: 'venue_sign',
+    group: null,
+    gps: latestFix(),
+    sign_kind: 'other',
+  });
+  log(`faces: ${open.id} left unanswered for the screen; asked: ${take.unanswered.length}`);
 }
 
 export async function runSelfTest(): Promise<Take> {
@@ -113,6 +161,8 @@ export async function runSelfTest(): Promise<Take> {
     linked_group: g,
   });
   log(`wall text ${wall.id}`);
+
+  await faceSelfTest(take, log);
 
   const manifest = manifestFile(take).textSync();
   log(`manifest ${manifest.split('\n').filter(Boolean).length} records:\n${manifest}`);

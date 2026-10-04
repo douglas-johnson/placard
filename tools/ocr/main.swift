@@ -11,8 +11,12 @@
 // GPS, which are what let a take be segmented into venues without hand-sorting
 // (see docs/capture-protocol.md), directory walking, and NDJSON output.
 //
+// With --faces it runs FaceCore.swift's pass instead (D49): the faces the phone
+// would pixellate, so a change to that pass is measured against the corpus first.
+//
 // Build:  ./tools/ocr/build.sh
 // Usage:  placard-ocr <file-or-directory> [--lang en-US,ja-JP] [--fast]
+//         placard-ocr <file-or-directory> --faces [--blur-to <dir>]
 
 import Foundation
 import ImageIO
@@ -134,6 +138,8 @@ var fast = false
 /// See `recognize` in OCRCore.swift for why a single pass is not enough.
 var scales: [Double] = [1.0, 1.6, 2.4]
 var inputs: [String] = []
+var facesMode = false
+var blurTo: URL? = nil
 
 var i = 0
 while i < args.count {
@@ -145,6 +151,11 @@ while i < args.count {
         fast = true
     case "--single-pass":
         scales = [1.0]
+    case "--faces":
+        facesMode = true
+    case "--blur-to":
+        i += 1
+        if i < args.count { facesMode = true; blurTo = URL(fileURLWithPath: args[i]) }
     case "--scales":
         i += 1
         if i < args.count {
@@ -158,9 +169,13 @@ while i < args.count {
         USAGE
           placard-ocr <file-or-directory> [--lang en-US,ja-JP] [--fast]
                        [--scales 1.0,1.6,2.4] [--single-pass]
+          placard-ocr <file-or-directory> --faces [--blur-to <dir>]
 
         Recognition runs at several scales by default and flags lines the scales
         disagree about. A single pass is not reliable for accession numbers.
+
+        --faces finds faces instead of reading text, with the phone's pass (D49).
+        --blur-to also writes each image with faces, pixellated, into <dir>.
 
         OUTPUT
           NDJSON on stdout, one object per image. Progress on stderr.
@@ -168,6 +183,7 @@ while i < args.count {
         EXAMPLES
           placard-ocr data/labels/raw/2026-09-16-moma > take.ndjson
           placard-ocr photo.heic --lang en-US,zh-Hans
+          placard-ocr data/labels/raw --faces --blur-to /tmp/faces
         """)
         exit(0)
     default:
@@ -191,6 +207,59 @@ FileHandle.standardError.write("placard-ocr: \(files.count) image(s), languages 
 
 let encoder = JSONEncoder()
 encoder.outputFormatting = [.withoutEscapingSlashes]
+
+struct FaceResult: Codable {
+    let path: String
+    let filename: String
+    let boxes: [[Double]]
+    let elapsedMs: Int
+    let error: String?
+
+    // Same reason as PhotoResult: nil is written as null, not left out.
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(path, forKey: .path)
+        try c.encode(filename, forKey: .filename)
+        try c.encode(boxes, forKey: .boxes)
+        try c.encode(elapsedMs, forKey: .elapsedMs)
+        try c.encode(error, forKey: .error)
+    }
+}
+
+if facesMode {
+    if let dir = blurTo {
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+    }
+    var withFaces = 0
+    for (n, url) in files.enumerated() {
+        var result = FaceResult(path: url.path, filename: url.lastPathComponent,
+                                boxes: [], elapsedMs: 0, error: nil)
+        do {
+            let scan = try detectFaces(url)
+            result = FaceResult(path: url.path, filename: url.lastPathComponent,
+                                boxes: scan.boxes, elapsedMs: scan.elapsedMs, error: nil)
+            if let dir = blurTo, !scan.boxes.isEmpty {
+                // Take directories share file names (f0005-work.jpg), so the copy is
+                // named for its parent too.
+                let name = url.deletingLastPathComponent().lastPathComponent + "-" + url.lastPathComponent
+                try pixellate(source: url, destination: dir.appendingPathComponent(name),
+                              boxes: scan.boxes)
+            }
+        } catch {
+            result = FaceResult(path: url.path, filename: url.lastPathComponent,
+                                boxes: result.boxes, elapsedMs: result.elapsedMs, error: "\(error)")
+        }
+        if !result.boxes.isEmpty { withFaces += 1 }
+        if let data = try? encoder.encode(result), let line = String(data: data, encoding: .utf8) {
+            print(line)
+        }
+        var note = "  [\(n + 1)/\(files.count)] \(url.lastPathComponent) — \(result.boxes.count) face(s)"
+        if let e = result.error { note += " ERROR: \(e)" }
+        FileHandle.standardError.write((note + "\n").data(using: .utf8)!)
+    }
+    FileHandle.standardError.write("placard-ocr: faces in \(withFaces) of \(files.count) image(s)\n".data(using: .utf8)!)
+    exit(0)
+}
 
 for (n, url) in files.enumerated() {
     let exif = readExif(url)

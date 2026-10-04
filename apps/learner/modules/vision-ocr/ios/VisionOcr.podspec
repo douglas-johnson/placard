@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name           = 'VisionOcr'
   s.version        = '0.1.0'
-  s.summary        = 'On-device Apple Vision OCR for Placard'
+  s.summary        = 'On-device Apple Vision OCR and face blur for Placard'
   s.description    = 'Wraps the OCR pipeline shared with tools/ocr as an Expo module.'
   s.author         = 'Placard'
   s.homepage       = 'https://github.com/douglas-johnson/placard'
@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.static_framework = true
 
   s.dependency 'ExpoModulesCore'
-  s.frameworks = 'Vision', 'ImageIO'
+  s.frameworks = 'Vision', 'ImageIO', 'CoreImage', 'CoreML', 'UniformTypeIdentifiers'
 
   s.pod_target_xcconfig = {
     'DEFINES_MODULE' => 'YES',

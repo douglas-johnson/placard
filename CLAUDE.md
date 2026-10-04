@@ -99,7 +99,8 @@ update (D33). What exists:
 
 - `apps/learner/` — the capture app: labels, works, wall text, venue signage, accession
   read-back, an append-only manifest per take; removing a photo as a redaction (D41);
-  an opt-in upload queue (D43)
+  an opt-in upload queue (D43); a retake that deletes the frame, and deleting a visit
+  while nothing of it has been sent (D48); routes under `app/` with Expo Router (D48)
 - `services/ingest/` — phone → `placard-raw` (B2): signed frame PUTs, one object per
   manifest record (D38); Postgres index for create-only allocation (D35)
 - `tools/redact/` — the version-by-version redaction tool (D36, D42)
@@ -118,8 +119,16 @@ records, `corpus-pull` reported the take complete, and the camera's focus and cr
 (126489b) held in a gallery. Don't test with throwaway photos, since `placard-raw` keeps
 everything.
 
-**Next:** F1 (field-beta §7), meaning the consent screen, face blur, and external
-testers; and the two post-visit follow-ups, #18 and #19.
+**The installed build and `main` have parted, 2026-10-04.** TestFlight phones run
+0.1.1, which last took an update from f26afd9 (#25–#27). `main` is 0.1.2 since the
+Expo Router port (#28), and D33's runtime policy is the app version, so an update
+published from `main` reaches no installed phone. Until the 0.1.2 build ships, a fix
+for 0.1.1 has to be published from a branch cut before 351da54. That build waits on
+face blur (#35), the other native change F1 needs.
+
+**Next:** F1 (field-beta §7): face blur (#35), then the 0.1.2 native build; then the
+consent screen with #29–#31 as updates on top of it, and external testers. The
+read-back follow-ups #21 and #22 wait on data from those testers.
 
 ## Repository layout
 
