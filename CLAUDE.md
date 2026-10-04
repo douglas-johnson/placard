@@ -173,6 +173,11 @@ python3 -m unittest tools/redact/test_redact.py
 python3 tools/corpus-pull/corpus-pull.py
 python3 -m unittest tools/corpus-pull/test_corpus_pull.py
 
+# The curriculum spike (#42): suggestions from the fixtures, ranked by closure (§6.1).
+# Needs the Met's Open Access CSV in its cache once; its README says how
+python3 tools/curriculum-spike/spike.py --top 10
+python3 -m unittest tools/curriculum-spike/test_spike.py
+
 # The upload service
 (cd services/ingest && .venv/bin/pytest -q)
 
