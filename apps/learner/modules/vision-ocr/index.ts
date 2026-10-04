@@ -1,5 +1,5 @@
 /**
- * On-device OCR via Apple Vision (§4.4). The native side is OCRCore.swift, which is
+ * On-device OCR and face blur via Apple Vision (§4.4, D49). The native side is OCRCore.swift, which is
  * the same code the corpus tool in tools/ocr runs on the Mac (D3), so a label that
  * reads a certain way in the fixtures reads the same way here.
  *
@@ -44,8 +44,18 @@ export type RecognizeOptions = {
   scales?: number[];
 };
 
+/** A face as Vision found it: normalized to the upright image, origin bottom-left. */
+export type FaceBox = [number, number, number, number];
+
+export type FaceScan = {
+  boxes: FaceBox[];
+  elapsedMs: number;
+};
+
 type NativeModule = {
   recognize(uri: string, options?: RecognizeOptions): Promise<RecognizeResult>;
+  detectFaces(uri: string): Promise<FaceScan>;
+  pixellate(source: string, destination: string, boxes: FaceBox[]): Promise<void>;
 };
 
 const native = requireOptionalNativeModule<NativeModule>('VisionOcr');
@@ -59,4 +69,28 @@ export function recognize(uri: string, options?: RecognizeOptions): Promise<Reco
     return Promise.reject(new Error('VisionOcr is not linked into this build'));
   }
   return native.recognize(uri, options);
+}
+
+/**
+ * Faces in the image at a local file URI (D49). Finding and pixellating are separate
+ * so which faces get blurred is decided here in JS, by the tester, and can change by
+ * update. Rejects if the module isn't linked.
+ */
+export function detectFaces(uri: string): Promise<FaceScan> {
+  if (!native) {
+    return Promise.reject(new Error('VisionOcr is not linked into this build'));
+  }
+  return native.detectFaces(uri);
+}
+
+/**
+ * Writes `source` to `destination` with each box pixellated (grown to take in hair and
+ * jaw), keeping the file's EXIF, GPS and orientation. The two may be the same file;
+ * the write is atomic either way.
+ */
+export function pixellate(source: string, destination: string, boxes: FaceBox[]): Promise<void> {
+  if (!native) {
+    return Promise.reject(new Error('VisionOcr is not linked into this build'));
+  }
+  return native.pixellate(source, destination, boxes);
 }

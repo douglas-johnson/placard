@@ -64,26 +64,52 @@ export function Capture({
 
   // Development only: the simulator has no camera, and its stand-in frame is a blank
   // 200px square. This hands the flow the bundled 38.447.4 label instead, so the
-  // read-back path can be exercised without a phone. Never compiled into a release.
-  const useFixture = useCallback(async () => {
-    if (!__DEV__) return;
-    setTaking(true);
-    try {
-      const asset = Asset.fromModule(require('../../assets/fixtures/mcny-38.447.4.jpg'));
-      await asset.downloadAsync();
-      if (!asset.localUri) throw new Error('fixture has no local URI');
-      const copy = new File(Paths.cache, `fixture-${Date.now()}.jpg`);
-      new File(asset.localUri).copySync(copy);
-      onPicture({ uri: copy.uri, width: 1200, height: 1200, gps: latestFix() });
-    } catch (e) {
-      console.warn('[capture] fixture failed', e);
-    } finally {
-      setTaking(false);
-    }
-  }, [onPicture]);
+  // read-back path can be exercised without a phone, or a statue with a face, for the
+  // face question (D49). Never compiled into a release.
+  const loadFixture = useCallback(
+    async (which: 'label' | 'face') => {
+      if (!__DEV__) return;
+      setTaking(true);
+      try {
+        const fixture =
+          which === 'label'
+            ? {
+                asset: require('../../assets/fixtures/mcny-38.447.4.jpg'),
+                width: 1200,
+                height: 1200,
+              }
+            : // Stored sideways with an orientation tag, like a phone frame; these are upright.
+              {
+                asset: require('../../assets/fixtures/met-statue-face.jpg'),
+                width: 465,
+                height: 1008,
+              };
+        const asset = Asset.fromModule(fixture.asset);
+        await asset.downloadAsync();
+        if (!asset.localUri) throw new Error('fixture has no local URI');
+        const copy = new File(Paths.cache, `fixture-${Date.now()}.jpg`);
+        new File(asset.localUri).copySync(copy);
+        onPicture({
+          uri: copy.uri,
+          width: fixture.width,
+          height: fixture.height,
+          gps: latestFix(),
+        });
+      } catch (e) {
+        console.warn('[capture] fixture failed', e);
+      } finally {
+        setTaking(false);
+      }
+    },
+    [onPicture],
+  );
 
   const allActions = __DEV__
-    ? [...(actions ?? []), { label: 'Fixture (dev)', onPress: useFixture, tone: 'quiet' as const }]
+    ? [
+        ...(actions ?? []),
+        { label: 'Fixture (dev)', onPress: () => loadFixture('label'), tone: 'quiet' as const },
+        { label: 'Face fixture (dev)', onPress: () => loadFixture('face'), tone: 'quiet' as const },
+      ]
     : actions;
 
   if (!permission) return <View style={styles.root} />;

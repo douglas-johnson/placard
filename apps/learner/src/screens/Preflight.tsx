@@ -12,6 +12,7 @@ import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { useCameraPermissions } from 'expo-camera';
 import * as Location from 'expo-location';
 import { Asset } from 'expo-asset';
+import { File, Paths } from 'expo-file-system';
 import * as VisionOcr from '../../modules/vision-ocr';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -30,6 +31,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
  * the 38.447.4 label from the corpus. That label is the D14 regression case — Vision
  * reads the accession with a bullet for a dot, and only normalization recovers it —
  * so a pass here means the whole pipeline ported, not just that a function exists.
+ *
+ * The face check does the same for the face pass (D49), over a bundled frame of a
+ * statue at the Met, stored sideways with an orientation tag as a phone frame is. It
+ * passes when the face is found, and found no longer once pixellated, which is the
+ * stored-versus-upright mapping working as well as the detector.
  */
 
 /** The accession printed on the bundled fixture label. See data/labels/fixtures. */
@@ -69,6 +75,57 @@ export function Preflight({ onBack }: { onBack: () => void }) {
     state: 'pending',
     detail: VisionOcr.isAvailable ? 'reading the fixture label…' : 'checking…',
   });
+
+  const [faceState, setFaceState] = useState<Check>({
+    label: 'Face blur',
+    state: 'pending',
+    detail: VisionOcr.isAvailable ? 'blurring the fixture statue…' : 'checking…',
+  });
+
+  useEffect(() => {
+    if (!VisionOcr.isAvailable) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setFaceState({ label: 'Face blur', state: 'fail', detail: 'not linked, with OCR' });
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      const blurred = new File(Paths.cache, `preflight-faces-${Date.now()}.jpg`);
+      try {
+        const asset = Asset.fromModule(require('../../assets/fixtures/met-statue-face.jpg'));
+        await asset.downloadAsync();
+        if (!asset.localUri) throw new Error('fixture asset has no local URI');
+        const before = await VisionOcr.detectFaces(asset.localUri);
+        await VisionOcr.pixellate(asset.localUri, blurred.uri, before.boxes);
+        const after = await VisionOcr.detectFaces(blurred.uri);
+        if (cancelled) return;
+        console.log('[face fixture]', JSON.stringify({ before, after }));
+        const found = before.boxes.length;
+        setFaceState({
+          label: 'Face blur',
+          state: found > 0 && after.boxes.length === 0 ? 'ok' : 'warn',
+          detail:
+            found === 0
+              ? 'no face found in the fixture statue'
+              : after.boxes.length > 0
+                ? 'the face was still found after pixellating'
+                : `face found in ${before.elapsedMs} ms · gone once pixellated`,
+        });
+      } catch (e) {
+        if (cancelled) return;
+        setFaceState({
+          label: 'Face blur',
+          state: 'fail',
+          detail: e instanceof Error ? e.message : 'the face pass failed',
+        });
+      } finally {
+        if (blurred.exists) blurred.delete();
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (!VisionOcr.isAvailable) {
@@ -196,6 +253,7 @@ export function Preflight({ onBack }: { onBack: () => void }) {
     },
     locationState,
     ocrState,
+    faceState,
   ];
 
   // Echo the preflight to the Metro console. On a simulator the screen may be

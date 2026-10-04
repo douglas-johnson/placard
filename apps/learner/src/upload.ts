@@ -287,9 +287,13 @@ function pending(): Pending[] {
       const lines = all.filter(
         (l) => !ledger.records.has(l.seq) && !ledger.conflicts.has(`r${l.seq}`),
       );
+      // A frame with faces waits for the tester's answer (D49), because the answer can
+      // rewrite it and the bucket keeps the first version it gets. Its records go.
+      const asked = new Set(take.unanswered.map((q) => q.frame));
       const frames = all
         .map((l) => l.record)
         .flatMap((r) => (r.type === 'frame' && r.file ? [{ frame: r.frame, file: r.file }] : []))
+        .filter((f) => !asked.has(f.frame))
         .filter((f) => !ledger.frames.has(f.frame) && !ledger.conflicts.has(f.frame));
       return { take, ledger, lines, frames };
     });
