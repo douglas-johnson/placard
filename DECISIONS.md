@@ -2140,3 +2140,43 @@ record that follows it.
 or carelessly, would argue for blurring every face. So would a corpus in which artwork
 faces turn out rare. Visitors found by the person detector whose faces the face pass
 misses would argue for adding bodies.
+
+---
+
+## D50 — Transcriptions are CC BY 4.0, and sending is consented to once, for three kinds
+
+**Date:** 2026-10-04 · **Status:** accepted · **Decided by:** Doug (the license, and one
+choice over three toggles); Claude's calls are marked · **Settles:** field-beta §8
+proposal 6, and for F1 the D28 question of how per-kind consent renders · **Issue:** #30
+
+**The transcriptions contributors help produce are published under CC BY 4.0.** That
+covers the fixtures: what a label says, checked against the institution. The photos
+themselves stay in the private store (field-beta §1), so they aren't licensed at all.
+The code stays GPL-3.0. The consent screen names the license, since field-beta §8
+wanted it settled before the first external tester.
+
+**One choice, with the kinds named.** Field-beta §1 keeps consent per kind, using
+D28's properties (`upload.label_photos`, `upload.artwork_photos`) plus
+`upload.venue_photos`, and left open whether they show as three toggles or one
+control. They show as one. The consent screen names all three kinds, and one "Send
+them" agrees to all three. The phone still records them as three properties, so they
+can be split later without asking anyone again. Separate toggles would let a visit
+send some kinds of frame and not others, and a take's commit marker (D38) counts every
+frame, so ingest would have to learn to call such a visit complete.
+
+**How it's built** (Claude's calls):
+
+- **The consent screen appears when sending is turned on, not before the first
+  capture**, where field-beta §1 first put it. Nothing leaves the phone without that
+  opt-in, and a tester who never turns it on keeps everything local. They should be
+  able to try the app without first agreeing to send.
+- **The opt-in records what was agreed to**: the three properties, the version of the
+  consent text, and when. A change to the terms is a new version, and a tester who
+  agreed to an older one is asked again before anything else is sent.
+- **Settings holds the choice; the consent screen holds the terms.** The settings
+  toggle gets one line, and every clause of the old paragraph moves to the consent
+  screen, where each is something the tester agrees to.
+
+**What would reverse this:** a tester who wants to keep one kind back, most likely
+venue exteriors now that faces are blurred anyway (D49), would argue for the toggles,
+along with the ingest change they need.
