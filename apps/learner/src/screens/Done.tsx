@@ -10,7 +10,7 @@ import { UploadPanel } from './UploadPanel';
 /**
  * The end of a visit. One job: get the manifest off the phone while the visit is
  * still the thing on screen. Before this existed, the exterior shot dropped straight
- * to Arrive and the manifest was unreachable (field-beta §6.1).
+ * to the venue picker and the manifest was unreachable (field-beta §6.1).
  */
 export function Done({ take, onClose }: { take: Take; onClose: () => void }) {
   const p = usePalette();

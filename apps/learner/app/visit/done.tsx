@@ -10,9 +10,10 @@ export default function DoneRoute() {
     <Done
       take={take}
       onClose={() => {
-        // Leave first: with no visit, visit/_layout.tsx would redirect on its own.
-        router.replace('/start');
+        // Back to the landing, beneath the visit or swapped in if the visit was
+        // resumed at launch. See visit/_layout.tsx.
         setCurrentTake(null);
+        router.dismissTo('/');
       }}
     />
   );

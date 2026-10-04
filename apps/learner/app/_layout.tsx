@@ -15,8 +15,10 @@ import { startUploads } from '../src/upload';
  * through the upload queue when the tester has opted in and there is signal (D43),
  * and the manifest can always go through the share sheet too.
  *
- * Routes are files under app/ (Expo Router, D48): start, the visit in progress under
- * visit/, earlier visits under visits/, and the preflight.
+ * Routes are files under app/ (Expo Router, D48): the landing (index), starting a
+ * visit under start/, the visit in progress under visit/, earlier visits under
+ * visits/, and the preflight. The visit can't be swiped back to the landing beneath
+ * it; it ends through the exterior, or by deleting it.
  */
 export default function RootLayout() {
   const scheme = useColorScheme();
@@ -64,7 +66,9 @@ export default function RootLayout() {
   return (
     <>
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
-      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: p.bg } }} />
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: p.bg } }}>
+        <Stack.Screen name="visit" options={{ gestureEnabled: false }} />
+      </Stack>
     </>
   );
 }
