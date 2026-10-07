@@ -570,7 +570,7 @@ def main() -> int:
         "--only",
         nargs="+",
         metavar="FIXTURE",
-        help="one thread instead of every encounter: fixture ids, e.g. mcny-38.447.4",
+        help="one path (D52) instead of every encounter: fixture ids, e.g. mcny-38.447.4",
     )
     ap.add_argument(
         "--subject",

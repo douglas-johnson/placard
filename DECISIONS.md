@@ -2203,3 +2203,37 @@ are full-bleed.
 
 `npm run locator-eval` judges each group on its last answer. Nothing else reads
 `accession` records yet. Anything that does should take the last one per group.
+
+---
+
+## D52 — In the learner app, threads are paths; the learner places each encounter on one
+
+**Date:** 2026-10-07 · **Status:** accepted · **Decided by:** Doug · **Issue:** #42 ·
+**Amends:** PLANNING.md §6.3 (the name)
+
+The curriculum spike (#42) treated every fixture as one learner's encounters and found
+that the three visits shared nothing. Doug pointed out why: the visits were chosen for
+instructive labels, not out of a line of inquiry. The capture app collects a corpus, and
+the learner app follows interests, and the spike had been measuring the first as if it
+were the second.
+
+**Decision:**
+
+- **§6.3's threads are called *paths* in the learner app.** The state machine is
+  unchanged — a path is `active` or `resting`, and never lapses.
+- **The learner places an encounter on a path.** Any encounter can go on a path, and
+  recommendations are made per path, not across everything the learner has captured.
+- **Inferring the path is not early-phase work.** A later "quick capture" may infer it, so
+  that opening the app and taking a picture is always possible when something interesting
+  turns up unexpectedly. Until then, placement is explicit.
+- **In the learner app, a capture signals interest.** The capture app's encounters do not,
+  so when recommendation experiments run on corpus data, Doug will say which encounters
+  count and which path they're on. The spike's `--only` flag is how that's expressed.
+
+**What this settles in the plan.** §13's cold-start question shrinks. A learner who names
+a path has said what it's about, so the first suggestions on a new path rank by relevance
+to that, and §6.1's closure ranking takes over once the path holds two encounters.
+
+**What it leaves open.** What a path is *about* in data terms — a subject the learner
+names, a set of encounters, or both — is still to be settled (§4.6, #42's subject facet).
+So is whether one encounter can sit on more than one path.

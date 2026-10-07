@@ -323,6 +323,8 @@ Model a line of inquiry as a **thread** with states: `active` → `resting` → 
 
 This is the "journey you can return to" requirement, implemented as a state machine. It costs very little and does a lot.
 
+*In the learner app a thread is called a **path**, and the learner places each encounter on one; recommendations are made per path (D52). This document keeps "thread" as the design term.*
+
 ### 6.4 Every thread has closable loops
 
 Long arcs need short satisfying units. A thread should have natural resting points that feel like arrival: *you've now traced how Caravaggio's lighting reached Utrecht and came back to Rembrandt.* Small, complete, narratable. The learner should be able to say what they learned in one sentence.

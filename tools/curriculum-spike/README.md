@@ -93,11 +93,12 @@ at all.
 **But these encounters were never one learner's interests.** Doug pointed out that the
 three visits were chosen for instructive labels, not out of a taste or a line of inquiry,
 so "the visits share nothing" is the truth about the corpus rather than a failure of the
-ranking. A real learner may hold several interests at once, and a capture is not always a
-sign of one. So `--only` narrows the learner to a single thread (§6.3), and `--subject`
+ranking. A learner may hold several interests at once; in the learner app they place each
+encounter on a *path* (§6.3's thread), and recommendations are per path (D52). So `--only`
+narrows the learner to a single path, and `--subject`
 attaches what a label's text says a work is about, linked to Wikidata by hand and recorded
 as an inferred claim. The one Revolutionary War capture from MCNY, Dawkins's *Liberty
-Triumphant* (ca. 1774), run as a thread of its own:
+Triumphant* (ca. 1774), run as a path of its own:
 
 ```sh
 python3 tools/curriculum-spike/spike.py --only mcny-38.447.4
@@ -115,11 +116,11 @@ python3 tools/curriculum-spike/spike.py --only mcny-38.447.4 \
   *Washington Crossing the Delaware* in gallery 760 and Trumbull's *George Washington
   before the Battle of Trenton* in 719, both confirmed on view. The right suggestions,
   from one inferred edge.
-- *Either way, no closure.* A thread of one has no two things to connect, so §6.1 has
-  nothing to rank by; it can only open outward. A thread's first suggestions are a
+- *Either way, no closure.* A path of one has no two things to connect, so §6.1 has
+  nothing to rank by; it can only open outward. A path's first suggestions are a
   different problem from its later ones, and they rank by relevance to the thread's
   subject, not by how they densify a map — the cold-start question (§13) at the scale of a
-  thread, which comes up every time a learner starts something new.
+  path, which comes up every time a learner starts something new.
 
 **What this suggests for §13 — proposals, not decisions:**
 

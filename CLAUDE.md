@@ -29,6 +29,9 @@ PLANNING.md §13 is open questions. When one gets answered, write it into `DECIS
   distinct from the **tombstone label**. §4 is mostly about the *label*. Keep the
   terms separate; they're different extraction problems. The term stays in the
   documents wherever it's used literally; only the project name changed.
+- **Thread / path** — the same thing. PLANNING.md §6.3 designs *threads*; the learner
+  app calls them *paths*, and the learner places each encounter on one (D52). Not to be
+  confused with a *take* or *visit*, which is one trip's captures in the capture app.
 - **Other people's sites.** The rename happened because existing exhibition guides
   already used the old name. PLANNING.md §12 argues from the category of existing
   aggregators and does not analyze any one of them — that analysis is kept out of
