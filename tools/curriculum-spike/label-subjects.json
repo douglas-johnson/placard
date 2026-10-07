@@ -1,0 +1,1230 @@
+{
+  "about": "What each encounter's interpretive text names, for #42's question: can label text carry the subject facet where a museum's catalog doesn't? Annotated by Claude on 2026-10-07 from OCR of the frames bound in each fixture; not yet reviewed by Doug. Only interpretive prose counts — the tombstone's title, maker, date and medium are already facets. Each mention records the relationship the text gives it; qid is filled by resolve-subjects.py and then checked by hand.",
+  "relations": {
+    "about": "what the work concerns (Linked Art `about` on the visual item)",
+    "depicts": "an identifiable thing or a kind shown in it (`represents`, `represents_instance_of_type`)",
+    "influence": "a style, movement, tradition or source the making drew on (`influenced_by` on the Production)",
+    "context": "a period, event or movement around the work's making or use (`during`, `caused_by`)",
+    "use": "what the object was for",
+    "technique": "how it was made (`technique`)",
+    "place": "where it was made, found or used (`took_place_at`)",
+    "maker": "a fact about the maker rather than the work"
+  },
+  "encounters": {
+    "cooper-hewitt-2007-25-4": {
+      "texts": [
+        {
+          "frame": "f0008-wall_text.jpg",
+          "scope": "object",
+          "legible": "full"
+        }
+      ],
+      "mentions": [
+        {
+          "text": "Islamic writing",
+          "relation": "influence",
+          "search": "Islamic calligraphy",
+          "scope": "object"
+        },
+        {
+          "text": "arabesque ornament",
+          "relation": "influence",
+          "search": "arabesque",
+          "scope": "object"
+        },
+        {
+          "text": "gothic lettering",
+          "relation": "influence",
+          "search": "blackletter",
+          "scope": "object"
+        },
+        {
+          "text": "communication design and typography",
+          "relation": "maker",
+          "search": "typography",
+          "scope": "object"
+        }
+      ]
+    },
+    "cooper-hewitt-2007-42-1": {
+      "texts": [
+        {
+          "frame": "f0015-wall_text.jpg",
+          "scope": "object",
+          "legible": "full"
+        }
+      ],
+      "mentions": [
+        {
+          "text": "toiles de Jouy",
+          "relation": "influence",
+          "search": "toile de Jouy",
+          "scope": "object"
+        },
+        {
+          "text": "stereotypes",
+          "relation": "about",
+          "search": "stereotype",
+          "scope": "object"
+        },
+        {
+          "text": "the Black American experience",
+          "relation": "about",
+          "search": "African Americans",
+          "scope": "object"
+        },
+        {
+          "text": "young men playing basketball",
+          "relation": "depicts",
+          "search": "basketball",
+          "scope": "object"
+        },
+        {
+          "text": "a boombox",
+          "relation": "depicts",
+          "search": "boombox",
+          "scope": "object"
+        },
+        {
+          "text": "fried chicken",
+          "relation": "depicts",
+          "search": "fried chicken",
+          "scope": "object"
+        },
+        {
+          "text": "watermelon",
+          "relation": "depicts",
+          "search": "watermelon stereotype",
+          "scope": "object"
+        }
+      ]
+    },
+    "cooper-hewitt-2009-16-6": {
+      "texts": [
+        {
+          "frame": "f0018-wall_text.jpg",
+          "scope": "object",
+          "legible": "full"
+        },
+        {
+          "frame": "f0019-wall_text.jpg",
+          "scope": "gallery",
+          "legible": "full"
+        }
+      ],
+      "mentions": [
+        {
+          "text": "a model right away",
+          "relation": "technique",
+          "search": "scale model",
+          "scope": "object"
+        },
+        {
+          "text": "prototyping, testing, and tweaking",
+          "relation": "about",
+          "search": "prototype",
+          "scope": "gallery"
+        },
+        {
+          "text": "small iterative changes",
+          "relation": "about",
+          "search": "iterative design",
+          "scope": "gallery"
+        }
+      ]
+    },
+    "cooper-hewitt-1966-78-1": {
+      "texts": [
+        {
+          "frame": "f0024-wall_text.jpg",
+          "scope": "object",
+          "legible": "full"
+        }
+      ],
+      "mentions": [
+        {
+          "text": "fun and convenient fashion alternative… the fad",
+          "relation": "context",
+          "search": "fad",
+          "scope": "object"
+        },
+        {
+          "text": "thrown away after a few uses",
+          "relation": "about",
+          "search": "disposable product",
+          "scope": "object"
+        },
+        {
+          "text": "the late 1960s",
+          "relation": "context",
+          "search": "1960s",
+          "scope": "object"
+        },
+        {
+          "text": "the environmental movement",
+          "relation": "context",
+          "search": "environmental movement",
+          "scope": "object"
+        }
+      ]
+    },
+    "cooper-hewitt-1992-132-1": {
+      "texts": [
+        {
+          "frame": "f0027-wall_text.jpg",
+          "scope": "object",
+          "legible": "full"
+        }
+      ],
+      "mentions": [
+        {
+          "text": "creative reuse",
+          "relation": "about",
+          "search": "upcycling",
+          "scope": "object"
+        },
+        {
+          "text": "flea markets",
+          "relation": "influence",
+          "search": "flea market",
+          "scope": "object"
+        },
+        {
+          "text": "Pop Art",
+          "relation": "influence",
+          "search": "pop art",
+          "scope": "object"
+        },
+        {
+          "text": "gave new life to discarded objects",
+          "relation": "about",
+          "search": "reuse",
+          "scope": "object"
+        }
+      ]
+    },
+    "cooper-hewitt-2015-1-18": {
+      "texts": [],
+      "mentions": []
+    },
+    "cooper-hewitt-2018-40-1": {
+      "texts": [],
+      "mentions": []
+    },
+    "cooper-hewitt-2025-11-1": {
+      "texts": [],
+      "mentions": []
+    },
+    "mcny-38.447.4": {
+      "texts": [
+        {
+          "frame": "IMG_E1308.HEIC",
+          "scope": "object",
+          "legible": "full",
+          "note": "one sentence on the label, in English and Spanish"
+        }
+      ],
+      "mentions": [
+        {
+          "text": "the opposition to the Tea Act",
+          "relation": "about",
+          "search": "Tea Act",
+          "scope": "object"
+        }
+      ]
+    },
+    "mcny-loan-moaf-894.5": {
+      "texts": [
+        {
+          "frame": "IMG_1289.HEIC",
+          "scope": "object",
+          "legible": "full"
+        }
+      ],
+      "mentions": [
+        {
+          "text": "Black Thursday",
+          "relation": "about",
+          "search": "Black Thursday",
+          "scope": "object"
+        },
+        {
+          "text": "the Wall Street crash",
+          "relation": "about",
+          "search": "Wall Street Crash of 1929",
+          "scope": "object"
+        },
+        {
+          "text": "the New York Stock Exchange",
+          "relation": "place",
+          "search": "New York Stock Exchange",
+          "scope": "object"
+        }
+      ]
+    },
+    "mcny-56.323.46": {
+      "texts": [
+        {
+          "frame": "IMG_1293.HEIC",
+          "scope": "object",
+          "legible": "partial",
+          "note": "only the left edge of the paragraph is in frame"
+        }
+      ],
+      "mentions": [
+        {
+          "text": "United Nations headqu[arters]",
+          "relation": "depicts",
+          "search": "Headquarters of the United Nations",
+          "scope": "object"
+        }
+      ]
+    },
+    "mcny-2014.21": {
+      "texts": [
+        {
+          "frame": "IMG_1296.HEIC",
+          "scope": "gallery",
+          "legible": "partial",
+          "note": "the wall text is cut off; 'these dual crises' are not named in what's legible"
+        }
+      ],
+      "mentions": []
+    },
+    "mcny-48.108.14A-B": {
+      "texts": [
+        {
+          "frame": "IMG_1316.HEIC",
+          "scope": "case",
+          "legible": "full",
+          "note": "one case panel for several objects"
+        },
+        {
+          "frame": "IMG_1317.HEIC",
+          "scope": "object",
+          "legible": "full"
+        }
+      ],
+      "mentions": [
+        {
+          "text": "New York's growing labor movement",
+          "relation": "context",
+          "search": "labor movement",
+          "scope": "gallery"
+        },
+        {
+          "text": "Samuel Gompers",
+          "relation": "context",
+          "search": "Samuel Gompers",
+          "scope": "gallery"
+        },
+        {
+          "text": "Cigar Makers' International Union",
+          "relation": "context",
+          "search": "Cigar Makers' International Union",
+          "scope": "gallery"
+        },
+        {
+          "text": "American Federation of Labor (AFL)",
+          "relation": "context",
+          "search": "American Federation of Labor",
+          "scope": "gallery"
+        },
+        {
+          "text": "mass-produce cigars in their tenement homes",
+          "relation": "use",
+          "search": "tenement",
+          "scope": "object"
+        },
+        {
+          "text": "child laborers",
+          "relation": "context",
+          "search": "child labour",
+          "scope": "gallery"
+        },
+        {
+          "text": "German, Bohemian, and Jewish immigrants",
+          "relation": "context",
+          "search": "immigration to the United States",
+          "scope": "object"
+        },
+        {
+          "text": "unions launched… in Union Square in 1882",
+          "relation": "context",
+          "search": "Labor Day",
+          "scope": "gallery"
+        }
+      ]
+    },
+    "mcny-loan-champanier-alice-panel1": {
+      "texts": [
+        {
+          "frame": "IMG_1303.HEIC",
+          "scope": "gallery",
+          "legible": "full",
+          "note": "exhibition wall text, Another Wonderland"
+        },
+        {
+          "frame": "IMG_1299.HEIC",
+          "scope": "gallery",
+          "legible": "partial",
+          "note": "right edge cut; Spanish column cut"
+        },
+        {
+          "frame": "IMG_1301.HEIC",
+          "scope": "object",
+          "legible": "full",
+          "note": "the panel key"
+        },
+        {
+          "frame": "IMG_1302.HEIC",
+          "scope": "gallery",
+          "legible": "full",
+          "note": "artist biography"
+        }
+      ],
+      "mentions": [
+        {
+          "text": "Alice steps out of a book",
+          "relation": "depicts",
+          "search": "Alice (Alice's Adventures in Wonderland)",
+          "scope": "object"
+        },
+        {
+          "text": "\"another\" wonderland: New York City",
+          "relation": "depicts",
+          "search": "New York City",
+          "scope": "object"
+        },
+        {
+          "text": "amidst the Great Depression",
+          "relation": "context",
+          "search": "Great Depression",
+          "scope": "gallery"
+        },
+        {
+          "text": "the Federal Art Project of the Works Progress Administration (WPA)",
+          "relation": "context",
+          "search": "Federal Art Project",
+          "scope": "gallery"
+        },
+        {
+          "text": "New Deal-era mural",
+          "relation": "context",
+          "search": "New Deal",
+          "scope": "gallery"
+        },
+        {
+          "text": "Gouverneur Hospital",
+          "relation": "place",
+          "search": "Gouverneur Hospital",
+          "scope": "gallery"
+        },
+        {
+          "text": "the Lower East Side",
+          "relation": "place",
+          "search": "Lower East Side",
+          "scope": "gallery"
+        },
+        {
+          "text": "the power of art in hospital settings",
+          "relation": "about",
+          "search": "arts in health",
+          "scope": "gallery"
+        },
+        {
+          "text": "arrived at Ellis Island in 1905",
+          "relation": "maker",
+          "search": "Ellis Island",
+          "scope": "gallery"
+        },
+        {
+          "text": "the Art Students League",
+          "relation": "maker",
+          "search": "Art Students League of New York",
+          "scope": "gallery"
+        },
+        {
+          "text": "the Whitney Studio Club",
+          "relation": "maker",
+          "search": "Whitney Studio Club",
+          "scope": "gallery"
+        },
+        {
+          "text": "Stuart Davis",
+          "relation": "maker",
+          "search": "Stuart Davis",
+          "scope": "gallery"
+        },
+        {
+          "text": "Thomas Hart Benton",
+          "relation": "maker",
+          "search": "Thomas Hart Benton",
+          "scope": "gallery"
+        },
+        {
+          "text": "Alexander Calder",
+          "relation": "maker",
+          "search": "Alexander Calder",
+          "scope": "gallery"
+        },
+        {
+          "text": "the 1939 New York World's Fair",
+          "relation": "maker",
+          "search": "1939 New York World's Fair",
+          "scope": "gallery"
+        }
+      ]
+    },
+    "mcny-2013.3.1.454": {
+      "texts": [],
+      "mentions": []
+    },
+    "mcny-85.8.19": {
+      "texts": [],
+      "mentions": []
+    },
+    "mcny-X2011.4.10368.168": {
+      "texts": [],
+      "mentions": []
+    },
+    "met-74.51.965": {
+      "texts": [
+        {
+          "frame": "ATGX2197.JPG",
+          "scope": "object",
+          "legible": "full"
+        }
+      ],
+      "mentions": [
+        {
+          "text": "the Geometric style that had originated in Athens",
+          "relation": "influence",
+          "search": "Geometric art",
+          "scope": "object"
+        },
+        {
+          "text": "found on Cyprus",
+          "relation": "place",
+          "search": "Cyprus",
+          "scope": "object"
+        },
+        {
+          "text": "a workshop on Euboea",
+          "relation": "place",
+          "search": "Euboea",
+          "scope": "object"
+        },
+        {
+          "text": "the island of Naxos",
+          "relation": "place",
+          "search": "Naxos",
+          "scope": "object"
+        },
+        {
+          "text": "two stags or goats",
+          "relation": "depicts",
+          "search": "deer",
+          "scope": "object"
+        },
+        {
+          "text": "animals flanking a sacred tree derives from Near Eastern art",
+          "relation": "influence",
+          "search": "art of the ancient Near East",
+          "scope": "object"
+        },
+        {
+          "text": "the motif of animals flanking a sacred tree",
+          "relation": "depicts",
+          "search": "tree of life",
+          "scope": "object"
+        },
+        {
+          "text": "the double axes",
+          "relation": "depicts",
+          "search": "labrys",
+          "scope": "object"
+        },
+        {
+          "text": "the Minoan culture",
+          "relation": "influence",
+          "search": "Minoan civilization",
+          "scope": "object"
+        },
+        {
+          "text": "the horses",
+          "relation": "depicts",
+          "search": "horse",
+          "scope": "object"
+        }
+      ]
+    },
+    "met-49.11.4": {
+      "texts": [
+        {
+          "frame": "HWFN5677.JPG",
+          "scope": "object",
+          "legible": "full"
+        }
+      ],
+      "mentions": [
+        {
+          "text": "found near the Kerameikos in Athens",
+          "relation": "place",
+          "search": "Kerameikos",
+          "scope": "object"
+        },
+        {
+          "text": "standing before her parents… two other female members of the family",
+          "relation": "depicts",
+          "search": "family",
+          "scope": "object"
+        },
+        {
+          "text": "two small servants",
+          "relation": "depicts",
+          "search": "servant",
+          "scope": "object"
+        }
+      ]
+    },
+    "met-91.1.1383": {
+      "texts": [
+        {
+          "frame": "IMG_1363.HEIC",
+          "scope": "object",
+          "legible": "full"
+        }
+      ],
+      "mentions": [
+        {
+          "text": "core-formed",
+          "relation": "technique",
+          "search": "core-formed glass",
+          "scope": "object"
+        },
+        {
+          "text": "Mediterranean Group II",
+          "relation": "context",
+          "search": "Mediterranean Group II glass",
+          "scope": "object"
+        },
+        {
+          "text": "the lentoid aryballos",
+          "relation": "context",
+          "search": "aryballos",
+          "scope": "object"
+        }
+      ]
+    },
+    "met-22.139.24": {
+      "texts": [
+        {
+          "frame": "UAOX4498.JPG",
+          "scope": "object",
+          "legible": "full"
+        }
+      ],
+      "mentions": [
+        {
+          "text": "Kybele, the mother goddess of Anatolia",
+          "relation": "depicts",
+          "search": "Cybele",
+          "scope": "object"
+        },
+        {
+          "text": "the cult of Kybele",
+          "relation": "about",
+          "search": "cult of Cybele",
+          "scope": "object"
+        },
+        {
+          "text": "Anatolia",
+          "relation": "context",
+          "search": "Anatolia",
+          "scope": "object"
+        },
+        {
+          "text": "the Greek sculptor Pheidias",
+          "relation": "influence",
+          "search": "Phidias",
+          "scope": "object"
+        },
+        {
+          "text": "or Agorakritos",
+          "relation": "influence",
+          "search": "Agoracritus",
+          "scope": "object"
+        },
+        {
+          "text": "the Metroön",
+          "relation": "place",
+          "search": "Metroon Athens",
+          "scope": "object"
+        },
+        {
+          "text": "the Agora… of Athens",
+          "relation": "place",
+          "search": "Ancient Agora of Athens",
+          "scope": "object"
+        },
+        {
+          "text": "accompanied by lions",
+          "relation": "depicts",
+          "search": "lion",
+          "scope": "object"
+        }
+      ]
+    },
+    "met-21.169.1": {
+      "texts": [
+        {
+          "frame": "MXNX8968.JPG",
+          "scope": "object",
+          "legible": "full"
+        }
+      ],
+      "mentions": [
+        {
+          "text": "Klazomenai",
+          "relation": "place",
+          "search": "Klazomenai",
+          "scope": "object"
+        },
+        {
+          "text": "Old Smyrna",
+          "relation": "place",
+          "search": "Smyrna",
+          "scope": "object"
+        },
+        {
+          "text": "the funeral ceremony",
+          "relation": "use",
+          "search": "funeral",
+          "scope": "object"
+        },
+        {
+          "text": "a battle scene",
+          "relation": "depicts",
+          "search": "battle",
+          "scope": "object"
+        },
+        {
+          "text": "a centaur",
+          "relation": "depicts",
+          "search": "centaur",
+          "scope": "object"
+        },
+        {
+          "text": "a siren",
+          "relation": "depicts",
+          "search": "siren (mythology)",
+          "scope": "object"
+        },
+        {
+          "text": "two lions attack a boar",
+          "relation": "depicts",
+          "search": "wild boar",
+          "scope": "object"
+        }
+      ]
+    },
+    "met-26.31.188": {
+      "texts": [],
+      "mentions": []
+    },
+    "met-27.228": {
+      "texts": [
+        {
+          "frame": "JHTS7480.JPG",
+          "scope": "object",
+          "legible": "full",
+          "note": "OCR interleaves two columns; read in order"
+        }
+      ],
+      "mentions": [
+        {
+          "text": "Prothesis (laying out of the dead)",
+          "relation": "depicts",
+          "search": "prothesis",
+          "scope": "object"
+        },
+        {
+          "text": "gestures of lamentation… funeral song",
+          "relation": "depicts",
+          "search": "mourning",
+          "scope": "object"
+        },
+        {
+          "text": "horsemen",
+          "relation": "depicts",
+          "search": "equestrian",
+          "scope": "object"
+        },
+        {
+          "text": "to fetch water for the bridal bath",
+          "relation": "use",
+          "search": "wedding in ancient Greece",
+          "scope": "object"
+        },
+        {
+          "text": "certain funerary rites",
+          "relation": "use",
+          "search": "funeral",
+          "scope": "object"
+        }
+      ]
+    },
+    "met-10.130.1178": {
+      "texts": [
+        {
+          "frame": "VYJB8608.JPG",
+          "scope": "object",
+          "legible": "full"
+        },
+        {
+          "frame": "WBAO9000.JPG",
+          "scope": "gallery",
+          "legible": "full",
+          "note": "Manufacturing Stone Jars"
+        }
+      ],
+      "mentions": [
+        {
+          "text": "they probably held unguents or oils",
+          "relation": "use",
+          "search": "unguent",
+          "scope": "object"
+        },
+        {
+          "text": "the Syro-Canaanite region",
+          "relation": "context",
+          "search": "Canaan",
+          "scope": "object"
+        },
+        {
+          "text": "from tombs of important people or gifts to the gods in a temple",
+          "relation": "use",
+          "search": "grave goods",
+          "scope": "object"
+        },
+        {
+          "text": "drilled the interior, using a copper tubular drill",
+          "relation": "technique",
+          "search": "stone vessel ancient Egypt",
+          "scope": "gallery"
+        },
+        {
+          "text": "late Predynastic and Early Dynastic jars",
+          "relation": "context",
+          "search": "Early Dynastic Period (Egypt)",
+          "scope": "gallery"
+        }
+      ]
+    },
+    "met-48.160.1": {
+      "texts": [
+        {
+          "frame": "IYKC2872.JPG",
+          "scope": "object",
+          "legible": "full"
+        }
+      ],
+      "mentions": [
+        {
+          "text": "Djoser's Step Pyramid",
+          "relation": "place",
+          "search": "Pyramid of Djoser",
+          "scope": "object"
+        },
+        {
+          "text": "King Djoser",
+          "relation": "about",
+          "search": "Djoser",
+          "scope": "object"
+        },
+        {
+          "text": "meant to imitate the reed matting",
+          "relation": "depicts",
+          "search": "mat",
+          "scope": "object"
+        },
+        {
+          "text": "an eternal royal residence… for the afterlife",
+          "relation": "about",
+          "search": "ancient Egyptian afterlife beliefs",
+          "scope": "object"
+        }
+      ]
+    },
+    "met-26.3.29": {
+      "texts": [
+        {
+          "frame": "XPYT6355.JPG",
+          "scope": "object",
+          "legible": "full",
+          "note": "OCR interleaves two columns"
+        }
+      ],
+      "mentions": [
+        {
+          "text": "Mentuhotep II",
+          "relation": "depicts",
+          "search": "Mentuhotep II",
+          "scope": "object"
+        },
+        {
+          "text": "Sed festival, a feast of rejuvenation",
+          "relation": "about",
+          "search": "Sed festival",
+          "scope": "object"
+        },
+        {
+          "text": "Deir el-Bahri",
+          "relation": "place",
+          "search": "Deir el-Bahari",
+          "scope": "object"
+        },
+        {
+          "text": "the god Osiris",
+          "relation": "depicts",
+          "search": "Osiris",
+          "scope": "object"
+        },
+        {
+          "text": "scepter and flail",
+          "relation": "depicts",
+          "search": "crook and flail",
+          "scope": "object"
+        },
+        {
+          "text": "the red crown of Lower Egypt",
+          "relation": "depicts",
+          "search": "Deshret",
+          "scope": "object"
+        },
+        {
+          "text": "reunifying the country after the collapse of the Old Kingdom",
+          "relation": "context",
+          "search": "First Intermediate Period of Egypt",
+          "scope": "object"
+        }
+      ]
+    },
+    "met-20.3.1": {
+      "texts": [
+        {
+          "frame": "YKFX4553.JPG",
+          "scope": "object",
+          "legible": "full"
+        }
+      ],
+      "mentions": [
+        {
+          "text": "Meketre",
+          "relation": "context",
+          "search": "Meketre",
+          "scope": "object"
+        },
+        {
+          "text": "Amenemhat I",
+          "relation": "context",
+          "search": "Amenemhat I",
+          "scope": "object"
+        },
+        {
+          "text": "a harpist and a singer",
+          "relation": "depicts",
+          "search": "harp",
+          "scope": "object"
+        },
+        {
+          "text": "a closed lotus flower",
+          "relation": "depicts",
+          "search": "Nymphaea caerulea",
+          "scope": "object"
+        }
+      ]
+    },
+    "met-23.2.84": {
+      "texts": [
+        {
+          "frame": "PMHG9499.JPG",
+          "scope": "object",
+          "legible": "full"
+        },
+        {
+          "frame": "VHID2823.JPG",
+          "scope": "gallery",
+          "legible": "full",
+          "note": "Meeting the Divine"
+        }
+      ],
+      "mentions": [
+        {
+          "text": "King Haremhab",
+          "relation": "depicts",
+          "search": "Horemheb",
+          "scope": "object"
+        },
+        {
+          "text": "the canid funerary deity Anubis",
+          "relation": "depicts",
+          "search": "Anubis",
+          "scope": "object"
+        },
+        {
+          "text": "Horus Son of Isis",
+          "relation": "depicts",
+          "search": "Horus",
+          "scope": "object"
+        },
+        {
+          "text": "Valley of the Kings, tomb of Haremhab",
+          "relation": "place",
+          "search": "KV57",
+          "scope": "object"
+        },
+        {
+          "text": "kings and deities… reciprocity",
+          "relation": "about",
+          "search": "divine kingship",
+          "scope": "object"
+        },
+        {
+          "text": "the exhibition Divine Egypt",
+          "relation": "context",
+          "search": "Divine Egypt exhibition Metropolitan",
+          "scope": "gallery"
+        },
+        {
+          "text": "New Kingdom tombs… in the city of Thebes",
+          "relation": "context",
+          "search": "Theban Necropolis",
+          "scope": "gallery"
+        },
+        {
+          "text": "the Ramesside Period",
+          "relation": "context",
+          "search": "Ramesside Period",
+          "scope": "gallery"
+        },
+        {
+          "text": "the weighing of the heart",
+          "relation": "about",
+          "search": "weighing of the heart",
+          "scope": "gallery"
+        },
+        {
+          "text": "Nut as a tree goddess",
+          "relation": "depicts",
+          "search": "Nut (goddess)",
+          "scope": "gallery"
+        }
+      ]
+    },
+    "met-loan-selinus-metope": {
+      "texts": [
+        {
+          "frame": "IMG_1377.HEIC",
+          "scope": "object",
+          "legible": "full"
+        },
+        {
+          "frame": "GTVD6730.JPG",
+          "scope": "gallery",
+          "legible": "full",
+          "note": "Greeks in Sicily"
+        }
+      ],
+      "mentions": [
+        {
+          "text": "Eos, goddess of the dawn",
+          "relation": "depicts",
+          "search": "Eos",
+          "scope": "object"
+        },
+        {
+          "text": "the Athenian youth Kephalos",
+          "relation": "depicts",
+          "search": "Cephalus",
+          "scope": "object"
+        },
+        {
+          "text": "pursuit of mortal women… abducts him",
+          "relation": "about",
+          "search": "abduction in Greek mythology",
+          "scope": "object"
+        },
+        {
+          "text": "Depictions of Eos chasing young men… in Greek vase painting",
+          "relation": "context",
+          "search": "pottery of ancient Greece",
+          "scope": "object"
+        },
+        {
+          "text": "The ancient Greeks founded numerous settlements in Sicily",
+          "relation": "context",
+          "search": "Greek colonisation",
+          "scope": "gallery"
+        },
+        {
+          "text": "Selinus (present-day Selinunte)",
+          "relation": "place",
+          "search": "Selinunte",
+          "scope": "object"
+        },
+        {
+          "text": "two of its most prominent temples, dedicated to Apollo and Athena",
+          "relation": "context",
+          "search": "Apollo",
+          "scope": "gallery"
+        },
+        {
+          "text": "the agricultural goddess Demeter Malophoros",
+          "relation": "context",
+          "search": "Demeter",
+          "scope": "gallery"
+        }
+      ]
+    }
+  },
+  "resolutions": {
+    "1939 New York World's Fair": "Q207420",
+    "1960s": "Q35724",
+    "abduction in Greek mythology": "Q104882641",
+    "African Americans": "Q49085",
+    "Agoracritus": "Q395404",
+    "Alexander Calder": "Q151580",
+    "Alice (Alice's Adventures in Wonderland)": "Q1269082",
+    "Amenemhat I": "Q18771",
+    "American Federation of Labor": "Q464242",
+    "Anatolia": "Q51614",
+    "Ancient Agora of Athens": "Q395367",
+    "ancient Egyptian afterlife beliefs": "Q1687413",
+    "Anubis": "Q47534",
+    "Apollo": "Q37340",
+    "arabesque": "Q186599",
+    "art of the ancient Near East": null,
+    "Art Students League of New York": "Q705737",
+    "arts in health": "Q137303847",
+    "aryballos": "Q717954",
+    "basketball": "Q5372",
+    "battle": "Q178561",
+    "Black Thursday": "Q201684",
+    "blackletter": "Q213686",
+    "boombox": "Q1358666",
+    "Canaan": "Q163329",
+    "centaur": "Q83203",
+    "Cephalus": "Q643504",
+    "child labour": "Q192571",
+    "Cigar Makers' International Union": "Q5119803",
+    "core-formed glass": "Q11301801",
+    "crook and flail": "Q16931086",
+    "cult of Cybele": "Q122469098",
+    "Cybele": "Q188236",
+    "Cyprus": "Q229",
+    "deer": "Q23390",
+    "Deir el-Bahari": "Q373909",
+    "Demeter": "Q40730",
+    "Deshret": "Q2068006",
+    "disposable product": "Q1194058",
+    "Divine Egypt exhibition Metropolitan": null,
+    "divine kingship": null,
+    "Djoser": "Q174367",
+    "Early Dynastic Period (Egypt)": "Q187979",
+    "Ellis Island": "Q202175",
+    "environmental movement": "Q8189417",
+    "Eos": "Q178417",
+    "equestrian": "Q179226",
+    "Euboea": "Q173096",
+    "fad": "Q13427002",
+    "family": "Q8436",
+    "Federal Art Project": "Q3067861",
+    "First Intermediate Period of Egypt": "Q232211",
+    "flea market": "Q385870",
+    "fried chicken": "Q1065241",
+    "funeral": "Q201676",
+    "Geometric art": "Q852337",
+    "Gouverneur Hospital": "Q5588502",
+    "grave goods": "Q1399692",
+    "Great Depression": "Q8698",
+    "Greek colonisation": "Q828047",
+    "harp": "Q47369",
+    "Headquarters of the United Nations": "Q11297",
+    "Horemheb": "Q157995",
+    "horse": "Q726",
+    "Horus": "Q84122",
+    "immigration to the United States": "Q1309633",
+    "Islamic calligraphy": "Q656831",
+    "iterative design": "Q4928435",
+    "Kerameikos": "Q630974",
+    "Klazomenai": "Q536598",
+    "KV57": "Q947481",
+    "Labor Day": "Q848352",
+    "labor movement": "Q208701",
+    "labrys": "Q837381",
+    "lion": "Q140",
+    "Lower East Side": "Q1511813",
+    "mat": "Q7306720",
+    "Mediterranean Group II glass": null,
+    "Meketre": "Q1643850",
+    "Mentuhotep II": "Q296439",
+    "Metroon Athens": "Q1925757",
+    "Minoan civilization": "Q134178",
+    "mourning": "Q750652",
+    "Naxos": "Q188527",
+    "New Deal": "Q186356",
+    "New York City": "Q60",
+    "New York Stock Exchange": "Q13677",
+    "Nut (goddess)": "Q165496",
+    "Nymphaea caerulea": "Q148880",
+    "Osiris": "Q46491",
+    "Phidias": "Q177302",
+    "pop art": "Q134147",
+    "pottery of ancient Greece": "Q738680",
+    "prothesis": "Q2113623",
+    "prototype": "Q207977",
+    "Pyramid of Djoser": "Q192418",
+    "Ramesside Period": "Q2670831",
+    "reuse": "Q846574",
+    "Samuel Gompers": "Q282657",
+    "scale model": "Q6498959",
+    "Sed festival": "Q604644",
+    "Selinunte": "Q952173",
+    "servant": "Q54128",
+    "siren (mythology)": null,
+    "Smyrna": "Q108923214",
+    "stereotype": "Q167172",
+    "stone vessel ancient Egypt": "Q133278579",
+    "Stuart Davis": "Q704588",
+    "Tea Act": "Q1047538",
+    "tenement": "Q1078374",
+    "Theban Necropolis": "Q29223",
+    "Thomas Hart Benton": "Q471764",
+    "toile de Jouy": "Q1422692",
+    "tree of life": "Q1651237",
+    "typography": "Q159964",
+    "unguent": "Q17027511",
+    "upcycling": "Q1060794",
+    "Wall Street Crash of 1929": "Q201684",
+    "watermelon stereotype": "Q10903633",
+    "wedding in ancient Greece": null,
+    "weighing of the heart": "Q4690580",
+    "Whitney Studio Club": null,
+    "wild boar": "Q58697"
+  },
+  "resolution_notes": {
+    "abduction in Greek mythology": "'Rape in Greek mythology' — the item for divine abduction narratives; the label's own word is 'abducts'",
+    "art of the ancient Near East": "the only match is a 1949 Met exhibition of that name, not the art tradition",
+    "Black Thursday": "Wikidata has no item of its own; the Wall Street Crash item covers it",
+    "Divine Egypt exhibition Metropolitan": "the Met's 2025–26 exhibition has no Wikidata item",
+    "divine kingship": "no item for Egyptian royal-divine reciprocity; only books by that title",
+    "mat": "reed mat",
+    "Mediterranean Group II glass": "a specialist typology with no Wikidata item",
+    "siren (mythology)": "not found by name search: 'siren' returns films, albums and villages; the item may exist under another label",
+    "Smyrna": "Old Smyrna, the archaeological site, not modern İzmir",
+    "wedding in ancient Greece": "no item found",
+    "Whitney Studio Club": "the only match is the Whitney Museum, its successor, which is a different institution"
+  }
+}

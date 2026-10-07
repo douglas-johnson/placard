@@ -137,3 +137,82 @@ python3 tools/curriculum-spike/spike.py --only mcny-38.447.4 \
 
 What it does not show: whether the suggestions *feel* like consolidation to a learner.
 That is Doug's to judge from the report.
+
+## Label text as a subject source, 2026-10-07
+
+The path run above found the right suggestions for *Liberty Triumphant* only once the
+subject its label names was linked by hand. This measures whether that generalizes:
+what does the interpretive text across all three visits name, can it be linked, and
+does it connect the Cooper Hewitt and MCNY encounters to anything?
+
+```sh
+python3 tools/curriculum-spike/resolve-subjects.py          # candidates for unlinked terms
+python3 tools/curriculum-spike/label-subjects.py            # coverage, relationships, reach
+python3 tools/curriculum-spike/label-subjects.py --relations about,depicts,context,influence,place,use,technique,maker
+```
+
+`label-subjects.json` holds the annotation: for each encounter, the frames of
+interpretive prose bound to it (the object's own text, or a gallery or case text), and
+each thing the prose names, with the relationship the text gives it and its scope. The
+tombstone's own fields don't count. Each search term was resolved to Wikidata by hand
+from the top candidates, or left null with a reason. **The annotation is Claude's reading
+and is unreviewed.** It covers 30 encounters: the spike's 29 plus the MCNY cigar mold,
+which the spike skips for having no title or maker.
+
+**Labels carry subjects more often than expected.** 23 of 30 encounters have
+interpretive text bound to them; 22 name something that links to a Wikidata item; 18
+name a subject — something the work depicts or is about — and 17 of those from the
+object's own text rather than a gallery's.
+
+| | encounters | interpretive text | names a linked item | names a linked subject |
+|---|---|---|---|---|
+| Cooper Hewitt | 8 | 5 | 5 | 4 |
+| MCNY | 9 | 6 | 5 | 4 |
+| the Met | 13 | 12 | 12 | 10 |
+
+The gaps are a label style, not a venue: MCNY's photography wall cards (Gillon, Zellin,
+Kubrick) and three of Cooper Hewitt's design labels carry no prose at all.
+
+**What the text names, by relationship:** depicts 35, context 28, about 18, place 15,
+influence 11, maker 8, use 6, technique 3. Three things stand out. "About" is the rarest
+of the subject relationships: labels mostly say what's shown and what was happening
+around it. Context comes mostly from gallery texts (16 of 28), which is Linked Art's
+pattern of an exhibition's idea being `about` something rather than each object.
+And influence is how design labels talk — Bantjes's poster drawing on Islamic
+calligraphy and blackletter, Boym's *Recycle* on Pop Art and flea markets.
+
+**Linking works, with a tail.** 116 of 123 distinct terms resolved to an item. The seven
+that didn't are a specialist typology (Mediterranean Group II glass), an exhibition
+(*Divine Egypt*), an institution only its successor has an item for (the Whitney Studio
+Club), three concepts with no item, and the siren of Greek myth, which name search
+cannot find under the films, albums and villages called Siren. Name search is
+resolution, and it needs a person or a better method behind it.
+
+**But the subjects connect to nothing new.** With the 43 label subjects the Met's tags
+didn't already supply added as facets, no encounter is reached that wasn't before; with
+all 101 linked mentions of every relationship (the same exclusion), still none. Cooper Hewitt stays at 3 of 8 and MCNY at 2 of 8,
+and every closure that reaches them still goes through a material. The reason is on the
+candidates' side: of the 48 subjects linked from Cooper Hewitt's and MCNY's texts, **one**
+— New York City — appears among the Met's tags. The Met's 1,154 tags describe what is
+depicted, mostly in older art (men, women, portraits, flowers, horses); stereotypes, the
+labour movement, the Great Depression, Pop Art and disposable products aren't in that
+vocabulary. Wikidata does better on coverage — 41 of the 48 have some item that depicts
+or is about them — but only 12 of those are Met works, and the counts are inflated by
+"main subject" on books and scholarly articles.
+
+**What this suggests — proposals, not decisions:**
+
+- *Label text is a real subject source*, and the only one at venues without a rich
+  catalog. Extracting subjects from interpretive prose (§4.6's relationship candidates)
+  is worth building, each as an inferred claim with its relationship, not a bare tag.
+- *A subject only recommends something if candidates carry subjects the same way.* The
+  Met's tags and a label's prose are different vocabularies from different sources, so
+  matching across them fails even when both are linked to Wikidata. Candidates need
+  subjects drawn from their own interpretive text — which is what the corpus collects —
+  or from Wikidata restricted to artworks.
+- *For modern design and New York history, "look into" may matter more than "go see".*
+  The Tea Act's chain of events, other Federal Art Project murals, the Memphis Group:
+  Wikidata's events and works are where these paths lead, and the Met isn't.
+
+Not measured here: whether an automated extractor finds what the hand annotation found,
+and whether the relationships hold up under a second reader.
