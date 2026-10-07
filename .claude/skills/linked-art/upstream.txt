@@ -1,0 +1,35 @@
+# The Linked Art documentation this skill was checked against.
+# Moving the pin is a reviewed change: run scripts/upstream-changes.sh, re-check every
+# reference file that cites a changed page, then update commit and checked here.
+repo: https://github.com/linked-art/linked.art
+commit: bcbff1761e65f44eeaeb92b4b2b83da2783539f8
+commit_date: 2026-09-01
+model_version: 1.0
+api_version: 1.0
+checked: 2026-10-07
+license: CC BY 4.0 (the documentation); credit https://linked.art/
+
+# Pages the reference files cite, relative to the repo root.
+cited:
+docs/model/base/index.md
+docs/model/intro/index.md
+docs/model/profile/index.md
+docs/model/object/aboutness/index.md
+docs/model/object/production/index.md
+docs/model/object/physical/index.md
+docs/model/object/ownership/index.md
+docs/model/assertion/index.md
+docs/model/actor/index.md
+docs/model/place/index.md
+docs/model/event/index.md
+docs/model/concept/index.md
+docs/model/collection/index.md
+docs/model/exhibition/index.md
+docs/model/provenance/encounters.md
+docs/model/provenance/movement.md
+docs/model/vocab/required/index.md
+docs/model/vocab/recommended/index.md
+docs/model/object/rights/index.md
+docs/api/1.0/shared/timespan/index.md
+docs/api/1.0/schema/core.json
+docs/cookbook/mappings/cdwa/index.md
