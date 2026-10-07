@@ -26,7 +26,9 @@ The decisions this applies are D5, D52 and D53 (D52 and D53 are also on PR #43).
 
 | Claim | Linked Art | Notes |
 |---|---|---|
-| Accession number | `identified_by` an `Identifier` classified *Accession Number* (aat:300312355), `assigned_by` an assignment carried out by the museum | One object, two museums' numbers: two identifiers, each with its own assignment (D24) |
+| Accession number | `identified_by` an `Identifier` classified *Accession Number* (aat:300312355), `assigned_by` an assignment carried out by the museum | One object, two museums' numbers: two identifiers, each with its own assignment (Linked Art's example: a Kehinde Wiley portrait jointly owned by two Yale museums) |
+| Accession suffix naming parts (`48.108.14A-B`) | the whole is a `HumanMadeObject`; each piece is its own record `part_of` it | D24: the suffix is structural, not formatting |
+| Object with no accession (marked "private collection" in a mixed vitrine) | an object with no accession `Identifier`; ownership stated only as the label states it | D24, D17: record that it cannot be resolved, and stop |
 | Label lines as read | `referred_to_by` statements: Description, Materials Statement, Credit Line (aat:300026687), Production Statement | **Open:** how a reading of the label, and the label itself, are modelled is part of the label-interpretation research |
 | Title | `identified_by` a *Primary Name* per language | Label title and catalog title can differ (Cooper Hewitt's "Poster One"); both are claims, one is primary in a projection |
 | Date | EDTF string (D5, Placard's own) → derived `TimeSpan` bounds + a Display Name | BCE bounds need the year-zero convention stated (`time.md`) |

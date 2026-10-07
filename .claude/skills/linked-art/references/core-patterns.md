@@ -50,8 +50,9 @@ not a `Type`. Linked Art concepts align with SKOS; concept schemes are `Set`s.
 - **Identifiers:** `identified_by` → `Identifier` with `content`, classified as e.g.
   *Accession Number* (aat:300312355). Identifiers carry no language. When two
   institutions assign their own numbers to one object, each identifier is `assigned_by`
-  an `AttributeAssignment` carried out by its institution (see `assertions.md`) — the
-  shape of D24's mixed ownership.
+  an `AttributeAssignment` carried out by its institution (see `assertions.md`). Linked
+  Art's example is a Kehinde Wiley portrait jointly owned by the Yale University Art
+  Gallery (`2021.25.1`) and the Yale Center for British Art (`B2021.5`).
 - **Equivalents:** `equivalent` links to the *same entity* in another dataset — Wikidata,
   ULAN, LOC. The URI MUST identify the entity, not a web page about it
   (`http://vocab.getty.edu/ulan/500011051`, never `.../page/ulan/...`;
@@ -89,7 +90,9 @@ another event, and has a `technique`. Beginnings and endings by class:
 ## Parts and membership
 
 - `part_of` points from a part to its whole: a frame to its painting, a battle to its war,
-  a neighbourhood to its city. Wholes don't list their parts; the API finds them.
+  a neighbourhood to its city. Wholes don't list their parts; the API finds them. An
+  accession suffix naming physical pieces (`48.108.14A-B`, the two halves of a mold) is
+  this pattern: D24 keeps the accession whole and parsed into base and suffix.
 - Inside one record, an activity is split with `part` (e.g. one `Production` with a part
   per artist and role), because there is no separate record to point `part_of` at.
 - `member_of` is for sets and groups, which can exist with no members.
