@@ -2226,6 +2226,10 @@ were the second.
 - **Inferring the path is not early-phase work.** A later "quick capture" may infer it, so
   that opening the app and taking a picture is always possible when something interesting
   turns up unexpectedly. Until then, placement is explicit.
+- **Naming a path never blocks creating one.** A name can be given before the first
+  capture or after it, and a path can be started from an encounter the learner already
+  has — "start a path from this". An unnamed path is a whole path: what it's about comes
+  from its encounters until the learner says otherwise. *(Added the same day, Doug.)*
 - **In the learner app, a capture signals interest.** The capture app's encounters do not,
   so when recommendation experiments run on corpus data, Doug will say which encounters
   count and which path they're on. The spike's `--only` flag is how that's expressed.
