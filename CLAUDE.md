@@ -29,6 +29,9 @@ PLANNING.md §13 is open questions. When one gets answered, write it into `DECIS
   distinct from the **tombstone label**. §4 is mostly about the *label*. Keep the
   terms separate; they're different extraction problems. The term stays in the
   documents wherever it's used literally; only the project name changed.
+- **Thread / path** — the same thing. PLANNING.md §6.3 designs *threads*; the learner
+  app calls them *paths*, and the learner places each encounter on one (D52). Not to be
+  confused with a *take* or *visit*, which is one trip's captures in the capture app.
 - **Other people's sites.** The rename happened because existing exhibition guides
   already used the old name. PLANNING.md §12 argues from the category of existing
   aggregators and does not analyze any one of them — that analysis is kept out of
@@ -172,6 +175,13 @@ python3 -m unittest tools/redact/test_redact.py
 # Pull uploaded takes from B2 (Mac read-only key in the keychain as placard-b2-mac)
 python3 tools/corpus-pull/corpus-pull.py
 python3 -m unittest tools/corpus-pull/test_corpus_pull.py
+
+# The curriculum spike (#42): suggestions from the fixtures, ranked by closure (§6.1).
+# Needs the Met's Open Access CSV in its cache once; its README says how
+python3 tools/curriculum-spike/spike.py --top 10
+python3 -m unittest tools/curriculum-spike/test_spike.py
+# What interpretive label text names, and whether it connects (hand annotation, label-subjects.json)
+python3 tools/curriculum-spike/label-subjects.py
 
 # The upload service
 (cd services/ingest && .venv/bin/pytest -q)

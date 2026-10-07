@@ -1,14 +1,14 @@
 # Placard's claims in Linked Art terms — provisional
 
 > **Status: working notes, not a settled mapping.** The facets below come from the
-> curriculum spike (#42), which is still open: its code and findings are on PR #43, not
-> on `main`, and the research it started — how much a label's interpretive text can tell
-> us about what a work is *about* — is continuing. Rows marked **open** are questions that
+> curriculum spike (#42, `tools/curriculum-spike/`), which is still open: the research it
+> started — how much a label's interpretive text can tell us about what a work is
+> *about* — is continuing. Rows marked **open** are questions that
 > research, or B1's schema work, has to answer; their answers go in DECISIONS.md, and this
 > file is then revised to match. Treat every row as a hypothesis about where a claim
 > lands, checked against Linked Art but not yet against Placard's data at scale.
 
-The decisions this applies are D5, D52 and D53 (D52 and D53 are also on PR #43).
+The decisions this applies are D5, D52 and D53.
 
 ## Facets of a work, as the spike used them
 
@@ -19,7 +19,7 @@ The decisions this applies are D5, D52 and D53 (D52 and D53 are also on PR #43).
 | **period** | Met `period` ("Geometric") | the object's `Production` `during` a `Period` record | `during`, not `part_of` (`time.md`) |
 | **type** | Met `objectName` ("Krater") | object `classified_as` an AAT term, itself classified *Type of Work* (aat:300435443) | The spike's first-term heuristic stands in for entity resolution to AAT |
 | **material** | Met `medium`; label | `made_of` → `Material` (AAT); the text as written is a *Materials Statement* | Material, not tool. The spike's first-term split stands in for a materials parser |
-| **subject** | Met tags (with AAT and Wikidata URIs); label text, linked by hand for one fixture | on the object's `VisualItem`: `represents` (an identifiable thing), `represents_instance_of_type` (a kind), or `about` (what it evokes) | **Open, and the subject of the continuing research.** The Met's tags don't say which relationship they mean: "Birds" is a depicted kind, "American Revolution" a subject. Label text ("opposition to the Tea Act") looks like `about`, but one fixture is not evidence. How often interpretive text names a linkable subject, and which relationship it supports, is what the next part of the research measures |
+| **subject** | Met tags (with AAT and Wikidata URIs); interpretive label text, annotated by hand (`tools/curriculum-spike/label-subjects.json`) | on the object's `VisualItem`: `represents` (an identifiable thing), `represents_instance_of_type` (a kind), or `about` (what it evokes); influences on the `Production`; context as `during` / `caused_by`, or on an exhibition's idea | **Open.** The Met's tags don't say which relationship they mean: "Birds" is a depicted kind, "American Revolution" a subject. Label text says more: the 2026-10-07 measurement (spike README) found depicts, context, about, place and influence in that order, with context mostly in gallery texts. Whether candidates can be given subjects the same way is the open question it left |
 | **era** (dropped by the spike) | object dates | `Production` `timespan`, plus `took_place_at` | The spike found time alone is noise. Time *and* place is a Production, which Linked Art already has |
 
 ## Other claims

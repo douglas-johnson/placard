@@ -80,6 +80,6 @@ Part of the continuing label-interpretation research, not yet evidence.
 
 **For Placard (§8.2):** "on view in gallery 151" is a display-state claim. Linked Art
 gives it a home (`current_location`, `Move`); what Placard adds is that an observation of
-display goes stale — works on paper rotate (the #42 spike, on PR #43, found every
+display goes stale — works on paper rotate (the #42 spike found every
 engraving the 2023 Met data put in a gallery was off view in 2026) — which is claim
 metadata, not vocabulary.

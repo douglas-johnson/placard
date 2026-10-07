@@ -48,9 +48,10 @@ expressed — by widening bounds, not by a flag.
 kept beside the bounds as a Placard extension. Bounds are *derived* from it in
 projections, using EDTF's astronomical years (1 BCE = `0000`, 375 BCE = `-0374`), which
 match XSD 1.1, and a Linked Art export must say so. The Met's API counts BCE without a
-year zero (`-375` is 375 BCE). The curriculum spike's `met_edtf` (on PR #43, not yet on
-`main`) converts it and is tested; whatever ingests Met dates in B1 needs the same. EDTF's `~` (approximate) and `?` (uncertain) have no Linked Art equivalent
-beyond wider bounds and a Name; the EDTF string is what keeps them.
+year zero (`-375` is 375 BCE). The curriculum spike's `met_edtf`
+(`tools/curriculum-spike/spike.py`) converts it and is tested; whatever ingests Met dates
+in B1 needs the same. EDTF's `~` (approximate) and `?` (uncertain) have no Linked Art
+equivalent beyond wider bounds and a Name; the EDTF string is what keeps them.
 
 ## Periods, events, activities
 

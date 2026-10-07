@@ -84,3 +84,6 @@ tools/ocr/bin/
 
 # Bundled test labels — small derived copies, not raw captures (see apps/learner/AGENTS.md)
 !apps/learner/assets/fixtures/*.jpg
+
+# ── Curriculum spike (#42): public catalog responses, regenerable ─────
+tools/curriculum-spike/cache/

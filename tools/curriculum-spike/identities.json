@@ -1,0 +1,71 @@
+{
+  "about": "Makers named on non-Met labels, matched to Wikidata by hand on 2026-10-04 (#42). A name search is entity resolution, so every match was checked against the label's own nationality and dates, and the ones that could not be matched are recorded as such rather than guessed. Met makers come with the Met's own Wikidata link and are not listed here.",
+  "makers": {
+    "Constantin Boym": {
+      "qid": "Q29789627",
+      "description": "American designer, born Russia 1955",
+      "evidence": "label: American, 1955/.."
+    },
+    "Marian Bantjes": {
+      "qid": "Q3847649",
+      "description": "Canadian graphic designer (born 1963)",
+      "evidence": "label: Canadian, 1963/.."
+    },
+    "Sheila Bridges": {
+      "qid": "Q7493013",
+      "description": "Interior Designer",
+      "evidence": "label: American, 1964/..; the only human with the name; the Harlem Toile is her studio's"
+    },
+    "Gerald Gulotta": {
+      "qid": "Q17030581",
+      "description": "industrial designer",
+      "evidence": "label: American, 1921/2018; the only match"
+    },
+    "Donald M. Genaro": {
+      "qid": "Q5294414",
+      "description": "American industrial designer (born 1932)",
+      "evidence": "label: American, 1932/.."
+    },
+    "Michael Graves": {
+      "qid": "Q314636",
+      "description": "American architect and designer of consumer products (1934-2015)",
+      "evidence": "label: American, 1934/2015; the other three are medical researchers"
+    },
+    "Edmund Vincent Gillon": {
+      "qid": "Q122831481",
+      "description": "[Gillon, Edmund Vincent]",
+      "evidence": "a library-authority stub with no dates or occupation; kept because the full name is distinctive, but it will contribute nothing"
+    },
+    "Henry Dawkins": {
+      "qid": "Q24529682",
+      "description": "American engraver, active ca. 1753",
+      "evidence": "label: engraving, ca. 1774; the top four name matches are British politicians"
+    },
+    "Samuel H. Gottscho": {
+      "qid": "Q7411518",
+      "description": "American photographer (1875-1971)",
+      "evidence": "label: photographer; MCNY holds the Gottscho-Schleisner archive"
+    },
+    "Stanley Kubrick": {
+      "qid": "Q2001",
+      "description": "American filmmaker and photographer (1928-1999)",
+      "evidence": "label: a 1947 Look magazine photograph, which is his"
+    },
+    "Marjo Penninx": {
+      "qid": null,
+      "evidence": "no Wikidata item under the name"
+    },
+    "Peter Lin": {
+      "qid": null,
+      "evidence": "the items under the name are a bishop and two researchers; none is the photographer"
+    },
+    "Agnes Zellin": {
+      "qid": null,
+      "evidence": "no Wikidata item under the name"
+    },
+    "Abram August Champanier": {
+      "qid": null,
+      "evidence": "no Wikidata item under the name or 'Abram Champanier'"
+    }
+  }
+}

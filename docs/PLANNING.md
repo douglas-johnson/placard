@@ -199,6 +199,8 @@ This is worth serious consideration for three reasons:
 
 The cost is real: CIDOC CRM is verbose, and a naive adoption will produce a model that's miserable to query for simple things. A reasonable middle path is to model *events* as first-class nodes — Production, Acquisition, Exhibition, Sale — while keeping the ontology homegrown and CRM-shaped, then align to Linked Art at the ingestion and publication boundaries rather than internally.
 
+*Superseded in part by D53: the store of record is claims, the content of each claim uses Linked Art's vocabulary, and Linked Art documents are one projection rebuilt from the claims. Events stay first-class nodes.*
+
 **Attribution qualifiers are not decoration.** Labels say "Attributed to," "Studio of," "Workshop of," "Circle of," "Follower of," "After," "Manner of." These are a controlled vocabulary with precise meanings, and flattening them all to `created_by` destroys exactly the information that makes the influence graph interesting. *Follower of Caravaggio* is not a weaker fact about authorship — it's a strong fact about **influence propagating**, which is prime curriculum material. Preserve the qualifier on the production event.
 
 **The interpretive paragraph** is the best source of lateral relationships: influences, subjects, responses to other works, historical context. Extract relationship *candidates* from it with a model, but every one of them enters the §8.1 review queue as low-confidence. Curatorial prose is interpretive by design, and it's written to be engaging rather than precise.
@@ -323,6 +325,8 @@ Model a line of inquiry as a **thread** with states: `active` → `resting` → 
 
 This is the "journey you can return to" requirement, implemented as a state machine. It costs very little and does a lot.
 
+*In the learner app a thread is called a **path**, and the learner places each encounter on one; recommendations are made per path (D52). This document keeps "thread" as the design term.*
+
 ### 6.4 Every thread has closable loops
 
 Long arcs need short satisfying units. A thread should have natural resting points that feel like arrival: *you've now traced how Caravaggio's lighting reached Utrecht and came back to Rembrandt.* Small, complete, narratable. The learner should be able to say what they learned in one sentence.
@@ -351,7 +355,7 @@ Some frontier candidates are places to go, so cost, eligibility, opening hours, 
 
 **Canon entities:** `Artwork`, `Artist`, `Movement`, `Medium`, `Place`, `Institution`, `Exhibition`, `Theme`, `HistoricalEvent`
 
-**Event nodes** (per §4.6): `Production`, `Acquisition`, `Sale`, `Exhibiting`, `Treatment` — each with participants, a time-span, and a place. This is the CIDOC CRM–shaped middle path: events are first-class, so ownership intervals and exhibition histories have somewhere to live, without adopting the full ontology internally.
+**Event nodes** (per §4.6): `Production`, `Acquisition`, `Sale`, `Exhibiting`, `Treatment` — each with participants, a time-span, and a place. This is the CIDOC CRM–shaped middle path: events are first-class, so ownership intervals and exhibition histories have somewhere to live, without adopting the full ontology internally. *D53 makes the names Linked Art's, inside a claim envelope of Placard's own.*
 
 **Canon edges:** `created_by`, `influenced_by`, `taught`, `depicts`, `commissioned_by`, `responds_to`, `held_at`, `contemporary_of`, `part_of_movement`, `on_view_during`
 
@@ -780,7 +784,7 @@ public site acknowledges the app — are held in the private strategy notes inst
 - **Does the app ever teach directly?** Reggio resists instruction, but an adult self-learner may genuinely want a straight explanation of, say, what tempera is. Where's the line between provocation and lecture?
 - **What is the promotion parameter *k*?** A concrete number needs choosing, and it trades coverage against privacy.
 - **What motivates a verifier?** They're doing unpaid expert labor. Attribution on the public calendar? Institutional visibility? Access to aggregate data? This needs an answer before the invitations go out, not after.
-- **How far to go with CIDOC CRM?** §4.6 proposes event nodes with a homegrown ontology, aligning to Linked Art only at the boundaries. The alternative — adopt Linked Art internally — costs query ergonomics but buys free interoperability with every museum that already speaks it. This is the biggest open architectural call in the document.
+- **How far to go with CIDOC CRM?** *Answered by D53: claims are the store of record, their content uses Linked Art's vocabulary, and every other view is a rebuildable projection.* §4.6 proposed event nodes with a homegrown ontology, aligning to Linked Art only at the boundaries. The alternative — adopt Linked Art internally — costs query ergonomics but buys free interoperability with every museum that already speaks it. This is the biggest open architectural call in the document.
 - **Is provenance research in scope?** Ownership chains are curriculum-rich, and they also lead directly into Nazi-era looting, colonial acquisition, and restitution disputes. These are real art history and a self-study curriculum that routes around them is doing a disservice — but they need care, and the system should present documented gaps and disputes rather than drawing conclusions.
 - **Who nudges the second photo?** The label shot is the highest-value capture and the easiest to forget. Making it feel like practice rather than a chore is a design problem, not a technical one.
 - **What is the seed source for canonical facts?** Wikidata is broad and uneven; museum catalogs are accurate but narrow and disagree with each other. The starting corpus determines what verifiers spend their time on — correcting bad data or extending thin data are very different jobs.
