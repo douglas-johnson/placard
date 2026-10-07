@@ -27,7 +27,7 @@ pin, run `scripts/upstream-changes.sh`.
 | Time-spans, the four date bounds, BCE dates, EDTF, periods, `during` vs `part_of`, causes between events | `references/time.md` |
 | Who said what: `AttributeAssignment`, uncertain and former attributions, sources, AI-generated content, relationships Linked Art doesn't model | `references/assertions.md` |
 | People and groups, nationality, occupation, membership; places; events; exhibitions; current location and moves | `references/people-places-events.md` |
-| How Placard's claims might map onto all of the above, and Placard's extensions — **provisional**: the curriculum spike (#42, PR #43) and its label-interpretation research are still open | `references/placard-mapping.md` |
+| How Placard's claims might map onto all of the above, and Placard's extensions — **provisional**: the curriculum spike (#42) and its label-interpretation research are still open | `references/placard-mapping.md` |
 
 ## The five things most likely to go wrong
 

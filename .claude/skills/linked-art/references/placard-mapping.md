@@ -1,14 +1,14 @@
 # Placard's claims in Linked Art terms — provisional
 
 > **Status: working notes, not a settled mapping.** The facets below come from the
-> curriculum spike (#42), which is still open: its code and findings are on PR #43, not
-> on `main`, and the research it started — how much a label's interpretive text can tell
-> us about what a work is *about* — is continuing. Rows marked **open** are questions that
+> curriculum spike (#42, `tools/curriculum-spike/`), which is still open: the research it
+> started — how much a label's interpretive text can tell us about what a work is
+> *about* — is continuing. Rows marked **open** are questions that
 > research, or B1's schema work, has to answer; their answers go in DECISIONS.md, and this
 > file is then revised to match. Treat every row as a hypothesis about where a claim
 > lands, checked against Linked Art but not yet against Placard's data at scale.
 
-The decisions this applies are D5, D52 and D53 (D52 and D53 are also on PR #43).
+The decisions this applies are D5, D52 and D53.
 
 ## Facets of a work, as the spike used them
 
