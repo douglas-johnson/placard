@@ -36,10 +36,14 @@ stays queryable. Marking an attribution wrong adds information; it doesn't remov
 ## Events are first-class nodes
 
 `Production`, `Acquisition`, `Sale`, `Exhibiting`, `Treatment` — each with participants,
-a time-span, and a place (§4.6). The CIDOC CRM–shaped middle path: homegrown ontology,
-CRM-shaped, aligned to Linked Art at the ingestion and publication boundaries rather
-than internally. How far to take that is the largest open architectural question in
-the plan (§13) — see DECISIONS.md.
+a time-span, and a place (§4.6).
+
+**The ontology is settled by D53.** The claim envelope above is Placard's own; the content
+of each claim — classes, properties, types — uses Linked Art's vocabulary, the profile of
+CIDOC CRM that the Getty and Yale publish, with Getty AAT for types. Placard extends it only
+where Linked Art is silent. Everything that reads the canon reads a projection rebuilt from
+the claims: a flat facet index first, Linked Art documents when there's something to
+publish. Nothing writes to a projection.
 
 ## Extensions
 

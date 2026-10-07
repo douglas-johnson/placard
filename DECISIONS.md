@@ -2237,3 +2237,76 @@ to that, and §6.1's closure ranking takes over once the path holds two encounte
 **What it leaves open.** What a path is *about* in data terms — a subject the learner
 names, a set of encounters, or both — is still to be settled (§4.6, #42's subject facet).
 So is whether one encounter can sit on more than one path.
+
+---
+
+## D53 — The canon stores claims; their content is Linked Art; every other view is rebuilt from them
+
+**Date:** 2026-10-07 · **Status:** accepted · **Decided by:** Doug, on Claude's proposal ·
+**Issue:** #42 · **Answers:** PLANNING.md §13 "How far to go with CIDOC CRM?" ·
+**Amends:** §4.6's middle path, db/README
+
+§4.6 proposed a "homegrown ontology, CRM-shaped", aligned to Linked Art only where data
+comes in and goes out. Pressed on what that meant in practice, it turned out to mean
+very little. CIDOC CRM is a conceptual model that allows many ways to say the same
+thing, so "use CRM" in practice means writing a profile of it, picking one pattern per
+fact. Linked Art is that profile, already argued over by the Getty, Yale and others.
+Doug's counter-proposal was to store a standard and answer queries from a separate
+layer in whatever schema suits. That was right in spirit, and it is how Yale's LUX and
+the Getty work. It needed one correction: for Placard, the store of record is not a
+description of anything.
+
+**Decision:** three layers.
+
+1. **The store of record is claims** (§4.7), in Postgres as db/README specifies. The
+   envelope is Placard's own — source, record, retrieval time, confidence,
+   corroboration, verification, supersession — because no standard provides it at the
+   level constraint 2 requires. CRM's attribute assignment and CRMinf can express it,
+   but only by making every fact a node with four to six links of its own.
+2. **The content of a claim uses Linked Art's vocabulary**: its classes and properties,
+   Getty AAT for types, and Wikidata, ULAN and museum URIs for identity. Placard extends
+   it only where Linked Art is silent, and the #42 spike found those places: beliefs and
+   inference (after CRMinf), mode of depiction ("allegorically"), the EDTF string beside
+   the date bounds (constraint 7), display state that decays, and paths (D52).
+3. **Every other view is a projection, rebuilt from the claims.** First, a flat facet
+   index for ranking, which the spike built in miniature. Search when it's needed.
+   Linked Art documents for each entity when there is something to publish. A Linked Art
+   document is the output of resolving claims about an entity, not the input.
+
+The private overlay — encounters, paths, notes — is a separate store under its own
+credential (constraint 1). No projection built from the canon contains private data;
+ranking joins the two at request time, inside the learner app's service.
+
+**Why claims and not Linked Art documents as the record.** A Linked Art document is one
+institution's current view of one entity, replaced whole. Placard holds competing
+statements about the same entity from a museum, a label, Wikidata and a verifier, and
+the current view is computed from them. Projections only fix reads, too. Everything
+that writes — the fixture drafter, verification, corrections (§8.6), placing an
+encounter on a path — writes through the storage schema, which is the claims.
+
+**What makes a projection rebuildable.** These are the reason storing claims is worth
+its complexity, and they are rules:
+
+- Claims are appended, never edited. A correction supersedes (constraint 2).
+- Every input to a projection is a claim. Anything fetched from an API becomes a claim,
+  with its retrieval time, before anything uses it. A projection never calls out while
+  it is being built.
+- The rules that resolve claims into a view are versioned code, and each projection
+  records which version built it.
+- Nothing writes to a projection. A fix found there becomes a new claim.
+
+That buys three things: changing a rule (the spike's weighting of sources, say) is a
+rebuild rather than a migration; the view as it stood on any date can be rebuilt,
+because superseded claims stay; and every suggestion can be traced to the claims that
+produced it, which is §4.8's citation. If the law ever requires a claim to be removed
+rather than superseded, that is a recorded redaction in D36's sense, not a precedent.
+
+**Evidence.** On 2026-10-07 none of the A0 venues was confirmed as publishing Linked Art.
+It's published by the Getty, Yale (LUX) and the Rijksmuseum, with the National Gallery
+of Art engaged and the American Art Collaborative's fourteen museums publishing an
+earlier form. The Met and MoMA helped develop it but don't publish it. So the choice is
+made for the vocabulary's agreed patterns, not for interoperability today; data from
+those institutions would arrive already in a form Placard maps.
+
+**For a solo builder, the first version is small:** a claims table and one flat facet
+index. Linked Art export waits for the public site (B3).
