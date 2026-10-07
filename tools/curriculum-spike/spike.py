@@ -107,10 +107,11 @@ class Fetcher:
         path = CACHE / (hashlib.sha1(url.encode()).hexdigest() + ".json")
         return json.loads(path.read_text())["retrieved"] if path.exists() else ""
 
-    def sparql(self, query: str) -> list[dict]:
+    def sparql(self, query: str) -> tuple[list[dict], str]:
+        """The rows, and when the query was answered: the claims it yields carry that."""
         url = WDQS + "?" + urllib.parse.urlencode({"query": query, "format": "json"})
         body = self.json(url, {"Accept": "application/sparql-results+json"})
-        return body["results"]["bindings"] if body else []
+        return (body["results"]["bindings"] if body else []), self.retrieved(url)
 
 
 # ── claims ───────────────────────────────────────────────────────────────────
@@ -371,7 +372,7 @@ def wd_values(fx: Fetcher, qids: list[str], claims: Claims) -> dict[str, dict[st
     """For each maker, the values of the linking and describing properties."""
     props = " ".join(f"wdt:{p}" for p in [*LINKING, *DESCRIBING])
     vals = " ".join(f"wd:{q}" for q in qids)
-    rows = fx.sparql(
+    rows, retrieved = fx.sparql(
         f"SELECT ?a ?p ?v ?vLabel WHERE {{ VALUES ?a {{ {vals} }} VALUES ?p {{ {props} }} "
         f'?a ?p ?v . SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }} }}'
     )
@@ -385,7 +386,7 @@ def wd_values(fx: Fetcher, qids: list[str], claims: Claims) -> dict[str, dict[st
         labels[v] = r["vLabel"]["value"]
         claims.add(
             f"agent:{a}", (LINKING | DESCRIBING)[p], f"wd:{v}", source="wikidata",
-            record=f"https://www.wikidata.org/wiki/{a}#{p}", retrieved="(query cache)",
+            record=f"https://www.wikidata.org/wiki/{a}#{p}", retrieved=retrieved,
         )  # fmt: skip
     out["_labels"] = labels  # type: ignore[assignment]
     return out
@@ -422,9 +423,9 @@ def wd_neighbours(fx: Fetcher, learner: list[Work], values: dict, claims: Claims
             if p not in LINKING:
                 continue
             for v in vs:
-                count = fx.sparql(f"SELECT (COUNT(?x) AS ?n) WHERE {{ ?x wdt:{p} wd:{v} }}")
+                count, _ = fx.sparql(f"SELECT (COUNT(?x) AS ?n) WHERE {{ ?x wdt:{p} wd:{v} }}")
                 totals[(p, v)] = int(count[0]["n"]["value"]) if count else 0
-                rows = fx.sparql(
+                rows, retrieved = fx.sparql(
                     f"SELECT ?x ?xLabel ?xDescription ?s WHERE {{ ?x wdt:{p} wd:{v} ; "
                     f"wdt:P31 wd:Q5 ; wikibase:sitelinks ?s . FILTER(?x != wd:{qid}) "
                     f'SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }} }} '
@@ -451,7 +452,7 @@ def wd_neighbours(fx: Fetcher, learner: list[Work], values: dict, claims: Claims
                             person.via[w.id] = (p, labels.get(v, v), weight)
                     claims.add(
                         f"agent:{x}", LINKING[p], f"wd:{v}", source="wikidata",
-                        record=f"https://www.wikidata.org/wiki/{x}#{p}", retrieved="(query cache)",
+                        record=f"https://www.wikidata.org/wiki/{x}#{p}", retrieved=retrieved,
                     )  # fmt: skip
     return list(people.values()), totals
 
