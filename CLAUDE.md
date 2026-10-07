@@ -13,6 +13,7 @@ Solo project. Every architectural choice is also a learning-budget choice.
 | `docs/capture-protocol.md` | Field procedure for collecting labels | Corpus work |
 | `data/README.md` | Corpus layout and fixture format | Anything touching `data/` |
 | `db/README.md` | Postgres schema decisions, decided in advance | Before creating any schema |
+| `.claude/skills/linked-art/` | Linked Art, the vocabulary inside Placard's claims (D53), checked against a pinned commit of its docs | Modelling a claim, a schema, an ingestion mapping or a projection. Loads as the `linked-art` skill |
 
 PLANNING.md §13 is open questions. When one gets answered, write it into `DECISIONS.md`
 — an answer left in a chat transcript is an answer that gets re-litigated.
